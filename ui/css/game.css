@@ -20,6 +20,10 @@ main > .container {
 	pointer-events: none;
 }
 
+main > .container.boxes {
+	box-shadow: 0 0 0 4px lightgrey;
+}
+
 main .box {
 	width: 10%;
 	height: 10%;
@@ -60,6 +64,7 @@ main .line.horizontal + .line.horizontal {
 
 main .line.hover {
 	color: black;
+	transition-duration: 200ms;
 }
 
 main > .container.dots {
@@ -81,6 +86,15 @@ main .dot {
 main .dot:nth-child(11n) {
 	margin-right: 0;
 	margin-bottom: 0;
+}
+
+main .box,
+main .line {
+	-webkit-transition: color 400ms;
+	   -moz-transition: color 400ms;
+	    -ms-transition: color 400ms;
+	     -o-transition: color 400ms;
+	        transition: color 400ms;
 }
 
 main .p1 {
