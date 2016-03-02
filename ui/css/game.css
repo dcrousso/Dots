@@ -1,0 +1,92 @@
+main {
+	position: relative;
+	top: 15vh;
+	width: 90vw;
+	max-width: 500px;
+	height: 90vw;
+	max-height: 500px;
+	margin: 0 auto;
+	background-color: #f1f1f1;
+}
+
+main > .container {
+	display: flex;
+	flex-wrap: wrap;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	bottom: 20px;
+	left: 20px;
+	pointer-events: none;
+}
+
+main .box {
+	width: 10%;
+	height: 10%;
+	color: lightgrey;
+	background-color: currentColor;
+	pointer-events: all;
+}
+
+main > .container.lines {
+	top: calc(20px - (2px / 2));
+	right: calc(20px - (2px / 2));
+	bottom: calc(20px - (2px / 2));
+	left: calc(20px - (2px / 2));
+}
+
+main .line {
+	width: 0;
+	height: 0;
+	color: transparent;
+	border: 0 solid currentColor;
+	pointer-events: all;
+}
+
+main .line.horizontal {
+	width: calc(10% - (22px / 10));
+	border-top-width: 2px;
+}
+
+main .line.vertical {
+	height: calc(10% - (22px / 10));
+	margin-top: 2px;
+	border-right-width: 2px;
+}
+
+main .line.horizontal + .line.horizontal {
+	margin-left: 2px;
+}
+
+main .line.hover {
+	color: black;
+}
+
+main > .container.dots {
+	top: calc(20px - (6px / 2));
+	right: calc(20px - (6px / 2));
+	bottom: calc(20px - (6px / 2));
+	left: calc(20px - (6px / 2));
+}
+
+main .dot {
+	width: 6px;
+	height: 6px;
+	margin-right: calc(10% - (66px / 10));
+	margin-bottom: calc(10% - (66px / 10));
+	background-color: black;
+	border-radius: 50%;
+}
+
+main .dot:nth-child(11n) {
+	margin-right: 0;
+	margin-bottom: 0;
+}
+
+main .p1 {
+	color: #900;
+}
+
+main .p2 {
+	color: #fc0;
+}
