@@ -33,38 +33,34 @@ main .box {
 main .box[class*="p"]::before,
 main .box[class*="p"]::after {
 	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	margin: -2px;
+	top: -2px;
+	right: -2px;
+	bottom: -2px;
+	left: -2px;
 	content: "";
-	box-shadow: 0 0 0 2px currentColor inset;
-	animation-duration: 8s;
-	animation-timing-function: linear;
-	animation-iteration-count: infinite;
-}
-
-main .box[class*="p"]::before {
-	animation-name: clipBefore;
+	border: 2px solid currentColor;
+	animation: clipPath 8s linear infinite;
 }
 
 main .box[class*="p"]::after {
-	animation-name: clipAfter;
+	animation-delay: -4s;
 }
 
-@keyframes clipBefore {
-	0%, 100% { clip: rect(0    44px 2px  0); }
-	25%      { clip: rect(0    2px  44px 0); }
-	50%      { clip: rect(42px 44px 44px 0); }
-	75%      { clip: rect(0    44px 44px 42px); }
+main .box[class*="p"]:nth-child(odd)::before,
+main .box[class*="p"]:nth-child(odd)::after {
+	animation-direction: reverse;
 }
 
-@keyframes clipAfter {
-	0%, 100% { clip: rect(42px 44px 44px 0); }
-	25%      { clip: rect(0    44px 44px 42px); }
-	50%      { clip: rect(0    44px 2px  0); }
-	75%      { clip: rect(0    2px  44px 0); }
+@keyframes clipPath {
+	0%   { -webkit-clip-path: polygon(0                0,                    100% 0,                    100% 2px,      0                2px); }
+	12%  { -webkit-clip-path: polygon(50%              0,                    100% 0,                    100% 50%,      50%              50%); }
+	25%  { -webkit-clip-path: polygon(calc(100% - 2px) 0,                    100% 0,                    100% 100%,     calc(100% - 2px) 100%); }
+	38%  { -webkit-clip-path: polygon(50%              50%,                  100% 50%,                  100% 100%,     50%              100%); }
+	50%  { -webkit-clip-path: polygon(0                calc(100% - 2px),     100% calc(100% - 2px),     100% 100%,     0                100%); }
+	62%  { -webkit-clip-path: polygon(0                50%,                  50%  50%,                  50%  100%,     0                100%); }
+	75%  { -webkit-clip-path: polygon(0                0,                    2px  0,                    2px  100%,     0                100%); }
+	88%  { -webkit-clip-path: polygon(0                0,                    50%  0,                    50%  50%,      0                50%); }
+	100% { -webkit-clip-path: polygon(0                0,                    100% 0,                    100% 2px,      0                2px); }
 }
 
 main > .container.lines {

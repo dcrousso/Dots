@@ -84,7 +84,7 @@
 	}
 
 	function markLine(line) {
-		if (currentLine === line)
+		if (currentLine && line && currentLine.element === line.element)
 			return;
 
 		if (currentLine)
