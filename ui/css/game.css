@@ -20,16 +20,51 @@ main > .container {
 	pointer-events: none;
 }
 
-main > .container.boxes {
-	box-shadow: 0 0 0 4px lightgrey;
-}
-
 main .box {
-	width: 10%;
-	height: 10%;
-	color: lightgrey;
+	position: relative;
+	width: calc(10% - 6px);
+	height: calc(10% - 6px);
+	margin: 3px;
+	color: transparent;
 	background-color: currentColor;
 	pointer-events: all;
+}
+
+main .box[class*="p"]::before,
+main .box[class*="p"]::after {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: -2px;
+	content: "";
+	box-shadow: 0 0 0 2px currentColor inset;
+	animation-duration: 8s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+}
+
+main .box[class*="p"]::before {
+	animation-name: clipBefore;
+}
+
+main .box[class*="p"]::after {
+	animation-name: clipAfter;
+}
+
+@keyframes clipBefore {
+	0%, 100% { clip: rect(0    44px 2px  0); }
+	25%      { clip: rect(0    2px  44px 0); }
+	50%      { clip: rect(42px 44px 44px 0); }
+	75%      { clip: rect(0    44px 44px 42px); }
+}
+
+@keyframes clipAfter {
+	0%, 100% { clip: rect(42px 44px 44px 0); }
+	25%      { clip: rect(0    44px 44px 42px); }
+	50%      { clip: rect(0    44px 2px  0); }
+	75%      { clip: rect(0    2px  44px 0); }
 }
 
 main > .container.lines {
