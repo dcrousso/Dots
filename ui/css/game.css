@@ -121,11 +121,11 @@ main .dot:nth-child(11n) {
 
 main .box,
 main .line {
-	-webkit-transition: color 400ms;
-	   -moz-transition: color 400ms;
-	    -ms-transition: color 400ms;
-	     -o-transition: color 400ms;
-	        transition: color 400ms;
+	-webkit-transition: color 400ms, border-color 400ms, background-color 400ms;
+	   -moz-transition: color 400ms, border-color 400ms, background-color 400ms;
+	    -ms-transition: color 400ms, border-color 400ms, background-color 400ms;
+	     -o-transition: color 400ms, border-color 400ms, background-color 400ms;
+	        transition: color 400ms, border-color 400ms, background-color 400ms;
 }
 
 main .p1 {
