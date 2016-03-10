@@ -12,24 +12,7 @@
 		<meta name="description" content="Play the classic game Dots and Boxes, but with a twist!">
 		<meta name="author" content="Benjamin Stein, Sean Yuan, Devin Rousso, Shane Rosse">
 
-		<link rel="stylesheet" href="ui/css/common.css">
-		<link rel="stylesheet" href="ui/css/game.css">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/common.css">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/${param.pagetype}.css">
 	</head>
 	<body>
-		<header>
-			<nav>
-				<a href="/" title="Homepage">Home</a>
-				<a href="/logout" title="Logout">Logout</a>
-			</nav>
-		</header>
-		<main>
-			<noscript><h2>You must have JavaScript enabled to play</h2></noscript>
-			<div class="boxes container"></div>
-			<div class="lines container"></div>
-			<div class="dots container"></div>
-		</main>
-		<footer>
-		</footer>
-		<script src="ui/js/game.js"></script>
-	</body>
-</html>

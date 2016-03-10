@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>404: Page Not Found</title>
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<style>
+			html, body {
+				margin: 0;
+				font: 20px/1.5 Helvetica Neue, Arial, sans-serif;
+				text-align: center;
+				color: #333;
+			}
+			h1 {
+				font-size: 200px;
+				font-weight: 100;
+				margin: 75px auto;
+			}
+			p {
+				font-weight: 200;
+			}
+			a {
+				display: inline-block;
+				overflow: hidden;
+				vertical-align: top;
+				color: #2980b9;
+			}
+			a span {
+				display: inline-block;
+				position: relative;
+				padding: 0 2px;
+				-webkit-transition: all 400ms ease;
+				   -moz-transition: all 400ms ease;
+				    -ms-transition: all 400ms ease;
+				     -o-transition: all 400ms ease;
+				        transition: all 400ms ease;
+				-webkit-transform-origin: center top;
+				   -moz-transform-origin: center top;
+				    -ms-transform-origin: center top;
+				     -o-transform-origin: center top;
+				        transform-origin: center top;
+				-webkit-transform-style: preserve-3d;
+				   -moz-transform-style: preserve-3d;
+				    -ms-transform-style: preserve-3d;
+				     -o-transform-style: preserve-3d;
+				        transform-style: preserve-3d;
+			}
+			span:after {
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				padding: 0 2px;
+				content: attr(data-title);
+				color: #fff;
+				background-color: #3498db;
+				-webkit-transform-origin: center top;
+				   -moz-transform-origin: center top;
+				    -ms-transform-origin: center top;
+				     -o-transform-origin: center top;
+				        transform-origin: center top;
+				-webkit-transform: translate(0, 100%) rotateX(-90deg);
+				   -moz-transform: translate(0, 100%) rotateX(-90deg);
+				    -ms-transform: translate(0, 100%) rotateX(-90deg);
+				     -o-transform: translate(0, 100%) rotateX(-90deg);
+				        transform: translate(0, 100%) rotateX(-90deg);
+			}
+			a:hover span {
+				color: #277bb6;
+				background-color: #3498db;
+				-webkit-transform: translate(0, 0) rotateX(90deg);
+				   -moz-transform: translate(0, 0) rotateX(90deg);
+				    -ms-transform: translate(0, 0) rotateX(90deg);
+				     -o-transform: translate(0, 0) rotateX(90deg);
+				        transform: translate(0, 0) rotateX(90deg);
+			}
+		</style>
+	</head>
+	<body>
+		<h1>404</h1>
+		<p>Page not found. <a href="/"><span data-title="Go Back">Go Back</span></a></p>
+	</body>
+</html>

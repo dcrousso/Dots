@@ -1,3 +1,9 @@
+main {
+	max-width: 500px;
+	height: 90vw;
+	max-height: 500px;
+}
+
 main > .container {
 	display: -webkit-flex;
 	display:    -moz-flex;
@@ -121,9 +127,9 @@ main .line {
 }
 
 main .p1 {
-	color: #900;
+	color: #900; /* Cardinal */
 }
 
 main .p2 {
-	color: #fc0;
+	color: #fc0; /* Gold */
 }
