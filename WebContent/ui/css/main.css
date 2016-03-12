@@ -1,7 +1,101 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-size: 1.5em;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: hsl(0, 0%, 25%);
+	background-color: hsl(215, 65%, 50%);
+	background-image: radial-gradient(hsl(190, 100%, 50%), hsl(215, 65%, 50%));
+	background-attachment: fixed;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+a {
+	position: relative;
+	margin: 2px;
+	padding: 2px 4px;
+	text-decoration: none;
+	font-weight: lighter;
+	font-size: 150%;
+	color: hsl(0, 0%, 10%);
+	-webkit-transition: color 400ms;
+	   -moz-transition: color 400ms;
+	    -ms-transition: color 400ms;
+	     -o-transition: color 400ms;
+	        transition: color 400ms;
+}
+
+a::before {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: -1;
+	content: "";
+	background-color: transparent;
+	-webkit-transform: rotateY(90deg);
+	   -moz-transform: rotateY(90deg);
+	    -ms-transform: rotateY(90deg);
+	     -o-transform: rotateY(90deg);
+	        transform: rotateY(90deg);
+	-webkit-transition: -webkit-transform 400ms, background-color 400ms;
+	   -moz-transition:    -moz-transform 400ms, background-color 400ms;
+	    -ms-transition:     -ms-transform 400ms, background-color 400ms;
+	     -o-transition:      -o-transform 400ms, background-color 400ms;
+	        transition:         transform 400ms, background-color 400ms;
+}
+
+a:hover {
+	color: hsl(0, 0%, 100%);
+}
+
+a:hover::before {
+	background-color: hsl(215, 65%, 50%);
+	-webkit-transform: rotateY(0deg);
+	   -moz-transform: rotateY(0deg);
+	    -ms-transform: rotateY(0deg);
+	     -o-transform: rotateY(0deg);
+	        transform: rotateY(0deg);
+}
+
+header {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 100;
+	background-color: hsla(0, 0%, 100%, 0.9);
+	-webkit-backdrop-filter: blur(5px);
+}
+
+header > nav {
+	display: -webkit-flex;
+	display:    -moz-flex;
+	display:     -ms-flexbox;
+	display:         flex;
+	justify-content: space-around;
+	align-items: center;
+	width: 100%;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
 main {
+	position: relative;
+	top: 15vh;
+	width: 90vw;
 	max-width: 500px;
 	height: 90vw;
 	max-height: 500px;
+	margin: 0 auto;
+	background-color: white;
+	box-shadow: 0 0 2px white;
+	cursor: default;
 }
 
 main > .container {
@@ -132,4 +226,14 @@ main .p1 {
 
 main .p2 {
 	color: #fc0; /* Gold */
+}
+
+
+noscript {
+	text-align: center;
+}
+
+noscript > h2 {
+	margin: 0;
+	padding-top: 30%;
 }

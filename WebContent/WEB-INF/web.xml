@@ -49,15 +49,6 @@
 		<url-pattern>/logout</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>play-extension</servlet-name>
-		<jsp-file>/play.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>play-extension</servlet-name>
-		<url-pattern>/play</url-pattern>
-	</servlet-mapping>
-
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>

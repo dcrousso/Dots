@@ -1,6 +1,22 @@
 (function() {
 	"use strict";
 
+	// ============================== //
+	// ==========  Header  ========== //
+	// ============================== //
+
+	var links = document.querySelectorAll(".link");
+	Array.prototype.forEach.call(links, function(link) {
+		link.addEventListener("click", function(event) {
+			event.preventDefault();
+		});
+	});
+
+
+	// ============================== //
+	// ==========   Game   ========== //
+	// ============================== //
+
 	var currentPlayer = "p1";
 
 	var rows = 10;
