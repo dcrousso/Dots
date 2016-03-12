@@ -78,11 +78,12 @@ header > nav {
 	display:    -moz-flex;
 	display:     -ms-flexbox;
 	display:         flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	align-items: center;
 	width: 100%;
 	max-width: 800px;
 	margin: 0 auto;
+	padding: 0 20px;
 }
 
 main {
