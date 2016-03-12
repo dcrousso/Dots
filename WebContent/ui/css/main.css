@@ -228,6 +228,34 @@ main .p2 {
 	color: #fc0; /* Gold */
 }
 
+#authentication {
+	position: fixed;
+	top: calc(5vh + 2em);
+	right: 5vw;
+	bottom: 5vh;
+	left: 5vw;
+	font-size: 150%;
+	background-color: hsla(0, 0%, 0%, 0.9);
+}
+
+#authentication > * {
+	display: block;
+	width: 50%;
+	min-width: 250px;
+	margin: 20px auto;
+	padding: 10px;
+	font-size: 50%;
+}
+
+#authentication.error::after {
+	width: 100%;
+	position: absolute;
+	margin: 0 auto;
+	text-align: center;
+	font-size: 75%;
+	content: "Invalid Username/Password";
+	color: red;
+}
 
 noscript {
 	text-align: center;

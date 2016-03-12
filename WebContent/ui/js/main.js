@@ -1,15 +1,78 @@
 (function() {
 	"use strict";
 
+	var main = document.querySelector("main");
+
 	// ============================== //
 	// ==========  Header  ========== //
 	// ============================== //
 
-	var links = document.querySelectorAll(".link");
-	Array.prototype.forEach.call(links, function(link) {
-		link.addEventListener("click", function(event) {
-			event.preventDefault();
-		});
+	var authenticationLink = document.querySelector(".link.authentication");
+	authenticationLink.addEventListener("click", function(event) {
+		event.preventDefault();
+
+		if (this.classList.contains("login")) {
+			var form = document.body.appendChild(document.createElement("form"));
+			form.id = "authentication";
+
+			var usernameInput = form.appendChild(document.createElement("input"));
+			usernameInput.type = "text";
+			usernameInput.placeholder = "Username";
+			usernameInput.required = true;
+
+			var passwordInput = form.appendChild(document.createElement("input"));
+			passwordInput.type = "password";
+			passwordInput.placeholder = "Password";
+			passwordInput.required = true;
+
+			var submit = form.appendChild(document.createElement("button"));
+			submit.textContent = "Login";
+			submit.addEventListener("click", function(event) {
+				event.preventDefault();
+
+				if (!usernameInput.value || !passwordInput.value)
+					return;
+
+				var query = "username=" + usernameInput.value + "&password=" + passwordInput.value;
+
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState != 4 || xhr.status != 200)
+						return;
+
+					var json = JSON.parse(xhr.responseText);
+					if (!json || !json.authenticated) {
+						form.classList.add("error");
+						return;
+					}
+
+					authenticationLink.classList.remove("login");
+					authenticationLink.classList.add("logout");
+					authenticationLink.textContent = "Logout";
+					authenticationLink.title = "Logout";
+					form.remove();
+				};
+				xhr.open("POST", "authentication?" + query, true);
+				xhr.send();
+			});
+			return;
+		}
+
+		if (this.classList.contains("logout")) {
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState != 4 || xhr.status != 200)
+					return;
+
+				authenticationLink.classList.remove("logout");
+				authenticationLink.classList.add("login");
+				authenticationLink.textContent = "Login";
+				authenticationLink.title = "Login";
+			};
+			xhr.open("GET", "authentication", true);
+			xhr.send();
+			return;
+		}
 	});
 
 

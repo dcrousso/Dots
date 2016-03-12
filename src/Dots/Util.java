@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Util {
 
@@ -69,21 +69,21 @@ public class Util {
 		}
 	}
 
-	public static void query(String query, Iterable<String> args, Consumer<ResultSet> callback) {
+	public static <T> T query(String query, String[] args, Function<ResultSet, T> callback) {
 		if (getDBConnection() == null)
-			return;
-	
+			return null;
+
+		T result = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			ps = getDBConnection().prepareStatement(query);
 
-			int i = 1; // SQL indexes start at 1
-			for (String arg : args)
-				ps.setString(i++, arg);
+			for (int i = 0; i < args.length; ++i)
+				ps.setString(i + 1, args[i]);// SQL indexes start at 1
 
 			rs = ps.executeQuery();
-			callback.accept(rs);
+			result = callback.apply(rs);
 		} catch (SQLException e) {
 		} finally {
 			if (rs != null) {
@@ -102,6 +102,8 @@ public class Util {
 
 			closeDBConnection();
 		}
+
+		return result;
 	}
 
 	

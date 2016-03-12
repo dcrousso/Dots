@@ -41,12 +41,12 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>logout-extension</servlet-name>
-		<jsp-file>/logout.jsp</jsp-file>
+		<servlet-name>AuthenticationServlet</servlet-name>
+		<servlet-class>Dots.AuthenticationServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>logout-extension</servlet-name>
-		<url-pattern>/logout</url-pattern>
+		<servlet-name>AuthenticationServlet</servlet-name>
+		<url-pattern>/authentication</url-pattern>
 	</servlet-mapping>
 
 	<session-config>

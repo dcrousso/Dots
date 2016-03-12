@@ -1,3 +1,4 @@
+<% boolean authenticated = !session.isNew() && session.getAttribute("authenticated") != null; %>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -18,11 +19,7 @@
 		<header>
 			<nav>
 				<a href="${pageContext.request.contextPath}/" title="Homepage">Home</a>
-<% if (session.isNew() || session.getAttribute("authenticated") == null) { %>
-				<a class="link" href="${pageContext.request.contextPath}/login" title="Login">Login</a>
-<% } else { %>
-				<a class="link" href="${pageContext.request.contextPath}/logout" title="Logout">Logout</a>
-<% } %>
+				<a class="link authentication <%= (authenticated ? "logout" : "login") %>" href="${pageContext.request.contextPath}/<%= (authenticated ? "logout" : "login") %>" title="<%= (authenticated ? "Logout" : "Login") %>"><%= (authenticated ? "Logout" : "Login") %></a>
 			</nav>
 		</header>
 		<main>
