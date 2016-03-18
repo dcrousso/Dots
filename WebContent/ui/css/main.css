@@ -256,7 +256,7 @@ footer > .container {
 	position: fixed;
 	top: calc(5vh + 2em);
 	right: 5vw;
-	bottom: 5vh;
+	bottom: calc(5vh + 2em);
 	left: 5vw;
 	font-size: 150%;
 	background-color: hsla(0, 0%, 0%, 0.9);

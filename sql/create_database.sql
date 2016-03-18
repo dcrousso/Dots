@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS users (
 	password varchar(255) NOT NULL,
 	played INT NOT NULL DEFAULT 0,
 	won INT NOT NULL DEFAULT 0,
-	highscore INT NOT NULL DEFAULT 0,
+	points INT NOT NULL DEFAULT 0,
 	PRIMARY KEY (username)
 );

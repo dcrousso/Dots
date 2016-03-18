@@ -7,13 +7,13 @@ public class User {
 	private String m_username;
 	private int m_played;
 	private int m_won;
-	private int m_highscore;
+	private int m_points;
 
 	User() {
 		m_username = null;
 		m_played = 0;
 		m_won = 0;
-		m_highscore = 0;
+		m_points = 0;
 	}
 
 	User(ResultSet rs) {
@@ -21,7 +21,7 @@ public class User {
 			m_username = rs.getString("username");
 			m_played = rs.getInt("played");
 			m_won = rs.getInt("won");
-			m_highscore = rs.getInt("highscore");
+			m_points = rs.getInt("points");
 		} catch (SQLException e) {
 		}
 	}
@@ -38,22 +38,18 @@ public class User {
 		return m_won;
 	}
 
-	public void addGame(boolean won) {
-		++m_played;
+	public int getPoints() {
+		return m_points;
+	}
 
+	public void addGame(int points, boolean won) {
+		m_points += points;
+		++m_played;
 		if (won)
 			++m_won;
 	}
 
-	public void addGame() {
-		addGame(false);
-	}
-
-	public int getHighscore() {
-		return m_highscore;
-	}
-
-	public void setHighscore(int highscore) {
-		m_highscore = highscore;
+	public void addGame(int points) {
+		addGame(points, false);
 	}
 }

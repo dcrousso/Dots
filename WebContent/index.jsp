@@ -30,8 +30,8 @@
 			<div class="container">
 				<div id="score" class="icon-star">0</div>
 				<div id="played" class="icon-star"><%= (user != null ? user.getGamesPlayed() : 0) %></div>
-				<div id="won" class="icon-star"><%= (user != null ? user.getGamesWon() : 0) %></div>
-				<div id="highscore" class="icon-star"><%= (user != null ? user.getHighscore() : 0) %></div>
+				<div id="won" class="icon-trophy"><%= (user != null ? user.getGamesWon() : 0) %></div>
+				<div id="points" class="icon-star"><%= (user != null ? user.getPoints() : 0) %></div>
 			</div>
 		</footer>
 		<div class="scripts">

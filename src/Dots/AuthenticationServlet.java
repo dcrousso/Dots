@@ -42,7 +42,7 @@ public class AuthenticationServlet extends HttpServlet {
 		if (user != null) {
 			result.add("played", user.getGamesPlayed());
 			result.add("won", user.getGamesWon());
-			result.add("highscore", user.getHighscore());
+			result.add("points", user.getPoints());
 		} else
 			result.add("error", "Invalid Username/Password");
 

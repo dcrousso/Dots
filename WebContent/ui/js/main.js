@@ -2,11 +2,10 @@
 	"use strict";
 
 	var main = document.querySelector("main");
-
 	var scoreElement = document.getElementById("score");
 	var playedElement = document.getElementById("played");
 	var wonElement = document.getElementById("won");
-	var highscoreElement = document.getElementById("highscore");
+	var pointsElement = document.getElementById("points");
 
 	// ============================== //
 	// ==========  Header  ========== //
@@ -60,7 +59,7 @@
 
 					playedElement.textContent = json.played || 0;
 					wonElement.textContent = json.won || 0;
-					highscoreElement.textContent = json.highscore || 0;
+					pointsElement.textContent = json.points || 0;
 				};
 				xhr.open("POST", "authentication?" + query, true);
 				xhr.send();
@@ -78,6 +77,10 @@
 				authenticationLink.classList.add("login");
 				authenticationLink.textContent = "Login";
 				authenticationLink.title = "Login";
+
+				playedElement.textContent = 0;
+				wonElement.textContent = 0;
+				pointsElement.textContent = 0;
 			};
 			xhr.open("GET", "authentication", true);
 			xhr.send();
