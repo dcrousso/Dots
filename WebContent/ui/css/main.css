@@ -277,7 +277,7 @@ footer > .container {
 	margin: 0 auto;
 	text-align: center;
 	font-size: 75%;
-	content: "Invalid Username/Password";
+	content: attr(data-error);
 	color: red;
 }
 

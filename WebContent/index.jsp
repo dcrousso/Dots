@@ -1,4 +1,5 @@
-<% boolean authenticated = !session.isNew() && session.getAttribute("authenticated") != null; %>
+<%@ page import="Dots.User" %>
+<% User user = ((User) session.getAttribute("user")); %>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -19,7 +20,7 @@
 		<header>
 			<nav>
 				<a href="${pageContext.request.contextPath}/" title="Homepage">Home</a>
-				<a class="link authentication <%= (authenticated ? "logout" : "login") %>" href="${pageContext.request.contextPath}/<%= (authenticated ? "logout" : "login") %>" title="<%= (authenticated ? "Logout" : "Login") %>"><%= (authenticated ? "Logout" : "Login") %></a>
+				<a class="link authentication <%= (user != null ? "logout" : "login") %>" href="${pageContext.request.contextPath}/<%= (user != null ? "logout" : "login") %>" title="<%= (user != null ? "Logout" : "Login") %>"><%= (user != null ? "Logout" : "Login") %></a>
 			</nav>
 		</header>
 		<main>
@@ -28,9 +29,9 @@
 		<footer>
 			<div class="container">
 				<div id="score" class="icon-star">0</div>
-				<div id="played" class="icon-star">0</div>
-				<div id="won" class="icon-star">0</div>
-				<div id="highscore" class="icon-star">0</div>
+				<div id="played" class="icon-star"><%= (user != null ? user.getGamesPlayed() : 0) %></div>
+				<div id="won" class="icon-star"><%= (user != null ? user.getGamesWon() : 0) %></div>
+				<div id="highscore" class="icon-star"><%= (user != null ? user.getHighscore() : 0) %></div>
 			</div>
 		</footer>
 		<div class="scripts">

@@ -3,6 +3,11 @@
 
 	var main = document.querySelector("main");
 
+	var scoreElement = document.getElementById("score");
+	var playedElement = document.getElementById("played");
+	var wonElement = document.getElementById("won");
+	var highscoreElement = document.getElementById("highscore");
+
 	// ============================== //
 	// ==========  Header  ========== //
 	// ============================== //
@@ -41,8 +46,9 @@
 						return;
 
 					var json = JSON.parse(xhr.responseText);
-					if (!json || !json.authenticated) {
+					if (!json || json.error) {
 						form.classList.add("error");
+						form.dataset.error = json ? json.error : "Error";
 						return;
 					}
 
@@ -51,6 +57,10 @@
 					authenticationLink.textContent = "Logout";
 					authenticationLink.title = "Logout";
 					form.remove();
+
+					playedElement.textContent = json.played || 0;
+					wonElement.textContent = json.won || 0;
+					highscoreElement.textContent = json.highscore || 0;
 				};
 				xhr.open("POST", "authentication?" + query, true);
 				xhr.send();
@@ -228,23 +238,26 @@
 
 			currentLine.element.classList.add(currentPlayer);
 
-			var filled = false;
+			var filled = 0;
 			if (checkAdjacent(currentLine.row, currentLine.col)) {
 				boxElements[currentLine.row][currentLine.col].classList.add(currentPlayer);
-				filled = true;
+				++filled;
 			}
 
 			if (currentLine.element.classList.contains("horizontal")) {
 				if (checkAdjacent(currentLine.row - 1, currentLine.col)) {
 					boxElements[currentLine.row - 1][currentLine.col].classList.add(currentPlayer);
-					filled = true;
+					++filled;
 				}
 			} else if (currentLine.element.classList.contains("vertical")) {
 				if (checkAdjacent(currentLine.row, currentLine.col - 1)) {
 					boxElements[currentLine.row][currentLine.col - 1].classList.add(currentPlayer);
-					filled = true;
+					++filled;
 				}
 			}
+
+			if (filled)
+				scoreElement.textContent = parseInt(scoreElement.textContent) + filled;
 
 			markLine();
 			handleMainMousemove(event);

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.json.Json;
-import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,35 +14,39 @@ public class AuthenticationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (request.getSession().isNew() || request.getSession().getAttribute("authenticated") == null)
+		if (request.getSession().isNew() || request.getSession().getAttribute("user") == null)
 			return;
 
-		request.getSession().removeAttribute("authenticated");
+		request.getSession().removeAttribute("user");
 		request.getSession().invalidate();
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String encrypted = Util.encryptMD5(request.getParameter("password"));
 
-		boolean valid = Util.query("SELECT * FROM users WHERE username = ?", new String[] {
+		User user = Util.query("SELECT * FROM users WHERE username = ?", new String[] {
 			request.getParameter("username")
 		}, rs -> {
 			try {
 				while (rs.next()) {
 					if (rs.getString("password").equals(encrypted))
-						return true;
+						return new User(rs);
 				}
 			} catch (SQLException e) {
 			}
-			return false;
+			return null;
 		});
 
-		if (valid)
-			request.getSession().setAttribute("authenticated", true);
+		JsonObjectBuilder result = Json.createObjectBuilder();
 
-		JsonObject result = Json.createObjectBuilder()
-			.add("authenticated", valid)
-		.build();
-		response.getWriter().write(result.toString());
+		if (user != null) {
+			result.add("played", user.getGamesPlayed());
+			result.add("won", user.getGamesWon());
+			result.add("highscore", user.getHighscore());
+		} else
+			result.add("error", "Invalid Username/Password");
+
+		request.getSession().setAttribute("user", user);
+		response.getWriter().write(result.build().toString());
 	}
 }
