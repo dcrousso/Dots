@@ -24,9 +24,6 @@
 		</header>
 		<main>
 			<noscript><h2>You must have JavaScript enabled to play</h2></noscript>
-			<div class="container boxes"></div>
-			<div class="container lines"></div>
-			<div class="container dots"></div>
 		</main>
 		<footer>
 			<div class="container">
