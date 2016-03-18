@@ -29,6 +29,12 @@
 			<div class="container dots"></div>
 		</main>
 		<footer>
+			<div class="container">
+				<div id="score" class="icon-star">0</div>
+				<div id="played" class="icon-star">0</div>
+				<div id="won" class="icon-star">0</div>
+				<div id="highscore" class="icon-star">0</div>
+			</div>
 		</footer>
 		<div class="scripts">
 			<script src="${pageContext.request.contextPath}/ui/js/main.js"></script>
