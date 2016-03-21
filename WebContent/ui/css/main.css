@@ -116,12 +116,17 @@ main > .container {
 
 main .box {
 	position: relative;
-	width: calc(10% - 6px);
-	height: calc(10% - 6px);
-	margin: 3px;
+	width: 10%;
+	height: 10%;
 	color: transparent;
 	background-color: currentColor;
 	pointer-events: all;
+}
+
+main .box[class*="p"] {
+	width: calc(10% - 6px);
+	height: calc(10% - 6px);
+	margin: 3px;
 }
 
 main .box[class*="p"]::before,
@@ -169,7 +174,6 @@ main .line {
 	height: 0;
 	color: transparent;
 	border: 0 solid currentColor;
-	pointer-events: all;
 }
 
 main .line.horizontal {

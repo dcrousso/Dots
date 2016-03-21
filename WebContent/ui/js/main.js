@@ -19,6 +19,22 @@
 		xhr.send();
 	}
 
+	function distance(event, element) {
+		if (!event)
+			return Infinity;
+
+		var rect = element.getBoundingClientRect();
+		var x = (rect.left + rect.right) / 2;
+		var y = (rect.top + rect.bottom) / 2;
+		return Math.sqrt(Math.pow(event.clientX - x, 2) + Math.pow(event.clientY - y, 2));
+	}
+
+	function isFilled(element) {
+		if (!element)
+			return false;
+		return element.classList.contains("p1") || element.classList.contains("p2");
+	}
+
 	// ============================== //
 	// ==========  Header  ========== //
 	// ============================== //
@@ -98,42 +114,54 @@
 	function initGame(rows, cols) {
 		main.textContent = ""; // Remove all children
 
+		var cells = [];
+
 		var boxContainer = main.appendChild(document.createElement("div"));
 		boxContainer.classList.add("container", "boxes");
 
-		var boxElements = [];
 		for (var i = 0; i < rows; ++i) {
-			boxElements[i] = [];
+			cells[i] = [];
 			for (var j = 0; j < cols; ++j) {
-				boxElements[i][j] = boxContainer.appendChild(document.createElement("div"));
-				boxElements[i][j].classList.add("box");
-				boxElements[i][j].dataset.row = i;
-				boxElements[i][j].dataset.col = j;
+				cells[i][j] = {};
+				cells[i][j].box = boxContainer.appendChild(document.createElement("div"));
+				cells[i][j].box.classList.add("box");
+				cells[i][j].box.dataset.row = i;
+				cells[i][j].box.dataset.col = j;
 			}
 		}
 
 		var lineContainer = main.appendChild(document.createElement("div"));
 		lineContainer.classList.add("container", "lines");
 
-		var lineElements = [];
 		for (var i = 0; i < rows + 1; ++i) {
-			lineElements[i] = [];
 			for (var j = 0; j < cols + 1; ++j) {
-				lineElements[i][j] = {};
 				if (i < rows) {
-					lineElements[i][j].vertical = lineContainer.appendChild(document.createElement("div"));
-					lineElements[i][j].vertical.classList.add("line", "vertical");
-					lineElements[i][j].vertical.dataset.row = i;
-					lineElements[i][j].vertical.dataset.col = j;
+					var left = lineContainer.appendChild(document.createElement("div"));
+					left.classList.add("line", "vertical");
+
+					if (j < cols) {
+						cells[i][j].left = left;
+						if (j)
+							cells[i][j - 1].right = cells[i][j].left;
+					} else
+						cells[i][j - 1].right = left;
 				}
+
 				if (j < cols) {
-					lineElements[i][j].horizontal = lineContainer.appendChild(document.createElement("div"));
-					lineElements[i][j].horizontal.classList.add("line", "horizontal");
-					lineElements[i][j].horizontal.dataset.row = i;
-					lineElements[i][j].horizontal.dataset.col = j;
+					var top = lineContainer.appendChild(document.createElement("div"));
+					top.classList.add("line", "horizontal");
+
+					if (i < rows) {
+						cells[i][j].top = top;
+						if (i)
+							cells[i - 1][j].bottom = cells[i][j].top;
+					} else
+						cells[i - 1][j].bottom = top;
 				}
 			}
 		}
+
+		var currentLine = null;
 
 		var dotContainer = main.appendChild(document.createElement("div"));
 		dotContainer.classList.add("container", "dots");
@@ -145,55 +173,20 @@
 			}
 		}
 
-		function getAdjacentLines(row, col, event) {
-			row = parseInt(row);
-			col = parseInt(col);
-
-			function distance(element) {
-				if (!event)
-					return Infinity;
-
-				var rect = element.getBoundingClientRect();
-				var x = (rect.left + rect.right) / 2;
-				var y = (rect.top + rect.bottom) / 2;
-				return Math.sqrt(Math.pow(event.clientX - x, 2) + Math.pow(event.clientY - y, 2));
-			}
-
-			function createLineObject(line) {
-				if (!line || isNaN(row) || isNaN(col))
-					return {};
-
-				var object = {element: line};
-				object.row = parseInt(line.dataset.row);
-				object.col = parseInt(line.dataset.col);
-				object.selected = line.classList.contains("p1") || line.classList.contains("p2");
-				object.distance = object.selected ? Infinity : distance(object.element);
-				return object;
-			}
-
-			return {
-				top: createLineObject(lineElements[row][col].horizontal),
-				right: createLineObject(col < cols ? lineElements[row][col + 1].vertical : null),
-				bottom: createLineObject(row < rows ? lineElements[row + 1][col].horizontal : null),
-				left: createLineObject(lineElements[row][col].vertical)
-			};
-		}
-
 		function markLine(line) {
-			if (currentLine && line && currentLine.element === line.element)
+			if (currentLine === line || isFilled(line))
 				return;
 
 			if (currentLine)
-				currentLine.element.classList.remove("hover");
+				currentLine.classList.remove("hover");
 
-			if (line && !line.selected) {
-				line.element.classList.add("hover");
+			if (line) {
+				line.classList.add("hover");
 				currentLine = line;
 			} else
 				currentLine = null;
 		}
 
-		var currentLine = null;
 		function handleMainMousemove(event) {
 			var element = document.elementFromPoint(event.clientX, event.clientY);
 			if (element === main) {
@@ -201,23 +194,24 @@
 				return;
 			}
 
-			var lines = getAdjacentLines(parseInt(element.dataset.row), parseInt(element.dataset.col), event);
-			switch (Math.min(lines.top.distance, lines.right.distance, lines.bottom.distance, lines.left.distance)) {
-			case lines.top.distance:
-				if (!lines.top.selected)
-					markLine(lines.top);
+			var cell = cells[parseInt(element.dataset.row)][parseInt(element.dataset.col)];
+			var top = isFilled(cell.top) ? Infinity : distance(event, cell.top);
+			var right = isFilled(cell.right) ? Infinity : distance(event, cell.right);
+			var bottom = isFilled(cell.bottom) ? Infinity : distance(event, cell.bottom);
+			var left = isFilled(cell.left) ? Infinity : distance(event, cell.left);
+
+			switch (Math.min(top, right, bottom, left)) {
+			case top:
+				markLine(cell.top);
 				break;
-			case lines.right.distance:
-				if (!lines.right.selected)
-					markLine(lines.right);
+			case right:
+				markLine(cell.right);
 				break;
-			case lines.bottom.distance:
-				if (!lines.bottom.selected)
-					markLine(lines.bottom);
+			case bottom:
+				markLine(cell.bottom);
 				break;
-			case lines.left.distance:
-				if (!lines.left.selected)
-					markLine(lines.left);
+			case left:
+				markLine(cell.left);
 				break;
 			}
 		}
@@ -227,40 +221,42 @@
 			if (!currentLine)
 				return;
 
-			function checkAdjacent(row, col) {
+			var element = document.elementFromPoint(event.clientX, event.clientY);
+			var row = parseInt(element.dataset.row);
+			var col = parseInt(element.dataset.col);
+
+			currentLine.classList.add(currentPlayer);
+
+			var cell = cells[row][col];
+
+			function fillCell(row, col) {
 				if (row < 0 || row > rows || col < 0 || col > cols)
-					return false;
+					return;
 
-				var lines = getAdjacentLines(row, col);
-				for (var key in lines) {
-					if (!lines[key].selected)
-						return false;
-				}
-				return true;
+				var cell = cells[row][col];
+				if (!isFilled(cell.top) || !isFilled(cell.right) || !isFilled(cell.bottom) || !isFilled(cell.left))
+					return;
+
+				cell.box.classList.add(currentPlayer);
+				scoreElement.textContent = parseInt(scoreElement.textContent) + 1;
 			}
 
-			currentLine.element.classList.add(currentPlayer);
+			fillCell(row, col); // Fill current cell if able
 
-			var filled = 0;
-			if (checkAdjacent(currentLine.row, currentLine.col)) {
-				boxElements[currentLine.row][currentLine.col].classList.add(currentPlayer);
-				++filled;
+			switch (currentLine) { // Fill adjacent cell if able
+			case cell.top:
+				fillCell(row - 1, col);
+				break;
+			case cell.right:
+				fillCell(row, col + 1);
+				break;
+			case cell.bottom:
+				fillCell(row + 1, col);
+				break;
+			case cell.left:
+				fillCell(row, col - 1);
+				break;
 			}
-
-			if (currentLine.element.classList.contains("horizontal")) {
-				if (checkAdjacent(currentLine.row - 1, currentLine.col)) {
-					boxElements[currentLine.row - 1][currentLine.col].classList.add(currentPlayer);
-					++filled;
-				}
-			} else if (currentLine.element.classList.contains("vertical")) {
-				if (checkAdjacent(currentLine.row, currentLine.col - 1)) {
-					boxElements[currentLine.row][currentLine.col - 1].classList.add(currentPlayer);
-					++filled;
-				}
-			}
-
-			if (filled)
-				scoreElement.textContent = parseInt(scoreElement.textContent) + filled;
 
 			markLine();
 			handleMainMousemove(event);
