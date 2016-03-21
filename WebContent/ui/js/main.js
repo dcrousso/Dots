@@ -13,7 +13,8 @@
 			if (xhr.readyState != 4 || xhr.status != 200)
 				return;
 
-			callback(xhr);
+			if (typeof callback === "function")
+				callback(xhr);
 		};
 		xhr.open(method, url, true);
 		xhr.send();
@@ -29,10 +30,16 @@
 		return Math.sqrt(Math.pow(event.clientX - x, 2) + Math.pow(event.clientY - y, 2));
 	}
 
+	function getFilled(element) {
+		if (element.classList.contains("p1"))
+			return 1;
+		if (element.classList.contains("p2"))
+			return 2;
+		return 0;
+	}
+
 	function isFilled(element) {
-		if (!element)
-			return false;
-		return element.classList.contains("p1") || element.classList.contains("p2");
+		return !!getFilled(element);
 	}
 
 	// ============================== //
@@ -174,7 +181,7 @@
 		}
 
 		function markLine(line) {
-			if (currentLine === line || isFilled(line))
+			if (currentLine === line || (line && isFilled(line)))
 				return;
 
 			if (currentLine)
@@ -257,6 +264,22 @@
 				fillCell(row, col - 1);
 				break;
 			}
+
+			var json = [];
+			for (var i = 0; i < cells.length; ++i) {
+				var row = [];
+				for (var j = 0; j < cells.length; ++j) {
+					row[j] = {
+						x: getFilled(cells[i][j].box),
+						t: getFilled(cells[i][j].top),
+						r: getFilled(cells[i][j].right),
+						b: getFilled(cells[i][j].bottom),
+						l: getFilled(cells[i][j].left)
+					};
+				}
+				json.push(row);
+			}
+			ajax("POST", "move?board=" + JSON.stringify(json));
 
 			markLine();
 			handleMainMousemove(event);

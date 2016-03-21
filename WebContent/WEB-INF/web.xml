@@ -49,6 +49,15 @@
 		<url-pattern>/authentication</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>MoveServlet</servlet-name>
+		<servlet-class>Dots.MoveServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MoveServlet</servlet-name>
+		<url-pattern>/move</url-pattern>
+	</servlet-mapping>
+
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>
