@@ -7,6 +7,18 @@
 	var wonElement = document.getElementById("won");
 	var pointsElement = document.getElementById("points");
 
+	function ajax(method, url, callback) {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState != 4 || xhr.status != 200)
+				return;
+
+			callback(xhr);
+		};
+		xhr.open(method, url, true);
+		xhr.send();
+	}
+
 	// ============================== //
 	// ==========  Header  ========== //
 	// ============================== //
@@ -39,11 +51,7 @@
 
 				var query = "username=" + usernameInput.value + "&password=" + passwordInput.value;
 
-				var xhr = new XMLHttpRequest();
-				xhr.onreadystatechange = function() {
-					if (xhr.readyState != 4 || xhr.status != 200)
-						return;
-
+				ajax("POST", "authentication?" + query, function(xhr) {
 					var json = JSON.parse(xhr.responseText);
 					if (!json || json.error) {
 						form.classList.add("error");
@@ -60,19 +68,13 @@
 					playedElement.textContent = json.played || 0;
 					wonElement.textContent = json.won || 0;
 					pointsElement.textContent = json.points || 0;
-				};
-				xhr.open("POST", "authentication?" + query, true);
-				xhr.send();
+				});
 			});
 			return;
 		}
 
 		if (this.classList.contains("logout")) {
-			var xhr = new XMLHttpRequest();
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState != 4 || xhr.status != 200)
-					return;
-
+			ajax("GET", "authentication", function(xhr) {
 				authenticationLink.classList.remove("logout");
 				authenticationLink.classList.add("login");
 				authenticationLink.textContent = "Login";
@@ -81,9 +83,7 @@
 				playedElement.textContent = 0;
 				wonElement.textContent = 0;
 				pointsElement.textContent = 0;
-			};
-			xhr.open("GET", "authentication", true);
-			xhr.send();
+			});
 			return;
 		}
 	});
