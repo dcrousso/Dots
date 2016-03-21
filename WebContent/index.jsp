@@ -1,4 +1,5 @@
 <%@ page import="Dots.User" %>
+<%@ page import="Dots.Util" %>
 <% User user = ((User) session.getAttribute("user")); %>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +26,9 @@
 		</header>
 		<main>
 			<noscript><h2>You must have JavaScript enabled to play</h2></noscript>
+			<script>
+				var game = JSON.parse('<%= Util.getFileContents("/Users/dcrousso/Dropbox (Rucar Management Inc)/School/2016-1 Spring/CSCI-201/FinalProject/Dots/WebContent/WEB-INF/board.json").replaceAll("[\\n\\t ]", "") %>');
+			</script>
 		</main>
 		<footer>
 			<div class="container">

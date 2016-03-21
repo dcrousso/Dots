@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import javax.json.Json;
-import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,7 +19,7 @@ public class MoveServlet extends HttpServlet {
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String json = request.getParameter("board");
+		String json = request.getParameter("changes");
 		if (Util.isEmpty(json)) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
@@ -28,7 +28,7 @@ public class MoveServlet extends HttpServlet {
 		StringReader stringReader = new StringReader(json);
 		JsonReader jsonReader = Json.createReader(stringReader);
 
-		JsonArray board = jsonReader.readArray();
+		JsonObject changes = jsonReader.readObject();
 
 		stringReader.close();
 		jsonReader.close();

@@ -1,6 +1,9 @@
 package Dots;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -104,6 +107,32 @@ public class Util {
 		}
 
 		return result;
+	}
+
+
+	// ============================== //
+	// ==========   File   ========== //
+	// ============================== //
+
+	public static String getFileContents(String path) {
+		if (isEmpty(path))
+			return null;
+
+		try {
+			return new String(Files.readAllBytes(Paths.get(path)));
+		} catch (IOException e) {
+		}
+		return null;
+	}
+
+	public static void writeToFile(String path, String content) {
+		if (isEmpty(path))
+			return;
+
+		try {
+			Files.write(Paths.get(path), content.getBytes());
+		} catch (IOException e) {
+		}
 	}
 
 

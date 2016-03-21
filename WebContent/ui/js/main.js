@@ -116,7 +116,7 @@
 	// ==========   Game   ========== //
 	// ============================== //
 
-	var currentPlayer = "p1";
+	var currentPlayer = "1";
 
 	function initGame(rows, cols) {
 		main.textContent = ""; // Remove all children
@@ -134,6 +134,8 @@
 				cells[i][j].box.classList.add("box");
 				cells[i][j].box.dataset.row = i;
 				cells[i][j].box.dataset.col = j;
+				if (game.board[i][j].x)
+					cells[i][j].box.classList.add("p" + game.board[i][j].x);
 			}
 		}
 
@@ -147,11 +149,18 @@
 					left.classList.add("line", "vertical");
 
 					if (j < cols) {
+						if (game.board[i][j].l)
+							left.classList.add("p" + game.board[i][j].l);
+
 						cells[i][j].left = left;
 						if (j)
 							cells[i][j - 1].right = cells[i][j].left;
-					} else
+					} else {
+						if (game.board[i][j - 1].r)
+							left.classList.add("p" + game.board[i][j - 1].r);
+
 						cells[i][j - 1].right = left;
+					}
 				}
 
 				if (j < cols) {
@@ -159,11 +168,18 @@
 					top.classList.add("line", "horizontal");
 
 					if (i < rows) {
+						if (game.board[i][j].t)
+							top.classList.add("p" + game.board[i][j].t);
+
 						cells[i][j].top = top;
 						if (i)
 							cells[i - 1][j].bottom = cells[i][j].top;
-					} else
+					} else {
+						if (game.board[i - 1][j].b)
+							top.classList.add("p" + game.board[i - 1][j].b);
+
 						cells[i - 1][j].bottom = top;
+					}
 				}
 			}
 		}
@@ -232,9 +248,18 @@
 			var row = parseInt(element.dataset.row);
 			var col = parseInt(element.dataset.col);
 
-			currentLine.classList.add(currentPlayer);
+			currentLine.classList.add("p" + currentPlayer);
 
 			var cell = cells[row][col];
+
+			var move = {
+				line: {
+					r: row,
+					c: col,
+					side: null
+				},
+				boxes: []
+			};
 
 			function fillCell(row, col) {
 				if (row < 0 || row > rows || col < 0 || col > cols)
@@ -244,8 +269,9 @@
 				if (!isFilled(cell.top) || !isFilled(cell.right) || !isFilled(cell.bottom) || !isFilled(cell.left))
 					return;
 
-				cell.box.classList.add(currentPlayer);
+				cell.box.classList.add("p" + currentPlayer);
 				scoreElement.textContent = parseInt(scoreElement.textContent) + 1;
+				move.boxes.push({r: row, c: col});
 			}
 
 			fillCell(row, col); // Fill current cell if able
@@ -253,33 +279,23 @@
 			switch (currentLine) { // Fill adjacent cell if able
 			case cell.top:
 				fillCell(row - 1, col);
+				move.line.side = "t";
 				break;
 			case cell.right:
 				fillCell(row, col + 1);
+				move.line.side = "r";
 				break;
 			case cell.bottom:
 				fillCell(row + 1, col);
+				move.line.side = "b";
 				break;
 			case cell.left:
 				fillCell(row, col - 1);
+				move.line.side = "l";
 				break;
 			}
 
-			var json = [];
-			for (var i = 0; i < cells.length; ++i) {
-				var row = [];
-				for (var j = 0; j < cells.length; ++j) {
-					row[j] = {
-						x: getFilled(cells[i][j].box),
-						t: getFilled(cells[i][j].top),
-						r: getFilled(cells[i][j].right),
-						b: getFilled(cells[i][j].bottom),
-						l: getFilled(cells[i][j].left)
-					};
-				}
-				json.push(row);
-			}
-			ajax("POST", "move?board=" + JSON.stringify(json));
+			ajax("POST", "move?changes=" + JSON.stringify(move));
 
 			markLine();
 			handleMainMousemove(event);
