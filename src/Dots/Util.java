@@ -83,7 +83,7 @@ public class Util {
 			ps = getDBConnection().prepareStatement(query);
 
 			for (int i = 0; i < args.length; ++i)
-				ps.setString(i + 1, args[i]);// SQL indexes start at 1
+				ps.setString(i + 1, args[i]); // SQL indexes start at 1
 
 			rs = ps.executeQuery();
 			result = callback.apply(rs);
@@ -156,7 +156,7 @@ public class Util {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			BigInteger number = new BigInteger(1, md.digest(password.getBytes()));
-			return number.toString();
+			return number.toString(16);
 		} catch (NoSuchAlgorithmException e) {
 			return password;
 		}
