@@ -16,6 +16,7 @@
 		<meta name="author" content="Benjamin Stein, Sean Yuan, Devin Rousso, Shane Rosse">
 
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/main.css">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/fonticons.css">
 	</head>
 	<body>
 		<header>
@@ -32,10 +33,10 @@
 		</main>
 		<footer>
 			<div class="container">
-				<div id="score" class="icon-star">0</div>
-				<div id="played" class="icon-star"><%= (user != null ? user.getGamesPlayed() : 0) %></div>
-				<div id="won" class="icon-trophy"><%= (user != null ? user.getGamesWon() : 0) %></div>
-				<div id="points" class="icon-star"><%= (user != null ? user.getPoints() : 0) %></div>
+				<div id="score" class="icon-box" title="Captured Boxes">0</div>
+				<div id="played" class="icon-flag-checkered" title="Games Played"><%= (user != null ? user.getGamesPlayed() : 0) %></div>
+				<div id="won" class="icon-trophy" title="Games Won"><%= (user != null ? user.getGamesWon() : 0) %></div>
+				<div id="points" class="icon-star" title="Total Points"><%= (user != null ? user.getPoints() : 0) %></div>
 			</div>
 		</footer>
 		<div class="scripts">

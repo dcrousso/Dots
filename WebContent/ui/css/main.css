@@ -8,7 +8,7 @@ body {
 	font-size: 1.5em;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: hsl(0, 0%, 25%);
-	background-color: hsl(215, 65%, 50%);
+	background-color: hsl(205, 76%, 95%); /* hsla(0, 0%, 100%, 0.9) on top of hsl(215, 65%, 50%) */
 	background-image: radial-gradient(hsl(190, 100%, 50%), hsl(215, 65%, 50%));
 	background-attachment: fixed;
 	-webkit-font-smoothing: antialiased;
@@ -254,6 +254,21 @@ footer > .container {
 	width: 100%;
 	max-width: 800px;
 	margin: 10px auto;
+}
+
+footer > .container > *[class^="icon"]::before {
+	margin-right: 5px;
+	font-size: 90%;
+	vertical-align: 1px;
+}
+
+footer > .container > .icon-box::before {
+	margin-right: 2px;
+	vertical-align:-1px;
+}
+
+footer > .container > .icon-star::before {
+	margin-right: 2px;
 }
 
 #authentication {
