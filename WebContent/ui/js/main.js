@@ -121,6 +121,22 @@
 
 	var currentPlayer = "1";
 
+	var socket = new WebSocket("ws://localhost:8080/Dots/websocket");
+	socket.onopen = function() {
+		console.log(socket);
+	};
+	socket.onmessage = function(event) {
+		console.log(event);
+	};
+	socket.onerror = function() {
+		alert("WebSocket error.\nPlease refresh the page.");
+		socket = null;
+	};
+	socket.onclose = function() {
+		alert("WebSocket closed.\nPlease refresh the page.");
+		socket = null;
+	};
+
 	function initGame(rows, cols) {
 		main.textContent = ""; // Remove all children
 
@@ -214,6 +230,9 @@
 		}
 
 		function handleMainMousemove(event) {
+			if (!socket)
+				return;
+
 			var element = document.elementFromPoint(event.clientX, event.clientY);
 			if (element === main) {
 				markLine();
@@ -244,7 +263,7 @@
 		main.addEventListener("mousemove", handleMainMousemove);
 
 		function handleMainClick(event) {
-			if (!currentLine)
+			if (!socket || !currentLine)
 				return;
 
 			var element = document.elementFromPoint(event.clientX, event.clientY);
@@ -298,7 +317,7 @@
 				break;
 			}
 
-			ajax("POST", "move?changes=" + JSON.stringify(move));
+			socket.send(JSON.stringify(move));
 
 			markLine();
 			handleMainMousemove(event);
