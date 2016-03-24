@@ -51,6 +51,9 @@
 		event.preventDefault();
 
 		if (this.classList.contains("login")) {
+			if (document.getElementById("authentication"))
+				return;
+
 			var form = document.body.appendChild(document.createElement("form"));
 			form.id = "authentication";
 

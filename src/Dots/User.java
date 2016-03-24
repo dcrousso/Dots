@@ -9,14 +9,14 @@ public class User {
 	private int m_won;
 	private int m_points;
 
-	User() {
+	public User() {
 		m_username = null;
 		m_played = 0;
 		m_won = 0;
 		m_points = 0;
 	}
 
-	User(ResultSet rs) {
+	public User(ResultSet rs) {
 		try {
 			m_username = rs.getString("username");
 			m_played = rs.getInt("played");
