@@ -30,16 +30,8 @@
 		return Math.sqrt(Math.pow(event.clientX - x, 2) + Math.pow(event.clientY - y, 2));
 	}
 
-	function getFilled(element) {
-		if (element.classList.contains("p1"))
-			return 1;
-		if (element.classList.contains("p2"))
-			return 2;
-		return 0;
-	}
-
 	function isFilled(element) {
-		return !!getFilled(element);
+		return /\bp\d+\b/.test(element.className);
 	}
 
 	// ============================== //
@@ -119,28 +111,12 @@
 	// ==========   Game   ========== //
 	// ============================== //
 
-	var currentPlayer = "1";
-
-	var socket = new WebSocket("ws://localhost:8080/Dots/websocket");
-	socket.onopen = function() {
-		console.log(socket);
-	};
-	socket.onmessage = function(event) {
-		console.log(event);
-	};
-	socket.onerror = function() {
-		alert("WebSocket error.\nPlease refresh the page.");
-		socket = null;
-	};
-	socket.onclose = function() {
-		alert("WebSocket closed.\nPlease refresh the page.");
-		socket = null;
-	};
+	var playerId = null;
+	var cells = [];
+	var socket = null;
 
 	function initGame(rows, cols) {
 		main.textContent = ""; // Remove all children
-
-		var cells = [];
 
 		var boxContainer = main.appendChild(document.createElement("div"));
 		boxContainer.classList.add("container", "boxes");
@@ -153,8 +129,6 @@
 				cells[i][j].box.classList.add("box");
 				cells[i][j].box.dataset.row = i;
 				cells[i][j].box.dataset.col = j;
-				if (game.board[i][j].x)
-					cells[i][j].box.classList.add("p" + game.board[i][j].x);
 			}
 		}
 
@@ -168,18 +142,11 @@
 					left.classList.add("line", "vertical");
 
 					if (j < cols) {
-						if (game.board[i][j].l)
-							left.classList.add("p" + game.board[i][j].l);
-
 						cells[i][j].left = left;
 						if (j)
 							cells[i][j - 1].right = cells[i][j].left;
-					} else {
-						if (game.board[i][j - 1].r)
-							left.classList.add("p" + game.board[i][j - 1].r);
-
+					} else
 						cells[i][j - 1].right = left;
-					}
 				}
 
 				if (j < cols) {
@@ -187,18 +154,11 @@
 					top.classList.add("line", "horizontal");
 
 					if (i < rows) {
-						if (game.board[i][j].t)
-							top.classList.add("p" + game.board[i][j].t);
-
 						cells[i][j].top = top;
 						if (i)
 							cells[i - 1][j].bottom = cells[i][j].top;
-					} else {
-						if (game.board[i - 1][j].b)
-							top.classList.add("p" + game.board[i - 1][j].b);
-
+					} else
 						cells[i - 1][j].bottom = top;
-					}
 				}
 			}
 		}
@@ -230,7 +190,7 @@
 		}
 
 		function handleMainMousemove(event) {
-			if (!socket)
+			if (!socket || socket.readyState === 3 )
 				return;
 
 			var element = document.elementFromPoint(event.clientX, event.clientY);
@@ -263,18 +223,18 @@
 		main.addEventListener("mousemove", handleMainMousemove);
 
 		function handleMainClick(event) {
-			if (!socket || !currentLine)
+			if (!socket || socket.readyState === 3 || !currentLine)
 				return;
 
 			var element = document.elementFromPoint(event.clientX, event.clientY);
 			var row = parseInt(element.dataset.row);
 			var col = parseInt(element.dataset.col);
 
-			currentLine.classList.add("p" + currentPlayer);
-
 			var cell = cells[row][col];
 
 			var move = {
+				type: "move",
+				player: playerId,
 				line: {
 					r: row,
 					c: col,
@@ -288,11 +248,17 @@
 					return;
 
 				var cell = cells[row][col];
-				if (!isFilled(cell.top) || !isFilled(cell.right) || !isFilled(cell.bottom) || !isFilled(cell.left))
+				if (!cell)
+					return;
+				if (currentLine !== cell.top && !isFilled(cell.top))
+					return;
+				if (currentLine !== cell.right && !isFilled(cell.right))
+					return;
+				if (currentLine !== cell.bottom && !isFilled(cell.bottom))
+					return;
+				if (currentLine !== cell.left && !isFilled(cell.left))
 					return;
 
-				cell.box.classList.add("p" + currentPlayer);
-				scoreElement.textContent = parseInt(scoreElement.textContent) + 1;
 				move.boxes.push({r: row, c: col});
 			}
 
@@ -323,6 +289,73 @@
 			handleMainMousemove(event);
 		}
 		main.addEventListener("click", handleMainClick);
+
+		socket = new WebSocket("ws://localhost:8080/Dots/websocket");
+		socket.onopen = function() {
+			console.log(socket);
+			console.log("WebSocket opened");
+		};
+		socket.onmessage = function(event) {
+			console.log(event);
+
+			var content = JSON.parse(event.data);
+			if (!content || !content.type)
+				return;
+
+			switch (content.type.toLowerCase()) {
+			case "init":
+				playerId = content.player;
+				for (var r = 0; r < cells.length; ++r){
+					for (var c = 0; c < cells[r].length; ++c) {
+						cells[r][c].box.classList.toggle("p" + content.board[r][c].x, !!content.board[r][c].x);
+						cells[r][c].top.classList.toggle("p" + content.board[r][c].t, !!content.board[r][c].t);
+						cells[r][c].right.classList.toggle("p" + content.board[r][c].r, !!content.board[r][c].r);
+						cells[r][c].bottom.classList.toggle("p" + content.board[r][c].b, !!content.board[r][c].b);
+						cells[r][c].left.classList.toggle("p" + content.board[r][c].l, !!content.board[r][c].l);
+					}
+				}
+				break;
+			case "move":
+				var line = null
+				switch (content.line.side) {
+				case "t":
+					line = cells[content.line.r][content.line.c].top;
+					break;
+				case "r":
+					line = cells[content.line.r][content.line.c].right;
+					break;
+				case "b":
+					line = cells[content.line.r][content.line.c].bottom;
+					break;
+				case "l":
+					line = cells[content.line.r][content.line.c].left;
+					break;
+				}
+				if (!line)
+					break;
+
+				line.classList.add("p" + content.player);
+
+				for (var i = 0; i < content.boxes.length; ++i)
+					cells[content.boxes[i].r][content.boxes[i].c].box.classList.add("p" + content.player);
+
+				if (playerId === content.player)
+					scoreElement.textContent = parseInt(scoreElement.textContent) + content.boxes.length;
+
+				break;
+			// TODO: Add "leave" case
+			// TODO: Add "end" case
+			}
+		};
+		socket.onerror = function(error) {
+			console.error(error);
+			socket.close();
+		};
+		socket.onclose = function() {
+			console.log(socket);
+			console.log("WebSocket closed");
+			socket = null;
+		};
 	}
 	initGame(10, 10);
 })();

@@ -1,6 +1,7 @@
 package Dots;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,7 +12,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 public class Util {
 
@@ -140,8 +149,32 @@ public class Util {
 	// ==========  String  ========== //
 	// ============================== //
 
+	public static JsonObjectBuilder parseJSON(String json) {
+		StringReader stringReader = new StringReader(json);
+		JsonReader jsonReader = Json.createReader(stringReader);
+
+		JsonObjectBuilder result = Json.createObjectBuilder();
+		for (Entry<String, JsonValue> entry : jsonReader.readObject().entrySet())
+			result.add(entry.getKey(), entry.getValue());
+
+		stringReader.close();
+		jsonReader.close();
+
+		return result;
+	}
+
 	public static boolean isEmpty(String s) {
 		return s == null || s.length() == 0 || s.trim().length() == 0;
+	}
+
+	public static int count(String haystack, String needle) {
+		int count = 0;
+
+		Matcher m = Pattern.compile(needle).matcher(haystack);
+		while (m.find())
+			++count;
+
+		return count;
 	}
 
 

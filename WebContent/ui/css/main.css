@@ -249,11 +249,15 @@ footer > .container {
 	display:    -moz-flex;
 	display:     -ms-flexbox;
 	display:         flex;
-	justify-content: space-around;
 	align-items: center;
 	width: 100%;
 	max-width: 800px;
 	margin: 10px auto;
+	text-align: center;
+}
+
+footer > .container > div {
+	width: 25%;
 }
 
 footer > .container > *[class^="icon"]::before {

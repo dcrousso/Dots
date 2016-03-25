@@ -1,5 +1,6 @@
 {
-	"player": 0,
+	"type": "init",
+	"player": 1,
 	"board": [
 		[
 			{
