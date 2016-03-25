@@ -293,7 +293,6 @@
 		socket = new WebSocket("ws://localhost:8080/Dots/websocket");
 		socket.onopen = function() {
 			console.log(socket);
-			console.log("WebSocket opened");
 		};
 		socket.onmessage = function(event) {
 			console.log(event);
@@ -343,8 +342,18 @@
 					scoreElement.textContent = parseInt(scoreElement.textContent) + content.boxes.length;
 
 				break;
-			// TODO: Add "leave" case
-			// TODO: Add "end" case
+			case "leave":
+				alert("The Opponent left the game");
+				socket.close();
+				break;
+			case "end":
+				alert("Game Over!\nThe Winner is Player " + content.winner);
+				playedElement.textContent = parseInt(playedElement.textContent) + 1;
+				if (playerId === content.winner)
+					wonElement.textContent = parseInt(wonElement.textContent) + 1;
+
+				socket.close();
+				break;
 			}
 		};
 		socket.onerror = function(error) {
@@ -352,8 +361,6 @@
 			socket.close();
 		};
 		socket.onclose = function() {
-			console.log(socket);
-			console.log("WebSocket closed");
 			socket = null;
 		};
 	}

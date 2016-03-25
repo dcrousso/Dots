@@ -48,8 +48,4 @@ public class User {
 		if (won)
 			++m_won;
 	}
-
-	public void addGame(int points) {
-		addGame(points, false);
-	}
 }

@@ -60,14 +60,20 @@ public class Util {
 		return dbConnection;
 	}
 
-	public static void execute(String query) {
+	public static boolean update(String query, String[] args) {
 		if (getDBConnection() == null)
-			return;
+			return false;
 
+		boolean result = false;
 		PreparedStatement ps = null;
 		try {
 			ps = getDBConnection().prepareStatement(query);
-			ps.execute();
+
+			for (int i = 0; i < args.length; ++i)
+				ps.setString(i + 1, args[i]); // SQL indexes start at 1
+
+			ps.executeUpdate();
+			result = true;
 		} catch (SQLException e) {
 		} finally {
 			if (ps != null) {
@@ -79,6 +85,8 @@ public class Util {
 
 			closeDBConnection();
 		}
+
+		return result;
 	}
 
 	public static <T> T query(String query, String[] args, Function<ResultSet, T> callback) {
