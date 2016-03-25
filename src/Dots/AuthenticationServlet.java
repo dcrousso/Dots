@@ -22,10 +22,18 @@ public class AuthenticationServlet extends HttpServlet {
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String encrypted = Util.encryptMD5(request.getParameter("password"));
+		String username = request.getParameter("username");
+		if (Util.isEmpty(username))
+			return;
+
+		String password = request.getParameter("password");
+		if (Util.isEmpty(password))
+			return;
+
+		String encrypted = Util.encryptMD5(password);
 
 		User user = Util.query("SELECT * FROM users WHERE username = ?", new String[] {
-			request.getParameter("username")
+			username
 		}, rs -> {
 			try {
 				while (rs.next()) {
