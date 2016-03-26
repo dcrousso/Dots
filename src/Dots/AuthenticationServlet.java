@@ -53,7 +53,7 @@ public class AuthenticationServlet extends HttpServlet {
 		if (user != null || register) {
 			if (register) {
 				user = new User(username);
-				Util.update("INSERT INTO users (username, password, played, won, points, games) VALUES (?, ?, ?, ?, ?, ?)", new String[] {
+				Util.update("INSERT INTO users (username, password, played, won, points, savedGame) VALUES (?, ?, ?, ?, ?, ?)", new String[] {
 					user.getUsername(),
 					encrypted,
 					Integer.toString(user.getGamesPlayed()),

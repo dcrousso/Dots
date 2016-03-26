@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
 	played INT NOT NULL DEFAULT 0,
 	won INT NOT NULL DEFAULT 0,
 	points INT NOT NULL DEFAULT 0,
-	games varchar(255) NOT NULL,
+	savedGame varchar(255) NOT NULL,
 	PRIMARY KEY (username)
 );
