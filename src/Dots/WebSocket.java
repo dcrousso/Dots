@@ -49,8 +49,12 @@ public class WebSocket {
 
 	@OnClose
 	public void handleClose() {
-		if (!isAlive())
+		if (!isAlive()) {
+			if (s_waiting.contains(this))
+				s_waiting.remove(this);
+
 			return;
+		}
 
 		m_error = true;
 

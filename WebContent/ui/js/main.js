@@ -150,6 +150,7 @@
 
 	function initGame(rows, cols) {
 		main.textContent = ""; // Remove all children
+		main.classList.add("waiting");
 
 		var boxContainer = main.appendChild(document.createElement("div"));
 		boxContainer.classList.add("container", "boxes");
@@ -346,6 +347,7 @@
 						cells[r][c].left.classList.toggle("p" + content.board[r][c].l, !!content.board[r][c].l);
 					}
 				}
+				main.classList.remove("waiting");
 				break;
 			case "move":
 				var line = null

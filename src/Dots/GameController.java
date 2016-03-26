@@ -54,7 +54,6 @@ public class GameController {
 		if (m_uncaptured <= 0 || caller != m_players.get(m_current))
 			return;
 
-		System.out.println(content.toString());
 		m_players.parallelStream().forEach(player -> player.send(content));
 
 		switch (content.getString("type")) {
