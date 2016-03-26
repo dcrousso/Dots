@@ -28,9 +28,7 @@ public class WebSocket {
 	public void handleOpen(Session session, EndpointConfig config) {
 		m_socketSession = session;
 		m_httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-		m_game = null;
-		m_error = false;
-		m_id = -1;
+		initialize();
 
 		WebSocket existing = s_waiting.poll();
 		if (existing == null)
@@ -93,5 +91,19 @@ public class WebSocket {
 
 	public int getId() {
 		return m_id;
+	}
+
+	public void restart() {
+		if (!isAlive())
+			return;
+
+		initialize();
+		s_waiting.offer(this);
+	}
+
+	private void initialize() {
+		m_game = null;
+		m_error = false;
+		m_id = -1;
 	}
 }

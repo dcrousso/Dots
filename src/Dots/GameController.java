@@ -51,14 +51,11 @@ public class GameController {
 	}
 
 	public void send(WebSocket caller, JsonObject content) {
-		if (m_uncaptured <= 0 || caller != m_players.get(m_current))
-			return;
-
-		m_players.parallelStream().forEach(player -> player.send(content));
-
 		switch (content.getString("type")) {
 		case "move":
-			// {"type":"move","player":1,"line":{"r":3,"c":4,"side":"l"},"boxes":[]}
+			if (m_uncaptured <= 0 || caller != m_players.get(m_current))
+				break;
+
 			JsonObject line = (JsonObject) content.getJsonObject("line");
 			m_board.put(generateCellKey(line.getInt("r"), line.getInt("c")) + line.getString("side"), m_current);
 
@@ -104,20 +101,29 @@ public class GameController {
 					});
 				}
 			}
+
+			m_players.parallelStream().forEach(player -> player.send(content));
 			break;
 		case "leave":
-			if (m_players.parallelStream().anyMatch(player -> ((User) player.getSessionAttribute("user")) == null)) // All players must be logged in
-				break;
+			if (m_players.parallelStream().noneMatch(player -> ((User) player.getSessionAttribute("user")) == null)) { // All players must be logged in
+				// TODO: Save current game state (m_board) to a file for playing later
+				// Create UID for game and save the value of m_board using JSON to /DotsData/<UID>.json
+				m_players.parallelStream().forEach(player -> {
+					User user = (User) player.getSessionAttribute("user");
+					if (user == null)
+						return;
 
-			// TODO: Save current game state (m_board) to a file for playing later
-			// Create UID for game and save the value of m_board using JSON to /DotsData/<UID>.json
-			m_players.parallelStream().forEach(player -> {
-				User user = (User) player.getSessionAttribute("user");
-				if (user == null)
-					return;
+					// Add UID to the savedGame column of the database
+				});
+			}
 
-				// Add UID to the games column of the database
-			});
+			m_players.parallelStream().forEach(player -> player.send(content));
+			break;
+		case "restart":
+			if (m_uncaptured <= 0 || m_players.parallelStream().anyMatch(player -> !player.isAlive()))
+				m_players.parallelStream().forEach(player -> player.restart());
+
+			m_players.parallelStream().forEach(player -> player.send(content));
 			break;
 		}
 	}

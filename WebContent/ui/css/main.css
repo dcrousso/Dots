@@ -100,16 +100,48 @@ main {
 	cursor: default;
 }
 
-main.waiting::after {
+main.waiting::after,
+main.leave::after,
+main.restart::after {
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
 	padding-top: 33%;
-	content: "Waiting for Opponent";
 	text-align: center;
 	background-color: hsla(0, 0%, 100%, 0.9);
+}
+
+main.waiting::after {
+	content: "Finding an Opponent";
+}
+
+main.leave::after {
+	content: "Opponent Left";
+}
+
+main.restart::after {
+	content: "Winner is Player " attr(data-winner);
+}
+
+main > button {
+	position: absolute;
+	top: 65%;
+	right: 35%;
+	left: 35%;
+	z-index: 1;
+	width: 30%;
+	margin-top: 10px;
+	line-height: 1.5em;
+}
+
+main.restart[data-winner="1"]::after {
+	color: #900;
+}
+
+main.restart[data-winner="2"]::after {
+	color: #fc0;
 }
 
 main > .container {
@@ -247,7 +279,7 @@ main .p2 {
 }
 
 footer {
-	position: absolute;
+	position: fixed;
 	right: 0;
 	bottom: 0;
 	left: 0;

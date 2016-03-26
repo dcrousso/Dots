@@ -149,8 +149,12 @@
 	var socket = null;
 
 	function initGame(rows, cols) {
+		playerId = null;
+		cells = [];
+
 		main.textContent = ""; // Remove all children
-		main.classList.add("waiting");
+		main.className = "waiting";
+		main.removeAttribute("data-winner");
 
 		var boxContainer = main.appendChild(document.createElement("div"));
 		boxContainer.classList.add("container", "boxes");
@@ -233,7 +237,12 @@
 				return;
 			}
 
-			var cell = cells[parseInt(element.dataset.row)][parseInt(element.dataset.col)];
+			var row = parseInt(element.dataset.row);
+			var col = parseInt(element.dataset.col);
+			if (isNaN(row) || isNaN(col))
+				return;
+
+			var cell = cells[row][col];
 			var top = isFilled(cell.top) ? Infinity : distance(event, cell.top);
 			var right = isFilled(cell.right) ? Infinity : distance(event, cell.right);
 			var bottom = isFilled(cell.bottom) ? Infinity : distance(event, cell.bottom);
@@ -263,6 +272,8 @@
 			var element = document.elementFromPoint(event.clientX, event.clientY);
 			var row = parseInt(element.dataset.row);
 			var col = parseInt(element.dataset.col);
+			if (isNaN(row) || isNaN(col))
+				return;
 
 			var cell = cells[row][col];
 
@@ -323,81 +334,101 @@
 			handleMainMousemove(event);
 		}
 		main.addEventListener("click", handleMainClick);
-
-		socket = new WebSocket("ws://localhost:8080/Dots/websocket");
-		socket.onopen = function() {
-			console.log(socket);
-		};
-		socket.onmessage = function(event) {
-			console.log(event);
-
-			var content = JSON.parse(event.data);
-			if (!content || !content.type)
-				return;
-
-			switch (content.type.toLowerCase()) {
-			case "init":
-				playerId = content.player;
-				for (var r = 0; r < cells.length; ++r){
-					for (var c = 0; c < cells[r].length; ++c) {
-						cells[r][c].box.classList.toggle("p" + content.board[r][c].x, !!content.board[r][c].x);
-						cells[r][c].top.classList.toggle("p" + content.board[r][c].t, !!content.board[r][c].t);
-						cells[r][c].right.classList.toggle("p" + content.board[r][c].r, !!content.board[r][c].r);
-						cells[r][c].bottom.classList.toggle("p" + content.board[r][c].b, !!content.board[r][c].b);
-						cells[r][c].left.classList.toggle("p" + content.board[r][c].l, !!content.board[r][c].l);
-					}
-				}
-				main.classList.remove("waiting");
-				break;
-			case "move":
-				var line = null
-				switch (content.line.side) {
-				case "t":
-					line = cells[content.line.r][content.line.c].top;
-					break;
-				case "r":
-					line = cells[content.line.r][content.line.c].right;
-					break;
-				case "b":
-					line = cells[content.line.r][content.line.c].bottom;
-					break;
-				case "l":
-					line = cells[content.line.r][content.line.c].left;
-					break;
-				}
-				if (!line)
-					break;
-
-				line.classList.add("p" + content.player);
-
-				for (var i = 0; i < content.boxes.length; ++i)
-					cells[content.boxes[i].r][content.boxes[i].c].box.classList.add("p" + content.player);
-
-				if (playerId === content.player)
-					scoreElement.textContent = parseInt(scoreElement.textContent) + content.boxes.length;
-
-				break;
-			case "leave":
-				alert("The Opponent left the game");
-				socket.close();
-				break;
-			case "end":
-				alert("Game Over!\nThe Winner is Player " + content.winner);
-				playedElement.textContent = parseInt(playedElement.textContent) + 1;
-				if (playerId === content.winner)
-					wonElement.textContent = parseInt(wonElement.textContent) + 1;
-
-				socket.close();
-				break;
-			}
-		};
-		socket.onerror = function(error) {
-			console.error(error);
-			socket.close();
-		};
-		socket.onclose = function() {
-			socket = null;
-		};
 	}
 	initGame(10, 10);
+
+	socket = new WebSocket("ws://localhost:8080/Dots/websocket");
+	socket.onopen = function() {
+		console.log(socket);
+	};
+	socket.onmessage = function(event) {
+		console.log(event);
+
+		var content = JSON.parse(event.data);
+		if (!content || !content.type)
+			return;
+
+		switch (content.type.toLowerCase()) {
+		case "init":
+			playerId = content.player;
+			for (var r = 0; r < cells.length; ++r){
+				for (var c = 0; c < cells[r].length; ++c) {
+					cells[r][c].box.classList.toggle("p" + content.board[r][c].x, !!content.board[r][c].x);
+					cells[r][c].top.classList.toggle("p" + content.board[r][c].t, !!content.board[r][c].t);
+					cells[r][c].right.classList.toggle("p" + content.board[r][c].r, !!content.board[r][c].r);
+					cells[r][c].bottom.classList.toggle("p" + content.board[r][c].b, !!content.board[r][c].b);
+					cells[r][c].left.classList.toggle("p" + content.board[r][c].l, !!content.board[r][c].l);
+				}
+			}
+			main.removeAttribute("class");
+			break;
+		case "move":
+			var line = null
+			switch (content.line.side) {
+			case "t":
+				line = cells[content.line.r][content.line.c].top;
+				break;
+			case "r":
+				line = cells[content.line.r][content.line.c].right;
+				break;
+			case "b":
+				line = cells[content.line.r][content.line.c].bottom;
+				break;
+			case "l":
+				line = cells[content.line.r][content.line.c].left;
+				break;
+			}
+			if (!line)
+				break;
+
+			line.classList.add("p" + content.player);
+
+			for (var i = 0; i < content.boxes.length; ++i)
+				cells[content.boxes[i].r][content.boxes[i].c].box.classList.add("p" + content.player);
+
+			if (playerId === content.player)
+				scoreElement.textContent = parseInt(scoreElement.textContent) + content.boxes.length;
+
+			break;
+		case "leave":
+			main.className = "leave";
+
+			var restart = main.appendChild(document.createElement("button"));
+			restart.textContent = "New Game";
+			restart.addEventListener("click", function (event) {
+				socket.send(JSON.stringify({
+					type: "restart"
+				}));
+				initGame(10, 10);
+				this.remove();
+			});
+			break;
+		case "end":
+			main.className = "restart";
+			main.dataset.winner = content.winner;
+
+			var restart = main.appendChild(document.createElement("button"));
+			restart.textContent = "New Game";
+			restart.addEventListener("click", function (event) {
+				socket.send(JSON.stringify({
+					type: "restart"
+				}));
+				initGame(10, 10);
+				this.remove();
+			});
+
+			playedElement.textContent = parseInt(playedElement.textContent) + 1;
+			if (playerId === content.winner)
+				wonElement.textContent = parseInt(wonElement.textContent) + 1;
+
+			break;
+		}
+	};
+	socket.onerror = function(error) {
+		console.error(error);
+		socket.close();
+	};
+	socket.onclose = function() {
+		socket = null;
+	};
 })();
