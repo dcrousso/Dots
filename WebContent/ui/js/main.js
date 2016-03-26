@@ -2,10 +2,16 @@
 	"use strict";
 
 	var main = document.querySelector("main");
+	var authenticationLink = document.querySelector(".link.authentication");
 	var scoreElement = document.getElementById("score");
 	var playedElement = document.getElementById("played");
 	var wonElement = document.getElementById("won");
 	var pointsElement = document.getElementById("points");
+	var authenticationForm = null;
+
+	function isEmpty(s) {
+		return !s && !s.length && !s.trim().length;
+	}
 
 	function ajax(method, url, callback) {
 		var xhr = new XMLHttpRequest();
@@ -18,6 +24,36 @@
 		};
 		xhr.open(method, url, true);
 		xhr.send();
+	}
+
+	function authenticate(username, password, isRegister) {
+		if (!authenticationForm || isEmpty(username) || isEmpty(password))
+			return;
+
+		var query = "username=" + username + "&password=" + password;
+		if (isRegister)
+			query += "&register=true";
+
+		ajax("POST", "authentication?" + query, function(xhr) {
+			var content = JSON.parse(xhr.responseText);
+			if (!content || content.error) {
+				authenticationForm.classList.add("error");
+				authenticationForm.dataset.error = (content && content.error) || "Invalid Username/Password";
+				return;
+			}
+
+			authenticationLink.classList.remove("login");
+			authenticationLink.classList.add("logout");
+			authenticationLink.textContent = "Logout";
+			authenticationLink.title = "Logout";
+
+			authenticationForm.remove();
+			authenticationForm = null;
+
+			playedElement.textContent = content.played || 0;
+			wonElement.textContent = content.won || 0;
+			pointsElement.textContent = content.points || 0;
+		});
 	}
 
 	function distance(event, element) {
@@ -38,55 +74,52 @@
 	// ==========  Header  ========== //
 	// ============================== //
 
-	var authenticationLink = document.querySelector(".link.authentication");
 	authenticationLink.addEventListener("click", function(event) {
 		event.preventDefault();
 
 		if (this.classList.contains("login")) {
-			if (document.getElementById("authentication"))
+			if (authenticationForm)
 				return;
 
-			var form = document.body.appendChild(document.createElement("form"));
-			form.id = "authentication";
+			authenticationForm = document.body.appendChild(document.createElement("form"));
+			authenticationForm.id = "authentication";
+			authenticationForm.action = "authentication";
 
-			var usernameInput = form.appendChild(document.createElement("input"));
+			var usernameInput = authenticationForm.appendChild(document.createElement("input"));
 			usernameInput.type = "text";
 			usernameInput.placeholder = "Username";
 			usernameInput.required = true;
+			usernameInput.focus();
 
-			var passwordInput = form.appendChild(document.createElement("input"));
+			var passwordInput = authenticationForm.appendChild(document.createElement("input"));
 			passwordInput.type = "password";
 			passwordInput.placeholder = "Password";
 			passwordInput.required = true;
 
-			var submit = form.appendChild(document.createElement("button"));
-			submit.textContent = "Login";
-			submit.addEventListener("click", function(event) {
+			var actionRow = authenticationForm.appendChild(document.createElement("div"));
+			actionRow.classList.add("actions");
+
+			var login = actionRow.appendChild(document.createElement("button"));
+			login.textContent = "Login";
+			login.addEventListener("click", function(event) {
 				event.preventDefault();
 
-				if (!usernameInput.value || !passwordInput.value)
-					return;
+				authenticate(usernameInput.value, passwordInput.value);
+			});
 
-				var query = "username=" + usernameInput.value + "&password=" + passwordInput.value;
+			var register = actionRow.appendChild(document.createElement("button"));
+			register.textContent = "Register";
+			register.addEventListener("click", function(event) {
+				event.preventDefault();
 
-				ajax("POST", "authentication?" + query, function(xhr) {
-					var json = JSON.parse(xhr.responseText);
-					if (!json || json.error) {
-						form.classList.add("error");
-						form.dataset.error = json ? json.error : "Error";
-						return;
-					}
+				authenticate(usernameInput.value, passwordInput.value, true);
+			});
 
-					authenticationLink.classList.remove("login");
-					authenticationLink.classList.add("logout");
-					authenticationLink.textContent = "Logout";
-					authenticationLink.title = "Logout";
-					form.remove();
-
-					playedElement.textContent = json.played || 0;
-					wonElement.textContent = json.won || 0;
-					pointsElement.textContent = json.points || 0;
-				});
+			var close = authenticationForm.appendChild(document.createElement("div"));
+			close.classList.add("close");
+			close.addEventListener("click", function(event) {
+				authenticationForm.remove();
+				authenticationForm = null;
 			});
 			return;
 		}

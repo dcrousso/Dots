@@ -9,8 +9,8 @@ public class User {
 	private int m_won;
 	private int m_points;
 
-	public User() {
-		m_username = null;
+	public User(String username) {
+		m_username = username;
 		m_played = 0;
 		m_won = 0;
 		m_points = 0;
