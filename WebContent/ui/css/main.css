@@ -301,7 +301,7 @@ footer > .container {
 }
 
 footer > .container > div {
-	width: 25%;
+	width: 100%;
 }
 
 footer > .container > *[class^="icon"]::before {
