@@ -15,20 +15,18 @@ import javax.websocket.server.ServerEndpoint;
 
 @ServerEndpoint(value = "/websocket", configurator = SessionConfigurator.class)
 
-public class WebSocket {
+public class WebSocket extends Player {
 	private static final ConcurrentLinkedQueue<WebSocket> s_waiting = new ConcurrentLinkedQueue<WebSocket>();
 
 	private Session m_socketSession;
 	private HttpSession m_httpSession;
-	private GameController m_game;
-	private boolean m_error;
-	private int m_id;
 
 	@OnOpen
 	public void handleOpen(Session session, EndpointConfig config) {
+		initialize(Type.Client);
+
 		m_socketSession = session;
 		m_httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-		initialize();
 
 		WebSocket existing = s_waiting.poll();
 		if (existing == null)
@@ -74,36 +72,15 @@ public class WebSocket {
 		m_socketSession.getAsyncRemote().sendText(content.toString());
 	}
 
-	public boolean isAlive() {
-		return m_id != -1 && !m_error;
-	}
-
-	public Object getSessionAttribute(String key) {
+	public Object getAttribute(String key) {
 		return m_httpSession.getAttribute(key);
-	}
-
-	public void setId(int i) {
-		if (m_id != -1)
-			return;
-
-		m_id = i;
-	}
-
-	public int getId() {
-		return m_id;
 	}
 
 	public void restart() {
 		if (!isAlive())
 			return;
 
-		initialize();
+		initialize(getType());
 		s_waiting.offer(this);
-	}
-
-	private void initialize() {
-		m_game = null;
-		m_error = false;
-		m_id = -1;
 	}
 }
