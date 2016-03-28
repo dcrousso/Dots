@@ -36,7 +36,8 @@ public class GameController {
 				break;
 
 			JsonObject line = (JsonObject) content.getJsonObject("line");
-			m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_current);
+			if (!m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_current))
+				break;
 
 			JsonArray boxes = (JsonArray) content.getJsonArray("boxes");
 			if (boxes.size() == 0)

@@ -127,7 +127,7 @@ main.restart::after {
 
 main > button {
 	position: absolute;
-	top: 65%;
+	top: 60%;
 	right: 35%;
 	left: 35%;
 	z-index: 1;
