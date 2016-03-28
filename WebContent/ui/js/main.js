@@ -291,7 +291,7 @@
 			};
 
 			function fillCell(row, col) {
-				if (row < 0 || row > rows || col < 0 || col > cols)
+				if (row < 0 || row >= rows || col < 0 || col >= cols)
 					return;
 
 				var cell = cells[row][col];
