@@ -14,7 +14,7 @@ public class GameBoard {
 
 	public GameBoard(JsonArray board, Vector<Player> players) {
 		m_board = new ConcurrentSkipListMap<String, Integer>();
-		m_uncaptured = Util.count(board.toString(), "\"b\"");
+		m_uncaptured = Util.count(board.toString(), "\"b\"\\s*:\\s*0");
 		m_scores = new ConcurrentHashMap<Integer, Integer>();
 
 		for (int r = 0; r < board.size(); ++r) {

@@ -81,6 +81,11 @@ public class WebSocket extends Player {
 			return;
 
 		initialize(getType());
-		s_waiting.offer(this);
+
+		WebSocket existing = s_waiting.poll();
+		if (existing == null)
+			s_waiting.offer(this);
+		else
+			m_game = existing.m_game = new GameController(existing, this);
 	}
 }
