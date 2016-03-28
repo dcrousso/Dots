@@ -277,8 +277,6 @@
 			if (isNaN(row) || isNaN(col))
 				return;
 
-			var cell = cells[row][col];
-
 			var move = {
 				type: "move",
 				player: playerId,
@@ -286,46 +284,21 @@
 					r: row,
 					c: col,
 					side: null
-				},
-				boxes: []
+				}
 			};
 
-			function fillCell(row, col) {
-				if (row < 0 || row >= rows || col < 0 || col >= cols)
-					return;
-
-				var cell = cells[row][col];
-				if (!cell)
-					return;
-				if (currentLine !== cell.top && !isFilled(cell.top))
-					return;
-				if (currentLine !== cell.right && !isFilled(cell.right))
-					return;
-				if (currentLine !== cell.bottom && !isFilled(cell.bottom))
-					return;
-				if (currentLine !== cell.left && !isFilled(cell.left))
-					return;
-
-				move.boxes.push({r: row, c: col});
-			}
-
-			fillCell(row, col); // Fill current cell if able
-
-			switch (currentLine) { // Fill adjacent cell if able
+			var cell = cells[row][col];
+			switch (currentLine) {
 			case cell.top:
-				fillCell(row - 1, col);
 				move.line.side = "t";
 				break;
 			case cell.right:
-				fillCell(row, col + 1);
 				move.line.side = "r";
 				break;
 			case cell.bottom:
-				fillCell(row + 1, col);
 				move.line.side = "b";
 				break;
 			case cell.left:
-				fillCell(row, col - 1);
 				move.line.side = "l";
 				break;
 			}

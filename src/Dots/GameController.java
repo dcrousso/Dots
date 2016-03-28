@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import Dots.Player.Type;
@@ -36,18 +35,14 @@ public class GameController {
 				break;
 
 			JsonObject line = (JsonObject) content.getJsonObject("line");
-			if (!m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_current))
+			JsonObject response = m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_current + 1);  // Player IDs start at 1
+			if (response == null)
 				break;
 
-			JsonArray boxes = (JsonArray) content.getJsonArray("boxes");
-			if (boxes.size() == 0)
+			if (response.getJsonArray("boxes").size() == 0)
 				m_current = (m_current + 1) % m_players.size();
-			else {
-				boxes.parallelStream().forEach(item -> {
-					JsonObject box = (JsonObject) item;
-					m_board.capture(box.getInt("r"), box.getInt("c"), m_current);
-				});
-			}
+
+			m_players.parallelStream().forEach(player -> player.send(response));
 
 			if (!m_board.hasUncaptured()) {
 				int winner = m_board.getWinner();
@@ -78,7 +73,6 @@ public class GameController {
 				}
 			}
 
-			m_players.parallelStream().forEach(player -> player.send(content));
 			break;
 		case "leave":
 			if (m_players.parallelStream().noneMatch(player -> ((User) player.getAttribute("user")) == null)) { // All players must be logged in
