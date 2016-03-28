@@ -158,13 +158,16 @@ main > .container {
 	pointer-events: none;
 }
 
+main > .container.boxes {
+	pointer-events: all;
+}
+
 main .box {
 	position: relative;
 	width: 10%;
 	height: 10%;
 	color: transparent;
 	background-color: currentColor;
-	pointer-events: all;
 }
 
 main .box[class*="p"] {

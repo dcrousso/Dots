@@ -156,6 +156,8 @@
 		main.className = "waiting";
 		main.removeAttribute("data-winner");
 
+		scoreElement.textContent = 0;
+
 		var boxContainer = main.appendChild(document.createElement("div"));
 		boxContainer.classList.add("container", "boxes");
 
@@ -227,7 +229,7 @@
 				currentLine = null;
 		}
 
-		function handleMainMousemove(event) {
+		function handleMousemove(event) {
 			if (!socket || socket.readyState === 3 )
 				return;
 
@@ -263,9 +265,9 @@
 				break;
 			}
 		}
-		main.addEventListener("mousemove", handleMainMousemove);
+		boxContainer.addEventListener("mousemove", handleMousemove);
 
-		function handleMainClick(event) {
+		function handleClick(event) {
 			if (!socket || socket.readyState === 3 || !currentLine)
 				return;
 
@@ -331,9 +333,9 @@
 			socket.send(JSON.stringify(move));
 
 			markLine();
-			handleMainMousemove(event);
+			handleMousemove(event);
 		}
-		main.addEventListener("click", handleMainClick);
+		boxContainer.addEventListener("click", handleClick);
 	}
 	initGame(10, 10);
 
@@ -358,6 +360,9 @@
 					cells[r][c].right.classList.toggle("p" + content.board[r][c].r, !!content.board[r][c].r);
 					cells[r][c].bottom.classList.toggle("p" + content.board[r][c].b, !!content.board[r][c].b);
 					cells[r][c].left.classList.toggle("p" + content.board[r][c].l, !!content.board[r][c].l);
+
+					if (content.board[r][c].x === playerId)
+						scoreElement.textContent = parseInt(scoreElement.textContent) + 1;
 				}
 			}
 			main.removeAttribute("class");
@@ -429,6 +434,7 @@
 		socket.close();
 	};
 	socket.onclose = function() {
+		console.log(socket);
 		socket = null;
 	};
 })();
