@@ -136,14 +136,6 @@ main > button {
 	line-height: 1.5em;
 }
 
-main.restart[data-winner="1"]::after {
-	color: #900;
-}
-
-main.restart[data-winner="2"]::after {
-	color: #fc0;
-}
-
 main > .container {
 	display: -webkit-flex;
 	display:    -moz-flex;
@@ -271,14 +263,6 @@ main .line {
 	    -ms-transition: color 400ms, border-color 400ms, background-color 400ms;
 	     -o-transition: color 400ms, border-color 400ms, background-color 400ms;
 	        transition: color 400ms, border-color 400ms, background-color 400ms;
-}
-
-main .p1 {
-	color: #900; /* Cardinal */
-}
-
-main .p2 {
-	color: #fc0; /* Gold */
 }
 
 footer {
@@ -424,4 +408,24 @@ noscript > h2 {
 	#authentication {
 		background-color: hsla(0, 0%, 0%, 0.7);
 	}
+}
+
+main .p1,
+main.restart[data-winner="1"]::after,
+.p1 footer > .container > *[class^="icon"]::before {
+	color: #900; /* Cardinal */
+}
+
+.p1 footer > .container > .icon-box::before {
+	content: url(icon-box-cardinal.svg);
+}
+
+main .p2,
+main.restart[data-winner="2"]::after,
+.p2 footer > .container > *[class^="icon"]::before {
+	color: #fc0; /* Gold */
+}
+
+.p2 footer > .container > .icon-box::before {
+	content: url(icon-box-gold.svg);
 }

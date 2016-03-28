@@ -366,6 +366,7 @@
 				}
 			}
 			main.removeAttribute("class");
+			document.body.className = "p" + playerId;
 			break;
 		case "move":
 			var line = null
