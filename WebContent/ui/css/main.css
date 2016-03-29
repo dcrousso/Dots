@@ -235,7 +235,8 @@ main .line.hover {
 	transition-duration: 200ms;
 }
 
-main .line[class*="p"] {
+main .line[class*="p"],
+main .line[class*="p"].hover {
 	border-style: solid;
 }
 
@@ -417,7 +418,7 @@ noscript > h2 {
 main .p1,
 main.restart[data-winner="1"]::after,
 .p1 footer > .container > *[class^="icon"]::before {
-	color: #900; /* Cardinal */
+	color: #900 !important; /* Cardinal */
 }
 
 .p1 footer > .container > .icon-box::before {
@@ -427,7 +428,7 @@ main.restart[data-winner="1"]::after,
 main .p2,
 main.restart[data-winner="2"]::after,
 .p2 footer > .container > *[class^="icon"]::before {
-	color: #fc0; /* Gold */
+	color: #fc0 !important; /* Gold */
 }
 
 .p2 footer > .container > .icon-box::before {

@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<style>
+			body {
+				display: -webkit-flex;
+				display:    -moz-flex;
+				display:     -ms-flexbox;
+				display:         flex;
+				justify-content: space-between;
+				align-items: center;
+				margin: 0;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			iframe {
+				width: 100%;
+				height: calc(100vh - 10px);
+				margin: 5px;
+				border: 2px ridge;
+			}
+
+			.options > button {
+				width: 100px;
+				margin: 10px 5px;
+				line-height: 1.5em;
+			}
+		</style>
+	</head>
+	<body>
+		<iframe id="p1"></iframe>
+		<div class="options">
+			<button class="p1">Start P1</button>
+			<button class="p2">Start P2</button>
+		</div>
+		<iframe id="p2"></iframe>
+		<script>
+			var p1 = document.getElementById("p1");
+			var p2 = document.getElementById("p2");
+
+			document.querySelector(".options > button.p1").addEventListener("click", function(event) {
+				p1.setAttribute("src", "//localhost:8080/Dots");
+			});
+
+			document.querySelector(".options > button.p2").addEventListener("click", function(event) {
+				p2.setAttribute("src", "//localhost:8080/Dots");
+			});
+		</script>
+	</body>
+</html>

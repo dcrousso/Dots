@@ -304,9 +304,6 @@
 			}
 
 			socket.send(JSON.stringify(move));
-
-			markLine();
-			handleMousemove(event);
 		}
 		boxContainer.addEventListener("click", handleClick);
 	}
