@@ -33,22 +33,17 @@ a {
 a::before {
 	position: absolute;
 	top: 0;
-	right: 0;
+	right: 50%;
 	bottom: 0;
-	left: 0;
+	left: 50%;
 	z-index: -1;
 	content: "";
 	background-color: transparent;
-	-webkit-transform: rotateY(90deg);
-	   -moz-transform: rotateY(90deg);
-	    -ms-transform: rotateY(90deg);
-	     -o-transform: rotateY(90deg);
-	        transform: rotateY(90deg);
-	-webkit-transition: -webkit-transform 400ms, background-color 400ms;
-	   -moz-transition:    -moz-transform 400ms, background-color 400ms;
-	    -ms-transition:     -ms-transform 400ms, background-color 400ms;
-	     -o-transition:      -o-transform 400ms, background-color 400ms;
-	        transition:         transform 400ms, background-color 400ms;
+	-webkit-transition: right 400ms, left 400ms, background-color 400ms;
+	   -moz-transition: right 400ms, left 400ms, background-color 400ms;
+	    -ms-transition: right 400ms, left 400ms, background-color 400ms;
+	     -o-transition: right 400ms, left 400ms, background-color 400ms;
+	        transition: right 400ms, left 400ms, background-color 400ms;
 }
 
 a:hover {
@@ -56,12 +51,9 @@ a:hover {
 }
 
 a:hover::before {
+	right: 0;
+	left: 0;
 	background-color: hsl(215, 65%, 50%);
-	-webkit-transform: rotateY(0deg);
-	   -moz-transform: rotateY(0deg);
-	    -ms-transform: rotateY(0deg);
-	     -o-transform: rotateY(0deg);
-	        transform: rotateY(0deg);
 }
 
 header {

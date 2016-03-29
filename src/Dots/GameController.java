@@ -33,7 +33,7 @@ public class GameController {
 				break;
 
 			JsonObject line = (JsonObject) content.getJsonObject("line");
-			JsonObject response = m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_current + 1);  // Player IDs start at 1
+			JsonObject response = m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_players.get(m_current).getId());  // Player IDs start at 1
 			if (response == null)
 				break;
 
