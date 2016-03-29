@@ -6,8 +6,6 @@ import java.util.Vector;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import Dots.Player.Type;
-
 public class GameController {
 	private Vector<Player> m_players;
 	private int m_current;
@@ -49,27 +47,23 @@ public class GameController {
 
 				JsonObject end = Json.createObjectBuilder()
 					.add("type", "end")
-					.add("winner", winner + 1)
+					.add("winner", winner)
 				.build();
 
 				for (int i = 0; i < m_players.size(); ++i) {
 					Player player = m_players.get(i);
 					player.send(end);
 
-					if (player.getType() == Type.AI)
-						continue;
-
 					User user = (User) player.getAttribute("user");
-					if (user == null)
-						continue;
-
-					user.addGame(m_board.getScore(i), i == winner);
-					Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
-						Integer.toString(user.getGamesPlayed()),
-						Integer.toString(user.getGamesWon()),
-						Integer.toString(user.getPoints()),
-						user.getUsername()
-					});
+					if (user != null) {
+						user.addGame(m_board.getScore(i), i == winner);
+						Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
+							Integer.toString(user.getGamesPlayed()),
+							Integer.toString(user.getGamesWon()),
+							Integer.toString(user.getPoints()),
+							user.getUsername()
+						});
+					}
 				}
 			}
 
@@ -90,10 +84,11 @@ public class GameController {
 			m_players.parallelStream().forEach(player -> player.send(content));
 			break;
 		case "restart":
-			if (!m_board.hasUncaptured() || m_players.parallelStream().anyMatch(player -> !player.isAlive()))
-				m_players.parallelStream().forEach(player -> player.restart());
+			if (!caller.isAlive() || (m_board.hasUncaptured() && m_players.parallelStream().noneMatch(player -> !player.isAlive())))
+				break;
 
-			m_players.parallelStream().forEach(player -> player.send(content));
+			caller.restart();
+			caller.send(content);
 			break;
 		}
 	}

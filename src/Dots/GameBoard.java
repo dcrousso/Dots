@@ -19,20 +19,24 @@ public class GameBoard {
 		m_uncaptured = Util.count(board.toString(), "\"b\"\\s*:\\s*0");
 		m_scores = new ConcurrentHashMap<Integer, Integer>();
 
+		players.parallelStream().forEach(player -> m_scores.put(player.getId(), 0));
+
 		for (int r = 0; r < board.size(); ++r) {
 			JsonArray row = (JsonArray) board.get(r);
 			for (int c = 0; c < row.size(); ++c) {
 				JsonObject cell = (JsonObject) row.get(c);
 				String key = generateCellKey(r, c);
-				m_board.put(key + "x", cell.getInt("x"));
 				m_board.put(key + "t", cell.getInt("t"));
 				m_board.put(key + "r", cell.getInt("r"));
 				m_board.put(key + "b", cell.getInt("b"));
 				m_board.put(key + "l", cell.getInt("l"));
+
+				int captured = cell.getInt("x");
+				m_board.put(key + "x", captured);
+				if (captured != 0)
+					m_scores.put(captured, getScore(captured) + 1);
 			}
 		}
-
-		players.parallelStream().forEach(player -> m_scores.put(player.getId(), 0));
 	}
 
 	public int getMark(int row, int col, String side) {
@@ -133,10 +137,10 @@ public class GameBoard {
 	}
 
 	public int getWinner() {
-		int winner = 0;
-		for (int i = 1; i < m_scores.size(); ++i) {
-			if (m_scores.get(i) > m_scores.get(winner))
-				winner = i;
+		int winner = -1;
+		for (ConcurrentHashMap.Entry<Integer, Integer> entry : m_scores.entrySet()) {
+			if (!m_scores.containsKey(winner) || entry.getValue() > m_scores.get(winner))
+				winner = entry.getKey();
 		}
 		return winner;
 	}
