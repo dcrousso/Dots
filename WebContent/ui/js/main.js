@@ -374,6 +374,7 @@
 
 			var restart = main.appendChild(document.createElement("button"));
 			restart.textContent = "New Game";
+			restart.focus();
 			restart.addEventListener("click", function (event) {
 				socket.send(JSON.stringify({
 					type: "restart"
@@ -388,6 +389,7 @@
 
 			var restart = main.appendChild(document.createElement("button"));
 			restart.textContent = "New Game";
+			restart.focus();
 			restart.addEventListener("click", function (event) {
 				socket.send(JSON.stringify({
 					type: "restart"
