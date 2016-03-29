@@ -212,7 +212,7 @@ main .line {
 	width: 0;
 	height: 0;
 	color: transparent;
-	border: 0 solid currentColor;
+	border: 0 dashed currentColor;
 }
 
 main .line.horizontal {
@@ -233,6 +233,10 @@ main .line.horizontal + .line.horizontal {
 main .line.hover {
 	color: black;
 	transition-duration: 200ms;
+}
+
+main .line[class*="p"] {
+	border-style: solid;
 }
 
 main > .container.dots {
