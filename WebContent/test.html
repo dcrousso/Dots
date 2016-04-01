@@ -6,7 +6,6 @@
 				display:    -moz-flex;
 				display:     -ms-flexbox;
 				display:         flex;
-				justify-content: space-between;
 				align-items: center;
 				margin: 0;
 			}
@@ -15,30 +14,51 @@
 				box-sizing: border-box;
 			}
 
+			div {
+				flex-grow: 1;
+				margin: 0 5px;
+				text-align: center;
+			}
+
 			iframe {
 				width: 100%;
-				height: calc(100vh - 10px);
-				margin: 5px;
+				height: calc(50vh - 12px);
+				margin: 5px 0;
 				border: 2px ridge;
 			}
 
+			.options {
+				flex-grow: 0;
+				width: 210px;
+			}
+
 			.options > button {
-				width: 100px;
+				width: 75px;
 				margin: 10px 5px;
 				line-height: 1.5em;
 			}
 		</style>
 	</head>
 	<body>
-		<iframe id="p1"></iframe>
+		<div>
+			<iframe id="p1"></iframe>
+			<iframe id="p3"></iframe>
+		</div>
 		<div class="options">
 			<button class="p1">Start P1</button>
 			<button class="p2">Start P2</button>
+			<button class="p3">Start P3</button>
+			<button class="p4">Start P4</button>
 		</div>
-		<iframe id="p2"></iframe>
+		<div>
+			<iframe id="p2"></iframe>
+			<iframe id="p4"></iframe>
+		</div>
 		<script>
 			var p1 = document.getElementById("p1");
 			var p2 = document.getElementById("p2");
+			var p3 = document.getElementById("p3");
+			var p4 = document.getElementById("p4");
 
 			document.querySelector(".options > button.p1").addEventListener("click", function(event) {
 				p1.setAttribute("src", "//localhost:8080/Dots");
@@ -46,6 +66,14 @@
 
 			document.querySelector(".options > button.p2").addEventListener("click", function(event) {
 				p2.setAttribute("src", "//localhost:8080/Dots");
+			});
+
+			document.querySelector(".options > button.p3").addEventListener("click", function(event) {
+				p3.setAttribute("src", "//localhost:8080/Dots");
+			});
+
+			document.querySelector(".options > button.p4").addEventListener("click", function(event) {
+				p4.setAttribute("src", "//localhost:8080/Dots");
 			});
 		</script>
 	</body>
