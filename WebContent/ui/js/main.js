@@ -342,6 +342,7 @@
 			if (!xhr || xhr.responseText !== "true")
 				return;
 
+			three.removeAttribute("title");
 			three.disabled = false;
 			three.addEventListener("click", function(event) {
 				if (!socket || socket.readyState !== 1)
@@ -351,6 +352,7 @@
 				main.className = "waiting";
 			});
 
+			four.removeAttribute("title");
 			four.disabled = false;
 			four.addEventListener("click", function(event) {
 				if (!socket || socket.readyState !== 1)
