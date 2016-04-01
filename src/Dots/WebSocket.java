@@ -1,5 +1,6 @@
 package Dots;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.json.Json;
@@ -16,7 +17,12 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/websocket", configurator = SessionConfigurator.class)
 
 public class WebSocket extends Player {
-	private static final ConcurrentLinkedQueue<WebSocket> s_waiting = new ConcurrentLinkedQueue<WebSocket>();
+	private static final HashMap<Integer, ConcurrentLinkedQueue<WebSocket>> s_waiting = new HashMap<Integer, ConcurrentLinkedQueue<WebSocket>>();
+	static {
+		s_waiting.put(2, new ConcurrentLinkedQueue<WebSocket>());
+		s_waiting.put(3, new ConcurrentLinkedQueue<WebSocket>());
+		s_waiting.put(4, new ConcurrentLinkedQueue<WebSocket>());
+	}
 
 	private Session m_socketSession;
 	private HttpSession m_httpSession;
@@ -27,27 +33,60 @@ public class WebSocket extends Player {
 
 		m_socketSession = session;
 		m_httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-
-		WebSocket existing = s_waiting.poll();
-		if (existing == null)
-			s_waiting.offer(this);
-		else
-			m_game = existing.m_game = new GameController(existing, this);
 	}
 
 	@OnMessage
 	public void handleMessage(String message) {
-		if (!isAlive())
+		JsonObject content = Util.parseJSON(message).build();
+		if (!isAlive() && content.containsKey("mode")) {
+			int mode = content.getInt("mode");
+			ConcurrentLinkedQueue<WebSocket> waiting = s_waiting.get(mode);
+			if (waiting == null)
+				return;
+
+			if (mode == 2) { // 2 Players
+				WebSocket p1 = waiting.poll();
+				if (p1 == null)
+					waiting.offer(this);
+				else
+					m_game = p1.m_game = new GameController(p1, this);
+			} else if (mode == 3 && getUser() != null) { // 3 Players (Authenticated only)
+				WebSocket p1 = waiting.poll();
+				WebSocket p2 = waiting.poll();
+				if (p2 == null) {
+					if (p1 != null)
+						waiting.offer(p1);
+					waiting.offer(this);
+				} else
+					m_game = p1.m_game = p2.m_game = new GameController(p1, p2, this);
+			} else if (mode == 4 && getUser() != null) { // 4 Players (Authenticated only)
+				WebSocket p1 = waiting.poll();
+				WebSocket p2 = waiting.poll();
+				WebSocket p3 = waiting.poll();
+				if (p3 == null) {
+					if (p1 != null)
+						waiting.offer(p1);
+					if (p2 != null)
+						waiting.offer(p2);
+					waiting.offer(this);
+				} else
+					m_game = p1.m_game = p2.m_game = p3.m_game = new GameController(p1, p2, p3, this);
+			}
+		}
+
+		if (!isAlive() || content.containsKey("mode"))
 			return;
 
-		m_game.send(this, Util.parseJSON(message).build());
+		m_game.send(this, content);
 	}
 
 	@OnClose
 	public void handleClose() {
 		if (!isAlive()) {
-			if (s_waiting.contains(this))
-				s_waiting.remove(this);
+			s_waiting.values().parallelStream().forEach(queue -> {
+				if (queue.contains(this))
+					queue.remove(this);
+			});
 
 			return;
 		}
@@ -72,8 +111,8 @@ public class WebSocket extends Player {
 		m_socketSession.getAsyncRemote().sendText(content.toString());
 	}
 
-	public Object getAttribute(String key) {
-		return m_httpSession.getAttribute(key);
+	public User getUser() {
+		return (User) m_httpSession.getAttribute("user");
 	}
 
 	public void restart() {
@@ -81,11 +120,5 @@ public class WebSocket extends Player {
 			return;
 
 		initialize(getType());
-
-		WebSocket existing = s_waiting.poll();
-		if (existing == null)
-			s_waiting.offer(this);
-		else
-			m_game = existing.m_game = new GameController(existing, this);
 	}
 }

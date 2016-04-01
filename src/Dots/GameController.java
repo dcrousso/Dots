@@ -53,7 +53,7 @@ public class GameController {
 					Player player = m_players.get(i);
 					player.send(end);
 
-					User user = (User) player.getAttribute("user");
+					User user = player.getUser();
 					if (user != null) {
 						user.addGame(m_board.getScore(i), i == winner);
 						Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
@@ -68,18 +68,6 @@ public class GameController {
 
 			break;
 		case "leave":
-			if (m_players.parallelStream().noneMatch(player -> ((User) player.getAttribute("user")) == null)) { // All players must be logged in
-				// TODO: Save current game state (m_board) to a file for playing later
-				// Create UID for game and save the value of m_board using JSON to /DotsData/<UID>.json
-				m_players.parallelStream().forEach(player -> {
-					User user = (User) player.getAttribute("user");
-					if (user == null)
-						return;
-
-					// Add UID to the savedGame column of the database
-				});
-			}
-
 			m_players.parallelStream().forEach(player -> player.send(content));
 			break;
 		case "restart":
@@ -87,7 +75,6 @@ public class GameController {
 				break;
 
 			caller.restart();
-			caller.send(content);
 			break;
 		}
 	}

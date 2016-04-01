@@ -15,14 +15,17 @@ public class AuthenticationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (request.getSession().isNew() || request.getSession().getAttribute("user") == null)
-			return;
-
-		request.getSession().removeAttribute("user");
-		request.getSession().invalidate();
+		response.getWriter().write(((User) request.getSession().getAttribute("user")) == null ? "false" : "true");
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String logout = request.getParameter("logout");
+		if (!Util.isEmpty(logout) && logout.equals("true")) {
+			request.getSession().removeAttribute("user");
+			request.getSession().invalidate();
+			return;
+		}
+
 		String username = request.getParameter("username");
 		if (Util.isEmpty(username))
 			return;

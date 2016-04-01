@@ -19,7 +19,7 @@ public abstract class Player {
 
 	public abstract void send(JsonObject content);
 
-	public abstract Object getAttribute(String key);
+	public abstract User getUser();
 
 	public abstract void restart();
 

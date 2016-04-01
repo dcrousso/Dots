@@ -56,6 +56,10 @@ a:hover::before {
 	background-color: hsl(215, 65%, 50%);
 }
 
+button {
+	line-height: 1.5em;
+}
+
 header {
 	position: fixed;
 	top: 0;
@@ -92,6 +96,7 @@ main {
 	cursor: default;
 }
 
+main.mode-select::after,
 main.waiting::after,
 main.leave::after,
 main.restart::after {
@@ -103,6 +108,10 @@ main.restart::after {
 	padding-top: 33%;
 	text-align: center;
 	background-color: hsla(0, 0%, 100%, 0.9);
+}
+
+main.mode-select::after {
+	content: "Choose a Game Mode";
 }
 
 main.waiting::after {
@@ -117,15 +126,34 @@ main.restart::after {
 	content: "Winner is Player " attr(data-winner);
 }
 
+main > .modes {
+	display: none;
+}
+
+main.mode-select > .modes,
 main > button {
 	position: absolute;
 	top: 60%;
+	z-index: 1;
+	margin-top: 0.5vh;
+}
+
+main.mode-select > .modes {
+	display: -webkit-flex;
+	display:    -moz-flex;
+	display:     -ms-flexbox;
+	display:         flex;
+	justify-content: space-around;
+	align-items: center;
+	right: 15%;
+	left: 15%;
+	width: 70%;
+}
+
+main > button {
 	right: 35%;
 	left: 35%;
-	z-index: 1;
 	width: 30%;
-	margin-top: 10px;
-	line-height: 1.5em;
 }
 
 main > .container {
@@ -352,7 +380,6 @@ footer > .container > .icon-star::before {
 
 #authentication > .actions > button {
 	margin: 5px;
-	line-height: 1.5em;
 }
 
 #authentication > .close {
@@ -414,7 +441,7 @@ main.restart[data-winner="1"]::after,
 }
 
 .p1 footer > .container > .icon-box::before {
-	content: url(icon-box-cardinal.svg);
+	content: url(icon-box-p1.svg);
 }
 
 main .p2,
@@ -424,5 +451,25 @@ main.restart[data-winner="2"]::after,
 }
 
 .p2 footer > .container > .icon-box::before {
-	content: url(icon-box-gold.svg);
+	content: url(icon-box-p2.svg);
+}
+
+main .p3,
+main.restart[data-winner="1"]::after,
+.p3 footer > .container > *[class^="icon"]::before {
+	color: #F75 !important; /* Coral */
+}
+
+.p3 footer > .container > .icon-box::before {
+	content: url(icon-box-p3.svg);
+}
+
+main .p4,
+main.restart[data-winner="1"]::after,
+.p4 footer > .container > *[class^="icon"]::before {
+	color: #DAD !important; /* Plum */
+}
+
+.p4 footer > .container > .icon-box::before {
+	content: url(icon-box-p4.svg);
 }

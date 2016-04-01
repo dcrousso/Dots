@@ -125,7 +125,7 @@
 		}
 
 		if (this.classList.contains("logout")) {
-			ajax("GET", "authentication", function(xhr) {
+			ajax("POST", "authentication?logout=true", function(xhr) {
 				authenticationLink.classList.remove("logout");
 				authenticationLink.classList.add("login");
 				authenticationLink.textContent = "Login";
@@ -149,14 +149,15 @@
 	var socket = null;
 
 	function initGame(rows, cols) {
-		playerId = null;
-		cells = [];
-
 		main.textContent = ""; // Remove all children
-		main.className = "waiting";
+		main.className = "mode-select";
 		main.removeAttribute("data-winner");
 
 		scoreElement.textContent = 0;
+
+		playerId = null;
+		cells = [];
+		var currentLine = null;
 
 		var boxContainer = main.appendChild(document.createElement("div"));
 		boxContainer.classList.add("container", "boxes");
@@ -202,8 +203,6 @@
 				}
 			}
 		}
-
-		var currentLine = null;
 
 		var dotContainer = main.appendChild(document.createElement("div"));
 		dotContainer.classList.add("container", "dots");
@@ -268,7 +267,7 @@
 		boxContainer.addEventListener("mousemove", handleMousemove);
 
 		function handleClick(event) {
-			if (!socket || socket.readyState === 3 || !currentLine)
+			if (!socket || socket.readyState !== 1 || !currentLine)
 				return;
 
 			var element = document.elementFromPoint(event.clientX, event.clientY);
@@ -306,6 +305,51 @@
 			socket.send(JSON.stringify(move));
 		}
 		boxContainer.addEventListener("click", handleClick);
+
+		var modes = main.appendChild(document.createElement("div"));
+		modes.classList.add("modes");
+
+		var two = modes.appendChild(document.createElement("button"));
+		two.textContent = "Two Players";
+		two.addEventListener("click", function(event) {
+			if (!socket || socket.readyState !== 1)
+				return;
+
+			socket.send(JSON.stringify({mode: 2}));
+			main.className = "waiting";
+		});
+
+		var three = modes.appendChild(document.createElement("button"));
+		three.textContent = "Three Players";
+		three.title = "Register to gain access";
+		three.disabled = true;
+		three.addEventListener("click", function(event) {
+			if (!socket || socket.readyState !== 1)
+				return;
+
+			socket.send(JSON.stringify({mode: 3}));
+			main.className = "waiting";
+		});
+
+		var four = modes.appendChild(document.createElement("button"));
+		four.textContent = "Four Players";
+		four.title = "Register to gain access";
+		four.disabled = true;
+		four.addEventListener("click", function(event) {
+			if (!socket || socket.readyState !== 1)
+				return;
+
+			socket.send(JSON.stringify({mode: 4}));
+			main.className = "waiting";
+		});
+
+		ajax("GET", "authentication", function(xhr) {
+			if (!xhr || xhr.responseText !== "true")
+				return;
+
+			three.disabled = false;
+			four.disabled = false;
+		});
 	}
 	initGame(10, 10);
 

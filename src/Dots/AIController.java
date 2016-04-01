@@ -54,7 +54,7 @@ public class AIController extends Player implements Runnable {
 	}
 
 	@Override
-	public Object getAttribute(String key) {
+	public User getUser() {
 		return null;
 	}
 
