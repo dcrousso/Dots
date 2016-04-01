@@ -40,6 +40,12 @@ public class WebSocket extends Player {
 		JsonObject content = Util.parseJSON(message).build();
 		if (!isAlive() && content.containsKey("mode")) {
 			int mode = content.getInt("mode");
+			if (mode == 1) { // 1 Player vs AI
+				AIController ai = new AIController();
+				m_game = ai.m_game = new GameController(this, ai);
+				return;
+			}
+
 			ConcurrentLinkedQueue<WebSocket> waiting = s_waiting.get(mode);
 			if (waiting == null)
 				return;

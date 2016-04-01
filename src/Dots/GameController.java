@@ -6,6 +6,8 @@ import java.util.Vector;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import Dots.Player.Type;
+
 public class GameController {
 	private Vector<Player> m_players;
 	private int m_current;
@@ -39,7 +41,10 @@ public class GameController {
 			if (response.getJsonArray("boxes").size() == 0)
 				m_current = (m_current + 1) % m_players.size();
 
-			m_players.parallelStream().forEach(player -> player.send(response));
+			m_players.parallelStream().forEach(player -> {
+				if (player != caller || caller.getType() != Type.AI)
+					player.send(response);
+			});
 
 			if (!m_board.hasUncaptured()) {
 				int winner = m_board.getWinner();

@@ -278,7 +278,6 @@
 
 			var move = {
 				type: "move",
-				player: playerId,
 				line: {
 					r: row,
 					c: col,
@@ -309,6 +308,16 @@
 		var modes = main.appendChild(document.createElement("div"));
 		modes.classList.add("modes");
 
+		var ai = modes.appendChild(document.createElement("button"));
+		ai.textContent = "Play AI";
+		ai.addEventListener("click", function(event) {
+			if (!socket || socket.readyState !== 1)
+				return;
+
+			socket.send(JSON.stringify({mode: 1}));
+			main.className = "waiting";
+		});
+
 		var two = modes.appendChild(document.createElement("button"));
 		two.textContent = "Two Players";
 		two.addEventListener("click", function(event) {
@@ -323,32 +332,33 @@
 		three.textContent = "Three Players";
 		three.title = "Register to gain access";
 		three.disabled = true;
-		three.addEventListener("click", function(event) {
-			if (!socket || socket.readyState !== 1)
-				return;
-
-			socket.send(JSON.stringify({mode: 3}));
-			main.className = "waiting";
-		});
 
 		var four = modes.appendChild(document.createElement("button"));
 		four.textContent = "Four Players";
 		four.title = "Register to gain access";
 		four.disabled = true;
-		four.addEventListener("click", function(event) {
-			if (!socket || socket.readyState !== 1)
-				return;
-
-			socket.send(JSON.stringify({mode: 4}));
-			main.className = "waiting";
-		});
 
 		ajax("GET", "authentication", function(xhr) {
 			if (!xhr || xhr.responseText !== "true")
 				return;
 
 			three.disabled = false;
+			three.addEventListener("click", function(event) {
+				if (!socket || socket.readyState !== 1)
+					return;
+
+				socket.send(JSON.stringify({mode: 3}));
+				main.className = "waiting";
+			});
+
 			four.disabled = false;
+			four.addEventListener("click", function(event) {
+				if (!socket || socket.readyState !== 1)
+					return;
+
+				socket.send(JSON.stringify({mode: 4}));
+				main.className = "waiting";
+			});
 		});
 	}
 	initGame(10, 10);

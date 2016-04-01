@@ -1,7 +1,6 @@
 package Dots;
 
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
 public class AIController extends Player implements Runnable {
@@ -25,20 +24,20 @@ public class AIController extends Player implements Runnable {
 			int row = -1;
 			int col = -1;
 			String side = null;
-			JsonArrayBuilder boxes = Json.createArrayBuilder();
 
 			// Evaluate board to determine best move
 			// If move takes a box, add {r: #, c: #} to boxes
 
+			if (row == -1 || col == -1 || Util.isEmpty(side))
+				continue; // Try again
+
 			m_game.send(this, Json.createObjectBuilder()
 				.add("type", "move")
-				.add("player", m_id)
 				.add("line", Json.createObjectBuilder()
 					.add("r", row)
 					.add("c", col)
 					.add("side", side)
 				.build())
-				.add("boxes", boxes.build())
 			.build());
 
 			m_board = null;
@@ -49,7 +48,7 @@ public class AIController extends Player implements Runnable {
 	public void send(JsonObject content) {
 		if (content.getString("type").matches("\\bleave\\b|\\bend\\b"))
 			m_error = true;
-		else
+		else if (m_game != null)
 			m_board = m_game.getBoard();
 	}
 
@@ -60,9 +59,10 @@ public class AIController extends Player implements Runnable {
 
 	@Override
 	public void restart() {
-		if (m_thread != null)
-			return;
+		if (m_thread == null)
+			m_thread = new Thread(this);
 
-		(m_thread = new Thread(this)).start();
+		if (!m_thread.isAlive())
+			m_thread.start();
 	}
 }
