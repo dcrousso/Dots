@@ -2,7 +2,6 @@ package Dots;
 
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -10,12 +9,12 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
 public class GameBoard {
-	private ConcurrentSkipListMap<String, Integer> m_board;
+	private ConcurrentHashMap<String, Integer> m_board;
 	private int m_uncaptured;
 	private ConcurrentHashMap<Integer, Integer> m_scores;
 
 	public GameBoard(JsonArray board, Vector<Player> players) {
-		m_board = new ConcurrentSkipListMap<String, Integer>();
+		m_board = new ConcurrentHashMap<String, Integer>();
 		m_uncaptured = Util.count(board.toString(), "\"b\"\\s*:\\s*0");
 		m_scores = new ConcurrentHashMap<Integer, Integer>();
 

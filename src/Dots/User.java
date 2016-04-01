@@ -8,14 +8,12 @@ public class User {
 	private int m_played;
 	private int m_won;
 	private int m_points;
-	private String m_savedGame;
 
 	public User(String username) {
 		m_username = username;
 		m_played = 0;
 		m_won = 0;
 		m_points = 0;
-		m_savedGame = null;
 	}
 
 	public User(ResultSet rs) {
@@ -24,7 +22,6 @@ public class User {
 			m_played = rs.getInt("played");
 			m_won = rs.getInt("won");
 			m_points = rs.getInt("points");
-			m_savedGame = rs.getString("savedGame");
 		} catch (SQLException e) {
 		}
 	}
@@ -50,9 +47,5 @@ public class User {
 		++m_played;
 		if (won)
 			++m_won;
-	}
-
-	public String getSavedGame() {
-		return m_savedGame;
 	}
 }

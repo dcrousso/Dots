@@ -15,15 +15,14 @@ public class GameController {
 		m_players = new Vector<Player>(Arrays.asList(players));
 		m_current = 0;
 
-		String game = Util.getFileContents("/DotsData/board.json");
 		for (int i = 0; i < m_players.size(); ++i) {
 			Player player = m_players.get(i);
 			player.setId(i + 1);
-			player.send(Util.parseJSON(game)
+			player.send(Util.parseJSON(Defaults.EMPTY_BOARD)
 				.add("player", player.getId())
 			.build());
 		}
-		m_board = new GameBoard(Util.parseJSON(game).build().getJsonArray("board"), m_players);
+		m_board = new GameBoard(Util.parseJSON(Defaults.EMPTY_BOARD).build().getJsonArray("board"), m_players);
 	}
 
 	public void send(Player caller, JsonObject content) {
