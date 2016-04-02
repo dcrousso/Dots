@@ -116,7 +116,7 @@
 	}
 
 	game.boxes.container.addEventListener("mousemove", function(event) {
-		if (!socket || socket.readyState === 3 )
+		if (!socket || socket.readyState !== 1)
 			return;
 
 		function isFilled(element) {
@@ -289,12 +289,7 @@
 	resetMain();
 
 	socket = new WebSocket("ws://localhost:8080/Dots/websocket");
-	socket.onopen = function() {
-		console.log(socket);
-	};
 	socket.onmessage = function(event) {
-		console.log(event);
-
 		var content = JSON.parse(event.data);
 		if (!content || !content.type)
 			return;
@@ -385,10 +380,6 @@
 	socket.onerror = function(error) {
 		console.error(error);
 		socket.close();
-	};
-	socket.onclose = function() {
-		console.log(socket);
-		socket = null;
 	};
 
 
