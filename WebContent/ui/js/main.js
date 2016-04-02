@@ -315,6 +315,7 @@
 				}
 			}
 			main.removeAttribute("class");
+			game.modes.container.remove();
 			document.body.className = "p" + game.playerId;
 			break;
 		case "move":
