@@ -297,18 +297,7 @@
 		switch (content.type.toLowerCase()) {
 		case "init":
 			game.playerId = content.player;
-			for (var r = 0; r < game.rows; ++r){
-				for (var c = 0; c < game.cols; ++c) {
-					game.cells[r][c].box.classList.toggle("p" + content.board[r][c].x, !!content.board[r][c].x);
-					game.cells[r][c].top.classList.toggle("p" + content.board[r][c].t, !!content.board[r][c].t);
-					game.cells[r][c].right.classList.toggle("p" + content.board[r][c].r, !!content.board[r][c].r);
-					game.cells[r][c].bottom.classList.toggle("p" + content.board[r][c].b, !!content.board[r][c].b);
-					game.cells[r][c].left.classList.toggle("p" + content.board[r][c].l, !!content.board[r][c].l);
 
-					if (content.board[r][c].x === game.playerId)
-						game.scoreElement.textContent = parseInt(game.scoreElement.textContent) + 1;
-				}
-			}
 			main.removeAttribute("class");
 			game.modes.container.remove();
 			document.body.className = "p" + game.playerId;

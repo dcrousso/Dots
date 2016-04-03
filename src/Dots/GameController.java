@@ -20,7 +20,8 @@ public class GameController {
 		for (int i = 0; i < m_players.size(); ++i) {
 			Player player = m_players.get(i);
 			player.setId(i + 1);
-			player.send(Util.parseJSON(Defaults.EMPTY_BOARD)
+			player.send(Json.createObjectBuilder()
+				.add("type", "init")
 				.add("player", player.getId())
 			.build());
 		}
