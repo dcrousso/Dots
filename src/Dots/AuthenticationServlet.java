@@ -53,8 +53,8 @@ public class AuthenticationServlet extends HttpServlet {
 
 		JsonObjectBuilder result = Json.createObjectBuilder();
 
-		if (user != null || register) {
-			if (register) {
+		if ((user != null && !register) || (user == null && register)) {
+			if (user == null && register) {
 				user = new User(username);
 				Util.update("INSERT INTO users (username, password, played, won, points) VALUES (?, ?, ?, ?, ?)", new String[] {
 					user.getUsername(),
