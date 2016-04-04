@@ -49,31 +49,18 @@ public class GameController {
 
 			if (!m_board.hasUncaptured()) {
 				int winner = m_board.getWinner();
+				savePlayerInfo(winner);
 
 				JsonObject end = Json.createObjectBuilder()
 					.add("type", "end")
 					.add("winner", winner)
 				.build();
-
-				for (int i = 0; i < m_players.size(); ++i) {
-					Player player = m_players.get(i);
-					player.send(end);
-
-					User user = player.getUser();
-					if (user != null) {
-						user.addGame(m_board.getScore(i), i == winner);
-						Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
-							Integer.toString(user.getGamesPlayed()),
-							Integer.toString(user.getGamesWon()),
-							Integer.toString(user.getPoints()),
-							user.getUsername()
-						});
-					}
-				}
+				m_players.parallelStream().forEach(player -> player.send(end));
 			}
 
 			break;
 		case "leave":
+			savePlayerInfo(0); // No Winner
 			m_players.parallelStream().forEach(player -> player.send(content));
 			break;
 		case "restart":
@@ -87,5 +74,21 @@ public class GameController {
 
 	public GameBoard getBoard() {
 		return m_board;
+	}
+
+	private void savePlayerInfo(int winner) {
+		for (int i = 0; i < m_players.size(); ++i) {
+			Player player = m_players.get(i);
+			User user = player.getUser();
+			if (user != null) {
+				user.addGame(m_board.getScore(i), i == winner);
+				Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
+					Integer.toString(user.getGamesPlayed()),
+					Integer.toString(user.getGamesWon()),
+					Integer.toString(user.getPoints()),
+					user.getUsername()
+				});
+			}
+		}
 	}
 }

@@ -132,7 +132,7 @@ public class GameBoard {
 	}
 
 	public int getScore(int player) {
-		return m_scores.get(player);
+		return m_scores.containsKey(player) ? m_scores.get(player) : 0;
 	}
 
 	public int getWinner() {
