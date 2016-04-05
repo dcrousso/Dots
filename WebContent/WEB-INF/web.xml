@@ -32,15 +32,6 @@
 	</error-page>
 
 	<servlet>
-		<servlet-name>home-extension</servlet-name>
-		<jsp-file>/index.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>home-extension</servlet-name>
-		<url-pattern>/index</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
 		<servlet-name>AuthenticationServlet</servlet-name>
 		<servlet-class>Dots.AuthenticationServlet</servlet-class>
 	</servlet>
