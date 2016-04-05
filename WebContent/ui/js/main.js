@@ -12,6 +12,9 @@
 	function ajax(method, url, callback) {
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
+			if (window.logging)
+				console.log(xhr);
+
 			if (xhr.readyState !== 4 || xhr.status !== 200)
 				return;
 
@@ -289,7 +292,14 @@
 	resetMain();
 
 	socket = new WebSocket("ws://localhost:8080/Dots/websocket");
+	socket.onopen = function() {
+		if (window.logging)
+			console.log(socket);
+	};
 	socket.onmessage = function(event) {
+		if (window.logging)
+			console.log(event);
+
 		var content = JSON.parse(event.data);
 		if (!content || !content.type)
 			return;
@@ -373,6 +383,10 @@
 	socket.onerror = function(error) {
 		console.error(error);
 		socket.close();
+	};
+	socket.onclose = function() {
+		if (window.logging)
+			console.log(socket);
 	};
 
 
