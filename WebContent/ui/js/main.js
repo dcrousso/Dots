@@ -333,6 +333,9 @@
 		case "leave":
 			main.className = "leave";
 
+			game.playedElement.textContent = content.played;
+			game.pointsElement.textContent = content.points;
+
 			var restart = main.appendChild(document.createElement("button"));
 			restart.textContent = "New Game";
 			restart.focus();
@@ -359,7 +362,8 @@
 				this.remove();
 			});
 
-			game.playedElement.textContent = parseInt(game.playedElement.textContent) + 1;
+			game.playedElement.textContent = content.played;
+			game.pointsElement.textContent = content.points;
 			if (game.playerId === content.winner)
 				game.wonElement.textContent = parseInt(game.wonElement.textContent) + 1;
 

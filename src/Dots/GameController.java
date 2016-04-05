@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import Dots.Player.Type;
 
@@ -12,6 +13,7 @@ public class GameController {
 	private Vector<Player> m_players;
 	private int m_current;
 	private GameBoard m_board;
+	private boolean m_alive;
 
 	public GameController(Player ...players) {
 		m_players = new Vector<Player>(Arrays.asList(players));
@@ -26,6 +28,8 @@ public class GameController {
 			.build());
 		}
 		m_board = new GameBoard(Util.parseJSON(Defaults.EMPTY_BOARD).build().getJsonArray("board"), m_players);
+
+		m_alive = true;
 	}
 
 	public void send(Player caller, JsonObject content) {
@@ -48,20 +52,37 @@ public class GameController {
 			});
 
 			if (!m_board.hasUncaptured()) {
-				int winner = m_board.getWinner();
+				final int winner = m_board.getWinner();
 				savePlayerInfo(winner);
+				m_players.parallelStream().forEach(player -> {
+					JsonObjectBuilder end = Json.createObjectBuilder()
+						.add("type", "end")
+						.add("winner", winner);
 
-				JsonObject end = Json.createObjectBuilder()
-					.add("type", "end")
-					.add("winner", winner)
-				.build();
-				m_players.parallelStream().forEach(player -> player.send(end));
+					User user = player.getUser();
+					if (user != null)
+						end.add("played", user.getGamesPlayed()).add("points", user.getPoints());
+
+					player.send(end.build());
+				});
 			}
 
 			break;
 		case "leave":
-			savePlayerInfo(0); // No Winner
-			m_players.parallelStream().forEach(player -> player.send(content));
+			if (!m_alive)
+				break;
+
+			savePlayerInfo(-1); // No Winner
+			m_players.parallelStream().forEach(player -> {
+				JsonObjectBuilder leave = Json.createObjectBuilder()
+					.add("type", "leave");
+
+				User user = player.getUser();
+				if (user != null)
+					leave.add("played", user.getGamesPlayed()).add("points", user.getPoints());
+
+				player.send(leave.build());
+			});
 			break;
 		case "restart":
 			if (!caller.isAlive() || (m_board.hasUncaptured() && m_players.parallelStream().noneMatch(player -> !player.isAlive())))
@@ -90,5 +111,6 @@ public class GameController {
 				});
 			}
 		}
+		m_alive = false;
 	}
 }
