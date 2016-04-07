@@ -371,8 +371,11 @@
 
 			main.className = "leave";
 
-			game.playedElement.textContent = content.played;
-			game.pointsElement.textContent = content.points;
+			if (!isNaN(content.played))
+				game.playedElement.textContent = content.played;
+
+			if (!isNaN(content.points))
+				game.pointsElement.textContent = content.points;
 
 			var restart = main.appendChild(document.createElement("button"));
 			restart.textContent = "New Game";
@@ -403,8 +406,12 @@
 				this.remove();
 			});
 
-			game.playedElement.textContent = content.played;
-			game.pointsElement.textContent = content.points;
+			if (!isNaN(content.played))
+				game.playedElement.textContent = content.played;
+
+			if (!isNaN(content.points))
+				game.pointsElement.textContent = content.points;
+
 			if (game.playerId === content.winner)
 				game.wonElement.textContent = parseInt(game.wonElement.textContent) + 1;
 
@@ -452,9 +459,9 @@
 				authenticationForm.remove();
 				authenticationForm = null;
 
-				game.playedElement.textContent = content.played || 0;
-				game.wonElement.textContent = content.won || 0;
-				game.pointsElement.textContent = content.points || 0;
+				game.playedElement.textContent = parseInt(content.played) || 0;
+				game.wonElement.textContent = parseInt(content.won) || 0;
+				game.pointsElement.textContent = parseInt(content.points) || 0;
 				game.modes.login();
 			});
 		}
