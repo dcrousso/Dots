@@ -110,17 +110,45 @@ header > nav > .players > div {
 header > nav > .players > div.current {
 	outline-color: black;
 	outline-offset: -3px;
-	animation: playerActive 2s ease infinite;
+	-webkit-animation: playerActive 2s infinite;
+	   -moz-animation: playerActive 2s infinite;
+	    -ms-animation: playerActive 2s infinite;
+	     -o-animation: playerActive 2s infinite;
+	        animation: playerActive 2s infinite;
 }
 
 header > nav > .players > div.disabled {
 	opacity: 0.3;
 }
 
-@keyframes playerActive {
-	from { transform: rotate(0deg); }
-	50%  { transform: rotate(180deg); }
-	to   { transform: rotate(360deg); }
+@-webkit-keyframes playerActive {
+	from { -webkit-transform: rotate(0deg); }
+	50%  { -webkit-transform: rotate(180deg); }
+	to   { -webkit-transform: rotate(360deg); }
+}
+
+@-moz-keyframes    playerActive {
+	from {    -moz-transform: rotate(0deg); }
+	50%  {    -moz-transform: rotate(180deg); }
+	to   {    -moz-transform: rotate(360deg); }
+}
+
+@-ms-keyframes     playerActive {
+	from {     -ms-transform: rotate(0deg); }
+	50%  {     -ms-transform: rotate(180deg); }
+	to   {     -ms-transform: rotate(360deg); }
+}
+
+@-o-keyframes      playerActive {
+	from {      -o-transform: rotate(0deg); }
+	50%  {      -o-transform: rotate(180deg); }
+	to   {      -o-transform: rotate(360deg); }
+}
+
+@keyframes         playerActive {
+	from {         transform: rotate(0deg); }
+	50%  {         transform: rotate(180deg); }
+	to   {         transform: rotate(360deg); }
 }
 
 main {
@@ -238,7 +266,8 @@ main .box[class*="p"]::after {
 	left: -2px;
 	content: "";
 	border: 2px solid currentColor;
-	animation: clipPath 8s linear infinite;
+	-webkit-animation: clipPath 8s linear infinite;
+	        animation: clipPath 8s linear infinite;
 }
 
 main .box[class*="p"]::after {
