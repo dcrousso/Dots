@@ -1,4 +1,3 @@
-window.logging = true;
 (function() {
 	"use strict";
 

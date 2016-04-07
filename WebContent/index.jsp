@@ -13,7 +13,7 @@
 		<meta name="keywords" content="dots and boxes, dots, boxes, game">
 		<meta name="description" content="Play the classic game Dots and Boxes, but with a twist!">
 		<meta name="author" content="Benjamin Stein, Sean Yuan, Devin Rousso, Shane Rosse">
-		<link rel="icon" href="${pageContext.request.contextPath}ui/images/favicon.png" type="image/png" />
+		<link rel="icon" href="${pageContext.request.contextPath}/ui/images/favicon.png" type="image/png" />
 
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/main.css">
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/fonticons.css">
