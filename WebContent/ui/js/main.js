@@ -119,9 +119,6 @@
 	}
 
 	game.boxes.container.addEventListener("mousemove", function(event) {
-		if (!socket || socket.readyState !== 1)
-			return;
-
 		function isFilled(element) {
 			return /\bp[1234]\b/.test(element.className);
 		}
@@ -184,7 +181,7 @@
 	});
 
 	game.boxes.container.addEventListener("click", function(event) {
-		if (!socket || socket.readyState !== 1 || !game.currentLine)
+		if (!game.currentLine)
 			return;
 
 		var element = document.elementFromPoint(event.clientX, event.clientY);
@@ -218,7 +215,8 @@
 			break;
 		}
 
-		socket.send(JSON.stringify(move));
+		if (socket && socket.readyState === 1)
+			socket.send(JSON.stringify(move));
 	});
 
 	// Lines
