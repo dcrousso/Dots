@@ -101,19 +101,19 @@ public class GameController {
 	}
 
 	private void savePlayerInfo(int winner) {
-		for (int i = 0; i < m_players.size(); ++i) {
-			Player player = m_players.get(i);
+		m_players.forEach(player -> {
 			User user = player.getUser();
-			if (user != null) {
-				user.addGame(m_board.getScore(i), i == winner);
-				Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
-					Integer.toString(user.getGamesPlayed()),
-					Integer.toString(user.getGamesWon()),
-					Integer.toString(user.getPoints()),
-					user.getUsername()
-				});
-			}
-		}
+			if (user == null)
+				return;
+
+			user.addGame(m_board.getScore(player.getId()), player.getId() == winner);
+			Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
+				Integer.toString(user.getGamesPlayed()),
+				Integer.toString(user.getGamesWon()),
+				Integer.toString(user.getPoints()),
+				user.getUsername()
+			});
+		});
 		m_alive = false;
 	}
 }
