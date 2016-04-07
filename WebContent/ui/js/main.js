@@ -215,6 +215,9 @@
 			break;
 		}
 
+		if (window.logging)
+			console.log(move);
+
 		if (socket && socket.readyState === 1)
 			socket.send(JSON.stringify(move));
 	});

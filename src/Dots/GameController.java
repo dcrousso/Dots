@@ -33,7 +33,7 @@ public class GameController {
 	}
 
 	public void send(Player caller, JsonObject content) {
-		switch (content.getString("type")) {
+		switch (content.getString("type").toLowerCase()) {
 		case "move":
 			if (!m_board.hasUncaptured() || caller != m_players.get(m_current))
 				break;
