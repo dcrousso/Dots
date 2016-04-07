@@ -61,6 +61,9 @@ window.logging = true;
 			if (!socket || socket.readyState !== 1)
 				return;
 
+			playerIcons[3].classList.toggle("disabled", mode < 3);
+			playerIcons[4].classList.toggle("disabled", mode < 4);
+
 			socket.send(JSON.stringify({mode: mode}));
 			main.className = "waiting";
 		};
@@ -276,6 +279,9 @@ window.logging = true;
 	}
 
 	function resetMain() {
+		for (var key in playerIcons)
+			playerIcons[key].classList.remove("disabled");
+
 		main.textContent = ""; // Remove all children
 		main.className = "mode-select";
 		main.removeAttribute("data-winner");

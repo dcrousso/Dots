@@ -100,17 +100,21 @@ header > nav > .players > div {
 	border-radius: 25%;
 	outline: 3px dashed transparent;
 	outline-offset: calc((-25px / 2) - 6px);
-	-webkit-transition: outline-color 400ms, outline-offset 400ms;
-	   -moz-transition: outline-color 400ms, outline-offset 400ms;
-	    -ms-transition: outline-color 400ms, outline-offset 400ms;
-	     -o-transition: outline-color 400ms, outline-offset 400ms;
-	        transition: outline-color 400ms, outline-offset 400ms;
+	-webkit-transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
+	   -moz-transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
+	    -ms-transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
+	     -o-transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
+	        transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
 }
 
 header > nav > .players > div.current {
 	outline-color: black;
 	outline-offset: -3px;
 	animation: playerActive 2s ease infinite;
+}
+
+header > nav > .players > div.disabled {
+	opacity: 0.3;
 }
 
 @keyframes playerActive {
