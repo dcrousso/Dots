@@ -2,11 +2,13 @@ package Dots;
 
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 public class GameBoard {
 	private ConcurrentHashMap<String, Integer> m_board;
@@ -49,7 +51,7 @@ public class GameBoard {
 		return getMark(row, col, side) != 0;
 	}
 
-	public JsonObject mark(int row, int col, String side, int player) {
+	public JsonObject mark(int row, int col, String side, int player, BiConsumer<JsonObjectBuilder, Boolean> callback) {
 		if (isMarked(row, col, side))
 			return null;
 
@@ -106,16 +108,21 @@ public class GameBoard {
 			break;
 		}
 
-		return Json.createObjectBuilder()
+		JsonObjectBuilder result = Json.createObjectBuilder()
 			.add("type", "move")
 			.add("player", player)
 			.add("line", Json.createObjectBuilder()
 				.add("r", row)
 				.add("c", col)
 				.add("side", side)
-			.build())
-			.add("boxes", boxes.build())
-		.build();
+			.build());
+
+		JsonArray captured = boxes.build();
+		if (!captured.isEmpty())
+			result.add("boxes", captured);
+
+		callback.accept(result, !captured.isEmpty());
+		return result.build();
 	}
 
 	public boolean capture(int row, int col, int player) {

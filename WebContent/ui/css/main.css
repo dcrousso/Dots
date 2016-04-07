@@ -83,6 +83,42 @@ header > nav {
 	padding: 0 20px;
 }
 
+header > nav > .players {
+	display: -webkit-flex;
+	display:    -moz-flex;
+	display:     -ms-flexbox;
+	display:         flex;
+	justify-content: space-between;
+	width: 100%;
+	max-width: 150px;
+}
+
+header > nav > .players > div {
+	width: 25px;
+	height: 25px;
+	background-color: currentColor;
+	border-radius: 25%;
+	outline: 3px dashed transparent;
+	outline-offset: calc((-25px / 2) - 6px);
+	-webkit-transition: outline-color 400ms, outline-offset 400ms;
+	   -moz-transition: outline-color 400ms, outline-offset 400ms;
+	    -ms-transition: outline-color 400ms, outline-offset 400ms;
+	     -o-transition: outline-color 400ms, outline-offset 400ms;
+	        transition: outline-color 400ms, outline-offset 400ms;
+}
+
+header > nav > .players > div.current {
+	outline-color: black;
+	outline-offset: -3px;
+	animation: playerActive 2s ease infinite;
+}
+
+@keyframes playerActive {
+	from { transform: rotate(0deg); }
+	50%  { transform: rotate(180deg); }
+	to   { transform: rotate(360deg); }
+}
+
 main {
 	position: relative;
 	top: 15vh;
@@ -107,6 +143,7 @@ main.restart::after {
 	left: 0;
 	padding-top: 33%;
 	text-align: center;
+	color: black;
 	background-color: hsla(0, 0%, 100%, 0.9);
 }
 
@@ -314,6 +351,7 @@ footer > .container {
 
 footer > .container > div {
 	width: 100%;
+	color: black;
 }
 
 footer > .container > *[class^="icon"]::before {
@@ -434,7 +472,8 @@ noscript > h2 {
 	}
 }
 
-main .p1,
+
+.p1,
 main.restart[data-winner="1"]::after,
 .p1 footer > .container > *[class^="icon"]::before {
 	color: #900 !important; /* Cardinal */
@@ -444,7 +483,8 @@ main.restart[data-winner="1"]::after,
 	content: url(icon-box-p1.svg);
 }
 
-main .p2,
+
+.p2,
 main.restart[data-winner="2"]::after,
 .p2 footer > .container > *[class^="icon"]::before {
 	color: #fc0 !important; /* Gold */
@@ -454,8 +494,9 @@ main.restart[data-winner="2"]::after,
 	content: url(icon-box-p2.svg);
 }
 
-main .p3,
-main.restart[data-winner="1"]::after,
+
+.p3,
+main.restart[data-winner="3"]::after,
 .p3 footer > .container > *[class^="icon"]::before {
 	color: #F75 !important; /* Coral */
 }
@@ -464,8 +505,9 @@ main.restart[data-winner="1"]::after,
 	content: url(icon-box-p3.svg);
 }
 
-main .p4,
-main.restart[data-winner="1"]::after,
+
+.p4,
+main.restart[data-winner="4"]::after,
 .p4 footer > .container > *[class^="icon"]::before {
 	color: #DAD !important; /* Plum */
 }

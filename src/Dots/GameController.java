@@ -25,6 +25,7 @@ public class GameController {
 			player.send(Json.createObjectBuilder()
 				.add("type", "init")
 				.add("player", player.getId())
+				.add("current", m_players.firstElement().getId())
 			.build());
 		}
 		m_board = new GameBoard(Util.parseJSON(Defaults.EMPTY_BOARD).build().getJsonArray("board"), m_players);
@@ -39,12 +40,14 @@ public class GameController {
 				break;
 
 			JsonObject line = (JsonObject) content.getJsonObject("line");
-			JsonObject response = m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_players.get(m_current).getId());  // Player IDs start at 1
+			JsonObject response = m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_players.get(m_current).getId(), (result, captured) -> {
+				if (!captured)
+					m_current = (m_current + 1) % m_players.size();
+
+				result.add("current", m_players.get(m_current).getId());
+			});
 			if (response == null)
 				break;
-
-			if (response.getJsonArray("boxes").size() == 0)
-				m_current = (m_current + 1) % m_players.size();
 
 			m_players.parallelStream().forEach(player -> {
 				if (player != caller || caller.getType() != Type.AI)

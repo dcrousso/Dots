@@ -1,6 +1,13 @@
+window.logging = true;
 (function() {
 	"use strict";
 
+	var playerIcons = {
+		1: document.querySelector("header > nav > .players > div.p1"),
+		2: document.querySelector("header > nav > .players > div.p2"),
+		3: document.querySelector("header > nav > .players > div.p3"),
+		4: document.querySelector("header > nav > .players > div.p4")
+	};
 	var main = document.querySelector("main");
 	var authenticationLink = document.querySelector(".link.authentication");
 	var authenticationForm = null;
@@ -309,11 +316,18 @@
 		case "init":
 			game.playerId = content.player;
 
+			document.body.className = "p" + game.playerId;
+			for (var key in playerIcons)
+				playerIcons[key].classList.toggle("current", parseInt(key) === content.current);
+
 			main.removeAttribute("class");
 			game.modes.container.remove();
-			document.body.className = "p" + game.playerId;
+
 			break;
 		case "move":
+			if (!content.line)
+				break;
+
 			var line = null
 			switch (content.line.side) {
 			case "t":
@@ -334,14 +348,22 @@
 
 			line.classList.add("p" + content.player);
 
-			for (var i = 0; i < content.boxes.length; ++i)
-				game.cells[content.boxes[i].r][content.boxes[i].c].box.classList.add("p" + content.player);
+			if (Array.isArray(content.boxes)) {
+				for (var i = 0; i < content.boxes.length; ++i)
+					game.cells[content.boxes[i].r][content.boxes[i].c].box.classList.add("p" + content.player);
 
-			if (game.playerId === content.player)
-				game.scoreElement.textContent = parseInt(game.scoreElement.textContent) + content.boxes.length;
+				if (game.playerId === content.player)
+					game.scoreElement.textContent = parseInt(game.scoreElement.textContent) + content.boxes.length;
+			}
+
+			for (var key in playerIcons)
+				playerIcons[key].classList.toggle("current", parseInt(key) === content.current);
 
 			break;
 		case "leave":
+			for (var key in playerIcons)
+				playerIcons[key].classList.remove("current");
+
 			main.className = "leave";
 
 			game.playedElement.textContent = content.played;
@@ -359,6 +381,9 @@
 			});
 			break;
 		case "end":
+			for (var key in playerIcons)
+				playerIcons[key].classList.remove("current");
+
 			main.className = "restart";
 			main.dataset.winner = content.winner;
 

@@ -1,5 +1,4 @@
 <%@ page import="Dots.User" %>
-<%@ page import="Dots.Util" %>
 <% User user = ((User) session.getAttribute("user")); %>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +13,7 @@
 		<meta name="keywords" content="dots and boxes, dots, boxes, game">
 		<meta name="description" content="Play the classic game Dots and Boxes, but with a twist!">
 		<meta name="author" content="Benjamin Stein, Sean Yuan, Devin Rousso, Shane Rosse">
-		<link rel="icon" href="ui/images/favicon.png" type="image/png" />
+		<link rel="icon" href="${pageContext.request.contextPath}ui/images/favicon.png" type="image/png" />
 
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/main.css">
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/fonticons.css">
@@ -22,7 +21,12 @@
 	<body>
 		<header>
 			<nav>
-				<a href="${pageContext.request.contextPath}/" title="Homepage">Home</a>
+				<div class="players">
+					<div class="p1" title="Player 1"></div>
+					<div class="p2" title="Player 2"></div>
+					<div class="p3" title="Player 3"></div>
+					<div class="p4" title="Player 4"></div>
+				</div>
 				<a class="link authentication <%= (user != null ? "logout" : "login") %>" href="${pageContext.request.contextPath}/<%= (user != null ? "logout" : "login") %>" title="<%= (user != null ? "Logout" : "Login") %>"><%= (user != null ? "Logout" : "Login") %></a>
 			</nav>
 		</header>
