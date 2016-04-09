@@ -22,7 +22,7 @@ public class GameController {
 		for (int i = 0; i < m_players.size(); ++i) {
 			Player player = m_players.get(i);
 			player.setId(i + 1);
-			player.send(Json.createObjectBuilder()
+			player.send(this, Json.createObjectBuilder()
 				.add("type", "init")
 				.add("player", player.getId())
 				.add("current", m_players.firstElement().getId())
@@ -51,7 +51,7 @@ public class GameController {
 
 			m_players.parallelStream().forEach(player -> {
 				if (player != caller || caller.getType() != Type.AI)
-					player.send(response);
+					player.send(this, response);
 			});
 
 			if (!m_board.hasUncaptured()) {
@@ -66,7 +66,7 @@ public class GameController {
 					if (user != null)
 						end.add("played", user.getGamesPlayed()).add("points", user.getPoints());
 
-					player.send(end.build());
+					player.send(this, end.build());
 				});
 			}
 
@@ -84,7 +84,7 @@ public class GameController {
 				if (user != null)
 					leave.add("played", user.getGamesPlayed()).add("points", user.getPoints());
 
-				player.send(leave.build());
+				player.send(this, leave.build());
 			});
 			break;
 		case "restart":

@@ -372,10 +372,10 @@
 			main.className = "leave";
 
 			if (!isNaN(content.played))
-				game.playedElement.textContent = content.played;
+				game.playedElement.textContent = content.played || 0;
 
 			if (!isNaN(content.points))
-				game.pointsElement.textContent = content.points;
+				game.pointsElement.textContent = content.points || 0;
 
 			var restart = main.appendChild(document.createElement("button"));
 			restart.textContent = "New Game";
@@ -407,10 +407,10 @@
 			});
 
 			if (!isNaN(content.played))
-				game.playedElement.textContent = content.played;
+				game.playedElement.textContent = content.played || 0;
 
 			if (!isNaN(content.points))
-				game.pointsElement.textContent = content.points;
+				game.pointsElement.textContent = content.points || 0;
 
 			if (game.playerId === content.winner)
 				game.wonElement.textContent = parseInt(game.wonElement.textContent) + 1;

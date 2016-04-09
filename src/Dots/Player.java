@@ -17,7 +17,7 @@ public abstract class Player {
 		return m_type;
 	}
 
-	public abstract void send(JsonObject content);
+	public abstract void send(GameController game, JsonObject content);
 
 	public abstract User getUser();
 

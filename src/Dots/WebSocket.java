@@ -41,8 +41,7 @@ public class WebSocket extends Player {
 		if (!isAlive() && content.containsKey("mode")) {
 			int mode = content.getInt("mode");
 			if (mode == 1) { // 1 Player vs AI
-				AIController ai = new AIController();
-				m_game = ai.m_game = new GameController(this, ai);
+				m_game = new GameController(this, AIController.INSTANCE);
 				return;
 			}
 
@@ -110,17 +109,20 @@ public class WebSocket extends Player {
 		m_error = true;
 	}
 
-	public void send(JsonObject content) {
+	@Override
+	public void send(GameController game, JsonObject content) {
 		if (!isAlive())
 			return;
 
 		m_socketSession.getAsyncRemote().sendText(content.toString());
 	}
 
+	@Override
 	public User getUser() {
 		return (User) m_httpSession.getAttribute("user");
 	}
 
+	@Override
 	public void restart() {
 		if (!isAlive())
 			return;
