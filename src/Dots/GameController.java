@@ -43,13 +43,6 @@ public class GameController {
 			JsonObject response = m_board.mark(line.getInt("r"), line.getInt("c"), line.getString("side"), m_players.get(m_current).getId(), (result, captured) -> {
 				if (!captured)
 					m_current = (m_current + 1) % m_players.size();
-				
-				//TODO code added by bfstein to make the AIController work
-//				if (captured) {
-//					if (m_players.get(m_current).getType() == Type.AI) {
-//						m_players.get(m_current).send(this, content);
-//					}
-//				}
 
 				result.add("current", m_players.get(m_current).getId());
 			});
@@ -57,7 +50,8 @@ public class GameController {
 				break;
 
 			m_players.parallelStream().forEach(player -> {
-				if (player != caller || caller.getType() != Type.AI)
+				// Don't forward the move to an AI if they initiated it unless it captured a box
+				if (player != caller || caller.getType() != Type.AI || response.containsKey("boxes"))
 					player.send(this, response);
 			});
 
