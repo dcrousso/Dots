@@ -41,9 +41,13 @@ public class GameBoard {
 	}
 
 	public int getMark(int row, int col, String side) {
+		if (Util.isEmpty(side))
+			return 0;
+
 		String key = generateCellKey(row, col) + side;
 		if (!m_board.containsKey(key))
 			return 0;
+
 		return m_board.get(key);
 	}
 

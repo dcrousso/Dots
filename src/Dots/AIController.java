@@ -35,53 +35,45 @@ public class AIController extends Player implements Runnable {
 
 				GameBoard board = game.getBoard();
 
-				for (int i = 0; i < 10 && side == null; ++i) {
-					for (int j = 0; j < 10 && side == null; ++j) {
-						int topMark = 0;
-						if (board.getMark(i, j, "t") != 0)
-							topMark = 1;
-
-						int bottomMark = 0;
-						if (board.getMark(i, j, "b") != 0)
-							bottomMark = 1;
-
-						int leftMark = 0;
-						if (board.getMark(i, j, "l") != 0)
-							leftMark = 1;
-
-						int rightMark = 0;
-						if (board.getMark(i, j, "r") != 0)
-							rightMark = 1;
-
-						if (topMark + bottomMark + leftMark + rightMark == 3) {
+				for (int i = 0; i < 10 && Util.isEmpty(side); ++i) {
+					for (int j = 0; j < 10 && Util.isEmpty(side); ++j) {
+						int topMark = board.isMarked(i, j, "t") ? 1 : 0;
+						int rightMark = board.isMarked(i, j, "r") ? 1 : 0;
+						int bottomMark = board.isMarked(i, j, "b") ? 1 : 0;
+						int leftMark = board.isMarked(i, j, "l") ? 1 : 0;
+						if (topMark + rightMark + bottomMark + leftMark == 3) {
 							row = i;
 							col = j;
 
 							if (topMark == 0)
 								side = "t";
+							else if (rightMark == 0)
+								side = "r";
 							else if (bottomMark == 0)
 								side = "b";
 							else if (leftMark == 0)
 								side = "l";
-							else if (rightMark == 0)
-								side = "r";
 						}
 					}
 				}
 
-				// Pick the first open spot
-				for (int i = 0; i < 10 && side == null; ++i) {
-					for (int j = 0; j < 10 && side == null; ++j) {
-						row = i;
-						col = j;
-						if (board.getMark(i, j, "t") == 0)
-							side = "t";
-						else if (board.getMark(i, j, "b") == 0)
-							side = "b";
-						else if (board.getMark(i, j, "l") == 0)
-							side = "l";
-						else if (board.getMark(i, j, "r") == 0)
-							side = "r";
+				// Pick a random open spot
+				while (board.isMarked(row, col, side) || Util.isEmpty(side)) {
+					row = (int) Math.floor(Math.random() * 10);
+					col = (int) Math.floor(Math.random() * 10);
+					switch ((int) Math.floor(Math.random() * 4)) {
+					case 0:
+						side = "t";
+						break;
+					case 1:
+						side = "r";
+						break;
+					case 2:
+						side = "b";
+						break;
+					case 3:
+						side = "l";
+						break;
 					}
 				}
 
