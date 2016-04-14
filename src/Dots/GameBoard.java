@@ -163,16 +163,7 @@ public class GameBoard {
 		return row + "." + col + ".";
 	}
 	
-	public boolean makesCapturable(int row, int col, String side) {
-		
-		//check the given cell
-//		int topMark = isMarked(row, col, "t") ? 1 : 0;
-//		int rightMark = isMarked(row, col, "r") ? 1 : 0;
-//		int bottomMark = isMarked(row, col, "b") ? 1 : 0;
-//		int leftMark = isMarked(row, col, "l") ? 1 : 0;
-//		if (topMark + rightMark + bottomMark + leftMark == 2) {
-//			return true;
-//		}
+	public String makesCapturable(int row, int col, String side) {
 		
 		//if it's horizontal, check above and below, unless you're at a border
 		
@@ -182,7 +173,13 @@ public class GameBoard {
 			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
 			int leftMark = isMarked(row, col, "l") ? 1 : 0;
 			if (rightMark + bottomMark + leftMark == 2) {
-				return true;
+				if (rightMark == 0) {
+					return "r";
+				} else if (bottomMark == 0) {
+					return "b";
+				} else {
+					return "l";
+				}
 			}
 			
 			if (row != 0) {
@@ -190,7 +187,13 @@ public class GameBoard {
 				rightMark = isMarked(row-1, col, "r") ? 1 : 0;
 				leftMark = isMarked(row-1, col, "l") ? 1 : 0;
 				if (rightMark + topMark + leftMark == 2) {
-					return true;
+					if (rightMark == 0) {
+						return "r";
+					} else if (topMark == 0) {
+						return "t";
+					} else {
+						return "l";
+					}
 				}
 			}
 		}
@@ -201,7 +204,13 @@ public class GameBoard {
 			int rightMark = isMarked(row, col, "r") ? 1 : 0;
 			int leftMark = isMarked(row, col, "l") ? 1 : 0;
 			if (rightMark + topMark + leftMark == 2) {
-				return true;
+				if (rightMark == 0) {
+					return "r";
+				} else if (topMark == 0) {
+					return "t";
+				} else {
+					return "l";
+				}
 			}
 			
 			if (row != 9) {
@@ -209,7 +218,13 @@ public class GameBoard {
 				int bottomMark = isMarked(row+1, col, "b") ? 1 : 0;
 				leftMark = isMarked(row+1, col, "l") ? 1 : 0;
 				if (rightMark + bottomMark + leftMark == 2) {
-					return true;
+					if (rightMark == 0) {
+						return "r";
+					} else if (bottomMark == 0) {
+						return "b";
+					} else {
+						return "l";
+					}
 				}
 			}
 		}
@@ -222,7 +237,13 @@ public class GameBoard {
 			int rightMark = isMarked(row, col, "r") ? 1 : 0;
 			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
 			if (rightMark + topMark + bottomMark == 2) {
-				return true;
+				if (rightMark == 0) {
+					return "r";
+				} else if (topMark == 0) {
+					return "t";
+				} else {
+					return "b";
+				}
 			}
 			
 			if (col != 0) {
@@ -230,7 +251,13 @@ public class GameBoard {
 				bottomMark = isMarked(row, col-1, "b") ? 1 : 0;
 				topMark = isMarked(row, col-1, "t") ? 1 : 0;
 				if (leftMark + bottomMark + topMark == 2) {
-					return true;
+					if (leftMark == 0) {
+						return "l";
+					} else if (topMark == 0) {
+						return "t";
+					} else {
+						return "b";
+					}
 				}
 			}
 		}
@@ -241,7 +268,13 @@ public class GameBoard {
 			int leftMark = isMarked(row, col, "l") ? 1 : 0;
 			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
 			if (leftMark + topMark + bottomMark == 2) {
-				return true;
+				if (leftMark == 0) {
+					return "l";
+				} else if (topMark == 0) {
+					return "t";
+				} else {
+					return "b";
+				}
 			}
 			
 			if (col != 9) {
@@ -249,11 +282,25 @@ public class GameBoard {
 				bottomMark = isMarked(row, col+1, "b") ? 1 : 0;
 				topMark = isMarked(row, col+1, "t") ? 1 : 0;
 				if (rightMark + bottomMark + topMark == 2) {
-					return true;
+					if (rightMark == 0) {
+						return "r";
+					} else if (topMark == 0) {
+						return "t";
+					} else {
+						return "b";
+					}
 				}
 			}
 		}
-		
-		return false;
+		return null;
+	}
+	
+	public boolean isSaturated() {
+		System.out.println(m_uncaptured);
+		if (m_uncaptured < 100) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
