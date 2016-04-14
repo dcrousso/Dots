@@ -53,34 +53,78 @@ public class AIController extends Player implements Runnable {
 								side = "b";
 							else if (leftMark == 0)
 								side = "l";
+							
+							System.out.println("Best");
+							if (board.makesCapturable(row, col, side)) {
+								System.out.println("yep");
+							} else {
+								System.out.println("I don't know what the problem is");
+							}
+							
 						}
 					}
 				}
 
-				// Pick a random open spot
-				while (board.isMarked(row, col, side) || Util.isEmpty(side)) {
-					row = (int) Math.floor(Math.random() * 10);
-					col = (int) Math.floor(Math.random() * 10);
-					switch ((int) Math.floor(Math.random() * 4)) {
-					case 0:
-						side = "t";
-						break;
-					case 1:
-						side = "r";
-						break;
-					case 2:
-						side = "b";
-						break;
-					case 3:
-						side = "l";
-						break;
+				// Pick a random open spot (ONLY IF I DIDN'T ALREADY MARK A BOX)
+				if (Util.isEmpty(side)) {
+					int myCounter = 0; //no infinite loops when I get caught
+					while (Util.isEmpty(side) || board.isMarked(row, col, side) || board.makesCapturable(row, col, side)) {
+						myCounter++;
+						if (myCounter > 40000) {
+							System.out.println("Counter exceeded");
+							side = null;
+							break;
+						}
+						row = (int) Math.floor(Math.random() * 10);
+						col = (int) Math.floor(Math.random() * 10);
+						switch ((int) Math.floor(Math.random() * 4)) {
+						case 0:
+							side = "t";
+							System.out.println("This is OK");
+							break;
+						case 1:
+							side = "r";
+							System.out.println("This is OK");
+							break;
+						case 2:
+							side = "b";
+							System.out.println("This is OK");
+							break;
+						case 3:
+							side = "l";
+							System.out.println("This is OK");
+							break;
+						}
 					}
 				}
 
-				if (row == -1 || col == -1 || Util.isEmpty(side)) {
-					m_games.offer(game); // Try again
-					continue;
+					
+				//for now, pick a sequential number (AI to come)
+				for (int i = 0; i < 10 && Util.isEmpty(side); ++i) {
+					for (int j = 0; j < 10 && Util.isEmpty(side); ++j) {
+						int topMark = board.isMarked(i, j, "t") ? 1 : 0;
+						int rightMark = board.isMarked(i, j, "r") ? 1 : 0;
+						int bottomMark = board.isMarked(i, j, "b") ? 1 : 0;
+						int leftMark = board.isMarked(i, j, "l") ? 1 : 0;
+						row = i;
+						col = j;
+						
+						System.out.println("shouldn't happen much");
+
+						if (topMark == 0)
+							side = "t";
+						else if (rightMark == 0)
+							side = "r";
+						else if (bottomMark == 0)
+							side = "b";
+						else if (leftMark == 0)
+							side = "l";
+					}
 				}
+					
+//					m_games.offer(game); // Try again
+//					continue;
+
 
 				game.send(this, Json.createObjectBuilder()
 					.add("type", "move")
@@ -117,5 +161,21 @@ public class AIController extends Player implements Runnable {
 			return;
 
 		(m_thread = new Thread(this)).start();
+	}
+	
+	//Minimax stuff: AI is always player 2
+	private int minimaxMax(GameBoard g, int depth) {
+		
+		if (!g.hasUncaptured() || depth == 6) {
+			return evaluate(g);
+		}
+		
+		
+		
+		return 0;
+	}
+	
+	private int evaluate(GameBoard g) {
+		return (g.getScore(2) - g.getScore(1));	
 	}
 }

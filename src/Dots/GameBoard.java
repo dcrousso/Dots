@@ -162,4 +162,98 @@ public class GameBoard {
 	private String generateCellKey(int row, int col) {
 		return row + "." + col + ".";
 	}
+	
+	public boolean makesCapturable(int row, int col, String side) {
+		
+		//check the given cell
+//		int topMark = isMarked(row, col, "t") ? 1 : 0;
+//		int rightMark = isMarked(row, col, "r") ? 1 : 0;
+//		int bottomMark = isMarked(row, col, "b") ? 1 : 0;
+//		int leftMark = isMarked(row, col, "l") ? 1 : 0;
+//		if (topMark + rightMark + bottomMark + leftMark == 2) {
+//			return true;
+//		}
+		
+		//if it's horizontal, check above and below, unless you're at a border
+		
+		//top
+		if (side == "t") {
+			int rightMark = isMarked(row, col, "r") ? 1 : 0;
+			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
+			int leftMark = isMarked(row, col, "l") ? 1 : 0;
+			if (rightMark + bottomMark + leftMark == 2) {
+				return true;
+			}
+			
+			if (row != 0) {
+				int topMark = isMarked(row-1, col, "t") ? 1 : 0;
+				rightMark = isMarked(row-1, col, "r") ? 1 : 0;
+				leftMark = isMarked(row-1, col, "l") ? 1 : 0;
+				if (rightMark + topMark + leftMark == 2) {
+					return true;
+				}
+			}
+		}
+		
+		//bottom
+		if (side == "b") {
+			int topMark = isMarked(row, col, "t") ? 1 : 0;
+			int rightMark = isMarked(row, col, "r") ? 1 : 0;
+			int leftMark = isMarked(row, col, "l") ? 1 : 0;
+			if (rightMark + topMark + leftMark == 2) {
+				return true;
+			}
+			
+			if (row != 9) {
+				rightMark = isMarked(row+1, col, "r") ? 1 : 0;
+				int bottomMark = isMarked(row+1, col, "b") ? 1 : 0;
+				leftMark = isMarked(row+1, col, "l") ? 1 : 0;
+				if (rightMark + bottomMark + leftMark == 2) {
+					return true;
+				}
+			}
+		}
+		
+		//if it's vertical, check left and right, unless you're at a border
+		
+		//left
+		if (side == "l") {
+			int topMark = isMarked(row, col, "t") ? 1 : 0;
+			int rightMark = isMarked(row, col, "r") ? 1 : 0;
+			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
+			if (rightMark + topMark + bottomMark == 2) {
+				return true;
+			}
+			
+			if (col != 0) {
+				int leftMark = isMarked(row, col-1, "l") ? 1 : 0;
+				bottomMark = isMarked(row, col-1, "b") ? 1 : 0;
+				topMark = isMarked(row, col-1, "t") ? 1 : 0;
+				if (leftMark + bottomMark + topMark == 2) {
+					return true;
+				}
+			}
+		}
+		
+		//right
+		if (side == "r") {
+			int topMark = isMarked(row, col, "t") ? 1 : 0;
+			int leftMark = isMarked(row, col, "l") ? 1 : 0;
+			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
+			if (leftMark + topMark + bottomMark == 2) {
+				return true;
+			}
+			
+			if (col != 9) {
+				int rightMark = isMarked(row, col+1, "r") ? 1 : 0;
+				bottomMark = isMarked(row, col+1, "b") ? 1 : 0;
+				topMark = isMarked(row, col+1, "t") ? 1 : 0;
+				if (rightMark + bottomMark + topMark == 2) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 }
