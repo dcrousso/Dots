@@ -1,5 +1,6 @@
 package Dots;
 
+import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.json.Json;
@@ -10,6 +11,7 @@ public class AIController extends Player implements Runnable {
 
 	private ConcurrentLinkedQueue<GameController> m_games;
 	private Thread m_thread;
+	private boolean AITakeover = false;
 
 	AIController() {
 		initialize(Type.AI);
@@ -34,8 +36,6 @@ public class AIController extends Player implements Runnable {
 				String side = null;
 
 				GameBoard board = game.getBoard();
-				
-				boolean unneeded = board.isSaturated();
 
 				for (int i = 0; i < 10 && Util.isEmpty(side); ++i) {
 					for (int j = 0; j < 10 && Util.isEmpty(side); ++j) {
@@ -69,6 +69,7 @@ public class AIController extends Player implements Runnable {
 						if (myCounter > 40000) {
 							System.out.println("Counter exceeded");
 							side = null;
+							AITakeover = true;
 							break;
 						}
 						row = (int) Math.floor(Math.random() * 10);
@@ -76,25 +77,21 @@ public class AIController extends Player implements Runnable {
 						switch ((int) Math.floor(Math.random() * 4)) {
 						case 0:
 							side = "t";
-							System.out.println("This is OK");
 							break;
 						case 1:
 							side = "r";
-							System.out.println("This is OK");
 							break;
 						case 2:
 							side = "b";
-							System.out.println("This is OK");
 							break;
 						case 3:
 							side = "l";
-							System.out.println("This is OK");
 							break;
 						}
 					}
 				}
 
-				boolean dumb = true;
+				boolean dumb = false;
 				
 				if (dumb) {
 					//for now, pick a sequential number (AI to come)
@@ -120,10 +117,16 @@ public class AIController extends Player implements Runnable {
 						}
 					}
 				} else {
-					//AI Compare alternatives, pick the one that leaves the
+					//AI Compare alternatives, pick the one that leaves the lowest opponent score
 					
-					
-					
+					if (Util.isEmpty(side)) {
+						System.out.println("AI!!");
+						AIMove bestMove = getBestMove(board, 1);
+						row = bestMove.row;
+						col = bestMove.col;
+						side = bestMove.side;
+						System.out.println("AI Done, move: " + row + ", " + col + ", " + side);
+					}
 				}
 
 					
@@ -168,65 +171,100 @@ public class AIController extends Player implements Runnable {
 		(m_thread = new Thread(this)).start();
 	}
 	
-	//Minimax stuff: AI is always player 2
-	private int minimaxMax(GameBoard g, int depth) {
+	//finds the move that yields the smallest number of boxes to the opposing player (i.e. minimax)
+	private AIMove getBestMove(GameBoard board, int opponent) {
 		
-		if (!g.hasUncaptured() || depth == 6) {
-			return evaluate(g);
+		//min move
+		int row = -1;
+		int col = -1;
+		String side = null;
+		
+		int minOpponentScore = 1000; //TODO
+		
+		for (int i = 0; i < 10; ++i) {
+			for (int j = 0; j < 10; ++j) {
+				int topMark = board.isMarked(i, j, "t") ? 1 : 0;
+				int rightMark = board.isMarked(i, j, "r") ? 1 : 0;
+				int bottomMark = board.isMarked(i, j, "b") ? 1 : 0;
+				int leftMark = board.isMarked(i, j, "l") ? 1 : 0;
+
+				//for top, right, bottom, left; if they're not marked
+
+				if (topMark == 0) {
+					
+					//evaluate how many boxes it captures
+					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "t"), opponent);
+					
+					if (opponentScore < minOpponentScore) {
+						minOpponentScore = opponentScore;
+						row = i;
+						col = j;
+						side = "t";
+					}
+				}
+					
+				if (rightMark == 0) {
+					//evaluate how many boxes it captures
+					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "r"), opponent);
+					
+					if (opponentScore < minOpponentScore) {
+						minOpponentScore = opponentScore;
+						row = i;
+						col = j;
+						side = "r";
+					}
+				}
+				
+				if (bottomMark == 0) {
+					//evaluate how many boxes it captures
+					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "b"), opponent);
+					
+					if (opponentScore < minOpponentScore) {
+						minOpponentScore = opponentScore;
+						row = i;
+						col = j;
+						side = "b";
+					}
+				}
+				
+				if (leftMark == 0) {
+					//evaluate how many boxes it captures
+					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "l"), opponent);
+					
+					if (opponentScore < minOpponentScore) {
+						minOpponentScore = opponentScore;
+						row = i;
+						col = j;
+						side = "l";
+					}
+				}
+			}
 		}
 		
-		
-		
-		return 0;
+		return new AIMove(row, col, side);
 	}
 	
-//	private AIMove getBestOption() {
-//		
-//		int row = -1;
-//		int col = -1;
-//		String side = null;
-//		
-//		for (int i = 0; i < 10 && Util.isEmpty(side); ++i) {
-//			for (int j = 0; j < 10 && Util.isEmpty(side); ++j) {
-//				int topMark = board.isMarked(i, j, "t") ? 1 : 0;
-//				int rightMark = board.isMarked(i, j, "r") ? 1 : 0;
-//				int bottomMark = board.isMarked(i, j, "b") ? 1 : 0;
-//				int leftMark = board.isMarked(i, j, "l") ? 1 : 0;
-//				if (topMark + rightMark + bottomMark + leftMark == 3) {
-//					row = i;
-//					col = j;
-//
-//					if (topMark == 0)
-//						side = "t";
-//					else if (rightMark == 0)
-//						side = "r";
-//					else if (bottomMark == 0)
-//						side = "b";
-//					else if (leftMark == 0)
-//						side = "l";
-//					
-//					System.out.println("Best");
-//				}
-//			}
-//		}
-//		
-//		return new AIMove(row, col, side);
-//	}
-	
-	private int evaluate(GameBoard g) {
-		return (g.getScore(2) - g.getScore(1));	
-	}
-	
-	class AIMove {
+	//evaluates how many boxes the opponent can capture if the opponent makes a given move
+	//NOTE: call on duplicates!
+	private int evaluate(GameBoard board, AIMove move, int player) {
 		
-		int row;
-		int col;
-		String side;
+		Vector<AIMove> moves = board.makesCapturable(move.row, move.col, move.side);
 		
-		AIMove(int row, int col, String side) {
-			this.row = row;
-			this.col = col;
-			this.side = side;
+		board.mark(move.row, move.col, move.side, player, (result, captured) -> {
+			result.add("current", player);
+		});
+		
+		if (moves == null) {			
+			return board.getScore(player);
 		}
+		
+		int opponentScore = board.getScore(player);
+		
+		for (AIMove m : moves) {
+			opponentScore = evaluate(board, m, player);
+		}
+		
+		return opponentScore;	
 	}
+	
 }

@@ -163,7 +163,9 @@ public class GameBoard {
 		return row + "." + col + ".";
 	}
 	
-	public String makesCapturable(int row, int col, String side) {
+	public Vector<AIMove> makesCapturable(int row, int col, String side) {
+		
+		Vector<AIMove> capturableBoxes = new Vector<AIMove>();
 		
 		//if it's horizontal, check above and below, unless you're at a border
 		
@@ -174,11 +176,11 @@ public class GameBoard {
 			int leftMark = isMarked(row, col, "l") ? 1 : 0;
 			if (rightMark + bottomMark + leftMark == 2) {
 				if (rightMark == 0) {
-					return "r";
+					capturableBoxes.add(new AIMove(row, col, "r"));
 				} else if (bottomMark == 0) {
-					return "b";
+					capturableBoxes.add(new AIMove(row, col, "b"));
 				} else {
-					return "l";
+					capturableBoxes.add(new AIMove(row, col, "l"));
 				}
 			}
 			
@@ -188,13 +190,18 @@ public class GameBoard {
 				leftMark = isMarked(row-1, col, "l") ? 1 : 0;
 				if (rightMark + topMark + leftMark == 2) {
 					if (rightMark == 0) {
-						return "r";
+						capturableBoxes.add(new AIMove(row-1, col, "r"));
 					} else if (topMark == 0) {
-						return "t";
+						capturableBoxes.add(new AIMove(row-1, col, "t"));
 					} else {
-						return "l";
+						capturableBoxes.add(new AIMove(row-1, col, "l"));
 					}
 				}
+			}
+			if (capturableBoxes.size() != 0) {
+				return capturableBoxes;
+			} else {
+				return null;
 			}
 		}
 		
@@ -205,11 +212,11 @@ public class GameBoard {
 			int leftMark = isMarked(row, col, "l") ? 1 : 0;
 			if (rightMark + topMark + leftMark == 2) {
 				if (rightMark == 0) {
-					return "r";
+					capturableBoxes.add(new AIMove(row, col, "r"));
 				} else if (topMark == 0) {
-					return "t";
+					capturableBoxes.add(new AIMove(row, col, "t"));
 				} else {
-					return "l";
+					capturableBoxes.add(new AIMove(row, col, "l"));
 				}
 			}
 			
@@ -219,13 +226,18 @@ public class GameBoard {
 				leftMark = isMarked(row+1, col, "l") ? 1 : 0;
 				if (rightMark + bottomMark + leftMark == 2) {
 					if (rightMark == 0) {
-						return "r";
+						capturableBoxes.add(new AIMove(row+1, col, "r"));
 					} else if (bottomMark == 0) {
-						return "b";
+						capturableBoxes.add(new AIMove(row+1, col, "b"));
 					} else {
-						return "l";
+						capturableBoxes.add(new AIMove(row+1, col, "l"));
 					}
 				}
+			}
+			if (capturableBoxes.size() != 0) {
+				return capturableBoxes;
+			} else {
+				return null;
 			}
 		}
 		
@@ -238,11 +250,11 @@ public class GameBoard {
 			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
 			if (rightMark + topMark + bottomMark == 2) {
 				if (rightMark == 0) {
-					return "r";
+					capturableBoxes.add(new AIMove(row, col, "r"));
 				} else if (topMark == 0) {
-					return "t";
+					capturableBoxes.add(new AIMove(row, col, "t"));
 				} else {
-					return "b";
+					capturableBoxes.add(new AIMove(row, col, "b"));
 				}
 			}
 			
@@ -252,13 +264,18 @@ public class GameBoard {
 				topMark = isMarked(row, col-1, "t") ? 1 : 0;
 				if (leftMark + bottomMark + topMark == 2) {
 					if (leftMark == 0) {
-						return "l";
+						capturableBoxes.add(new AIMove(row, col-1, "l"));
 					} else if (topMark == 0) {
-						return "t";
+						capturableBoxes.add(new AIMove(row, col-1, "t"));
 					} else {
-						return "b";
+						capturableBoxes.add(new AIMove(row, col-1, "b"));
 					}
 				}
+			}
+			if (capturableBoxes.size() != 0) {
+				return capturableBoxes;
+			} else {
+				return null;
 			}
 		}
 		
@@ -269,11 +286,11 @@ public class GameBoard {
 			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
 			if (leftMark + topMark + bottomMark == 2) {
 				if (leftMark == 0) {
-					return "l";
+					capturableBoxes.add(new AIMove(row, col, "l"));
 				} else if (topMark == 0) {
-					return "t";
+					capturableBoxes.add(new AIMove(row, col, "t"));
 				} else {
-					return "b";
+					capturableBoxes.add(new AIMove(row, col, "b"));
 				}
 			}
 			
@@ -283,24 +300,30 @@ public class GameBoard {
 				topMark = isMarked(row, col+1, "t") ? 1 : 0;
 				if (rightMark + bottomMark + topMark == 2) {
 					if (rightMark == 0) {
-						return "r";
+						capturableBoxes.add(new AIMove(row, col+1, "r"));
 					} else if (topMark == 0) {
-						return "t";
+						capturableBoxes.add(new AIMove(row, col+1, "t"));
 					} else {
-						return "b";
+						capturableBoxes.add(new AIMove(row, col+1, "b"));
 					}
 				}
+			}
+			if (capturableBoxes.size() != 0) {
+				return capturableBoxes;
+			} else {
+				return null;
 			}
 		}
 		return null;
 	}
+			
+	private GameBoard(ConcurrentHashMap<String, Integer> inBoard, int inUncaptured, ConcurrentHashMap<Integer, Integer> inScores) {
+		m_board = new ConcurrentHashMap<String, Integer>(inBoard);
+		m_uncaptured = inUncaptured;
+		m_scores = new ConcurrentHashMap<Integer, Integer>(inScores);
+	}
 	
-	public boolean isSaturated() {
-		System.out.println(m_uncaptured);
-		if (m_uncaptured < 100) {
-			return true;
-		} else {
-			return false;
-		}
+	public GameBoard duplicate() {
+		return new GameBoard(m_board, m_uncaptured, m_scores);
 	}
 }
