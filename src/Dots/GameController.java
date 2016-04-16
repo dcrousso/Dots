@@ -7,8 +7,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import Dots.Player.Type;
-
 public class GameController {
 	private Vector<Player> m_players;
 	private int m_current;
@@ -51,7 +49,7 @@ public class GameController {
 
 			m_players.parallelStream().forEach(player -> {
 				// Don't forward the move to an AI if they initiated it unless it captured a box
-				if (player != caller || caller.getType() != Type.AI || response.containsKey("boxes"))
+				if (player != caller || caller.getType() != Player.Type.AI || response.containsKey("boxes"))
 					player.send(this, response);
 			});
 

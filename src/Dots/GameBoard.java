@@ -1,8 +1,12 @@
 package Dots;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -10,21 +14,44 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-public class GameBoard {
+import javatechniques.DeepCopy;
+
+public class GameBoard implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	public static class Move {
+		public int row;
+		public int col;
+		public String side;
+
+		Move(int row, int col, String side) {
+			this.row = row;
+			this.col = col;
+			this.side = side;
+		}
+	}
+
 	private ConcurrentHashMap<String, Integer> m_board;
 	private int m_uncaptured;
 	private ConcurrentHashMap<Integer, Integer> m_scores;
+	private int m_rows;
+	private int m_cols;
 
 	public GameBoard(JsonArray board, Vector<Player> players) {
 		m_board = new ConcurrentHashMap<String, Integer>();
 		m_uncaptured = Util.count(board.toString(), "\"b\"\\s*:\\s*0");
 		m_scores = new ConcurrentHashMap<Integer, Integer>();
+		m_rows = 0;
+		m_cols = 0;
 
 		players.parallelStream().forEach(player -> m_scores.put(player.getId(), 0));
 
-		for (int r = 0; r < board.size(); ++r) {
+		m_rows = board.size();
+		m_cols = board.parallelStream().mapToInt(row -> ((JsonArray) row).size()).min().getAsInt();
+
+		for (int r = 0; r < m_rows; ++r) {
 			JsonArray row = (JsonArray) board.get(r);
-			for (int c = 0; c < row.size(); ++c) {
+			for (int c = 0; c < m_cols; ++c) {
 				JsonObject cell = (JsonObject) row.get(c);
 				String key = generateCellKey(r, c);
 				m_board.put(key + "t", cell.getInt("t"));
@@ -40,26 +67,167 @@ public class GameBoard {
 		}
 	}
 
-	public int getMark(int row, int col, String side) {
-		if (Util.isEmpty(side))
-			return 0;
+	public GameBoard duplicate() {
+		return (GameBoard) DeepCopy.copy(this);
+	}
 
-		String key = generateCellKey(row, col) + side;
-		if (!m_board.containsKey(key))
-			return 0;
+	public int getRows() {
+		return m_rows;
+	}
 
-		return m_board.get(key);
+	public int getCols() {
+		return m_cols;
 	}
 
 	public boolean isMarked(int row, int col, String side) {
-		return getMark(row, col, side) != 0;
+		if (!lineExists(row, col, side))
+			return false;
+
+		return m_board.get(generateCellKey(row, col) + side) != 0;
+	}
+
+	public HashSet<Move> isCapturable(int row, int col) {
+		BiFunction<Integer, Integer, Move> determineSide = (r, c) -> {
+			if (r < 0 || r >= m_rows || c < 0 || c >= m_cols)
+				return null;
+
+			boolean top = isMarked(r, c, "t");
+			boolean right = isMarked(r, c, "r");
+			boolean bottom = isMarked(r, c, "b");
+			boolean left = isMarked(r, c, "l");
+
+			if (!top && right && bottom && left)
+				return new Move(r, c, "t");
+
+			if (top && !right && bottom && left)
+				return new Move(r, c, "r");
+
+			if (top && right && !bottom && left)
+				return new Move(r, c, "b");
+
+			if (top && right && bottom && !left)
+				return new Move(r, c, "l");
+
+			return null;
+		};
+
+		HashSet<Move> capturable = new HashSet<Move>();
+
+		Move cell = determineSide.apply(row, col);
+		if (cell != null)
+			capturable.add(cell);
+
+		Move top = determineSide.apply(row - 1, col);
+		if (top != null)
+			capturable.add(top);
+
+		Move right = determineSide.apply(row, col + 1);
+		if (right != null)
+			capturable.add(right);
+
+		Move bottom = determineSide.apply(row + 1, col);
+		if (bottom != null)
+			capturable.add(bottom);
+
+		Move left = determineSide.apply(row, col - 1);
+		if (left != null)
+			capturable.add(left);
+
+		return capturable;
+	}
+
+	public HashSet<Move> makesCapturable(int row, int col, String side) {
+		BiFunction<Integer, Integer, Move> checkCell = (r, c) -> {
+			final int top = isMarked(r, c, "t") ? 1 : 0;
+			final int right = isMarked(r, c, "r") ? 1 : 0;
+			final int bottom = isMarked(r, c, "b") ? 1 : 0;
+			final int left = isMarked(r, c, "l") ? 1 : 0;
+
+			Function<String, Move> findMissing = s -> {
+				if (!s.equals("t") && top == 0)
+					return new Move(r, c, "t");
+
+				if (!s.equals("r") && right == 0)
+					return new Move(r, c, "r");
+
+				if (!s.equals("b") && bottom == 0)
+					return new Move(r, c, "b");
+
+				if (!s.equals("l") && left == 0)
+					return new Move(r, c, "l");
+
+				return null;
+			};
+
+			boolean isAdjacent = r != row || c != col;
+			switch (side) {
+			case "t":
+				if (isAdjacent && bottom == 0 && top + right + left == 2)
+					return findMissing.apply("b");
+
+				if (!isAdjacent && top == 0 && right + bottom + left == 2)
+					return findMissing.apply("t");
+			case "r":
+				if (isAdjacent && left == 0 && top + right + bottom == 2)
+					return findMissing.apply("l");
+
+				if (!isAdjacent && right == 0 && top + bottom + left == 2)
+					return findMissing.apply("r");
+			case "b":
+				if (isAdjacent && top == 0 && right + bottom + left == 2)
+					return findMissing.apply("t");
+
+				if (!isAdjacent && bottom == 0 && top + right + left == 2)
+					return findMissing.apply("b");
+			case "l":
+				if (isAdjacent && right == 0 && top + bottom + left == 2)
+					return findMissing.apply("r");
+
+				if (!isAdjacent && left == 0 && top + right + bottom == 2)
+					return findMissing.apply("l");
+			}
+
+			return null;
+		};
+
+		HashSet<Move> missing = new HashSet<Move>();
+
+		Move cell = checkCell.apply(row, col);
+		if (cell != null)
+			missing.add(cell);
+
+		switch (side) {
+		case "t":
+			Move top = checkCell.apply(row - 1, col);
+			if (top != null)
+				missing.add(top);
+
+			break;
+		case "r":
+			Move right = checkCell.apply(row, col + 1);
+			if (right != null)
+				missing.add(right);
+
+			break;
+		case "b":
+			Move bottom = checkCell.apply(row + 1, col);
+			if (bottom != null)
+				missing.add(bottom);
+
+			break;
+		case "l":
+			Move left = checkCell.apply(row, col - 1);
+			if (left != null)
+				missing.add(left);
+
+			break;
+		}
+
+		return missing;
 	}
 
 	public JsonObject mark(int row, int col, String side, int player, BiConsumer<JsonObjectBuilder, Boolean> callback) {
-		if (isMarked(row, col, side))
-			return null;
-
-		if (!side.matches("^[trbl]$"))
+		if (!lineExists(row, col, side) || isMarked(row, col, side))
 			return null;
 
 		m_board.put(generateCellKey(row, col) + side, player);
@@ -75,6 +243,9 @@ public class GameBoard {
 
 		switch (side) {
 		case "t":
+			if (!lineExists(row - 1, col, "b"))
+				break;
+
 			m_board.put(generateCellKey(row - 1, col) + "b", player);
 			if (capture(row - 1, col, player)) {
 				boxes.add(Json.createObjectBuilder()
@@ -84,6 +255,9 @@ public class GameBoard {
 			}
 			break;
 		case "r":
+			if (!lineExists(row, col + 1, "l"))
+				break;
+
 			m_board.put(generateCellKey(row, col + 1) + "l", player);
 			if (capture(row, col + 1, player)) {
 				boxes.add(Json.createObjectBuilder()
@@ -93,6 +267,9 @@ public class GameBoard {
 			}
 			break;
 		case "b":
+			if (!lineExists(row + 1, col, "t"))
+				break;
+
 			m_board.put(generateCellKey(row + 1, col) + "t", player);
 			if (capture(row + 1, col, player)) {
 				boxes.add(Json.createObjectBuilder()
@@ -102,6 +279,9 @@ public class GameBoard {
 			}
 			break;
 		case "l":
+			if (!lineExists(row, col - 1, "r"))
+				break;
+
 			m_board.put(generateCellKey(row, col - 1) + "r", player);
 			if (capture(row, col - 1, player)) {
 				boxes.add(Json.createObjectBuilder()
@@ -125,21 +305,10 @@ public class GameBoard {
 		if (!captured.isEmpty())
 			result.add("boxes", captured);
 
-		callback.accept(result, !captured.isEmpty());
+		if (callback != null)
+			callback.accept(result, !captured.isEmpty());
+
 		return result.build();
-	}
-
-	public boolean capture(int row, int col, int player) {
-		if (isMarked(row, col, "x"))
-			return false;
-
-		if (!isMarked(row, col, "t") || !isMarked(row, col, "r") || !isMarked(row, col, "b") || !isMarked(row, col, "l"))
-			return false;
-
-		m_board.put(generateCellKey(row, col) + "x", player);
-		m_scores.put(player, getScore(player) + 1);
-		--m_uncaptured;
-		return true;
 	}
 
 	public int getScore(int player) {
@@ -159,171 +328,27 @@ public class GameBoard {
 		return m_uncaptured > 0;
 	}
 
+	private boolean capture(int row, int col, int player) {
+		if (isMarked(row, col, "x"))
+			return false;
+
+		if (!isMarked(row, col, "t") || !isMarked(row, col, "r") || !isMarked(row, col, "b") || !isMarked(row, col, "l"))
+			return false;
+
+		m_board.put(generateCellKey(row, col) + "x", player);
+		m_scores.put(player, getScore(player) + 1);
+		--m_uncaptured;
+		return true;
+	}
+
+	private boolean lineExists(int row, int col, String side) {
+		if (Util.isEmpty(side))
+			return false;
+
+		return m_board.containsKey(generateCellKey(row, col) + side);
+	}
+
 	private String generateCellKey(int row, int col) {
 		return row + "." + col + ".";
-	}
-	
-	public Vector<AIMove> makesCapturable(int row, int col, String side) {
-		
-		Vector<AIMove> capturableBoxes = new Vector<AIMove>();
-		
-		//if it's horizontal, check above and below, unless you're at a border
-		
-		//top
-		if (side == "t") {
-			int rightMark = isMarked(row, col, "r") ? 1 : 0;
-			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
-			int leftMark = isMarked(row, col, "l") ? 1 : 0;
-			if (rightMark + bottomMark + leftMark == 2) {
-				if (rightMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "r"));
-				} else if (bottomMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "b"));
-				} else {
-					capturableBoxes.add(new AIMove(row, col, "l"));
-				}
-			}
-			
-			if (row != 0) {
-				int topMark = isMarked(row-1, col, "t") ? 1 : 0;
-				rightMark = isMarked(row-1, col, "r") ? 1 : 0;
-				leftMark = isMarked(row-1, col, "l") ? 1 : 0;
-				if (rightMark + topMark + leftMark == 2) {
-					if (rightMark == 0) {
-						capturableBoxes.add(new AIMove(row-1, col, "r"));
-					} else if (topMark == 0) {
-						capturableBoxes.add(new AIMove(row-1, col, "t"));
-					} else {
-						capturableBoxes.add(new AIMove(row-1, col, "l"));
-					}
-				}
-			}
-			if (capturableBoxes.size() != 0) {
-				return capturableBoxes;
-			} else {
-				return null;
-			}
-		}
-		
-		//bottom
-		if (side == "b") {
-			int topMark = isMarked(row, col, "t") ? 1 : 0;
-			int rightMark = isMarked(row, col, "r") ? 1 : 0;
-			int leftMark = isMarked(row, col, "l") ? 1 : 0;
-			if (rightMark + topMark + leftMark == 2) {
-				if (rightMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "r"));
-				} else if (topMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "t"));
-				} else {
-					capturableBoxes.add(new AIMove(row, col, "l"));
-				}
-			}
-			
-			if (row != 9) {
-				rightMark = isMarked(row+1, col, "r") ? 1 : 0;
-				int bottomMark = isMarked(row+1, col, "b") ? 1 : 0;
-				leftMark = isMarked(row+1, col, "l") ? 1 : 0;
-				if (rightMark + bottomMark + leftMark == 2) {
-					if (rightMark == 0) {
-						capturableBoxes.add(new AIMove(row+1, col, "r"));
-					} else if (bottomMark == 0) {
-						capturableBoxes.add(new AIMove(row+1, col, "b"));
-					} else {
-						capturableBoxes.add(new AIMove(row+1, col, "l"));
-					}
-				}
-			}
-			if (capturableBoxes.size() != 0) {
-				return capturableBoxes;
-			} else {
-				return null;
-			}
-		}
-		
-		//if it's vertical, check left and right, unless you're at a border
-		
-		//left
-		if (side == "l") {
-			int topMark = isMarked(row, col, "t") ? 1 : 0;
-			int rightMark = isMarked(row, col, "r") ? 1 : 0;
-			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
-			if (rightMark + topMark + bottomMark == 2) {
-				if (rightMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "r"));
-				} else if (topMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "t"));
-				} else {
-					capturableBoxes.add(new AIMove(row, col, "b"));
-				}
-			}
-			
-			if (col != 0) {
-				int leftMark = isMarked(row, col-1, "l") ? 1 : 0;
-				bottomMark = isMarked(row, col-1, "b") ? 1 : 0;
-				topMark = isMarked(row, col-1, "t") ? 1 : 0;
-				if (leftMark + bottomMark + topMark == 2) {
-					if (leftMark == 0) {
-						capturableBoxes.add(new AIMove(row, col-1, "l"));
-					} else if (topMark == 0) {
-						capturableBoxes.add(new AIMove(row, col-1, "t"));
-					} else {
-						capturableBoxes.add(new AIMove(row, col-1, "b"));
-					}
-				}
-			}
-			if (capturableBoxes.size() != 0) {
-				return capturableBoxes;
-			} else {
-				return null;
-			}
-		}
-		
-		//right
-		if (side == "r") {
-			int topMark = isMarked(row, col, "t") ? 1 : 0;
-			int leftMark = isMarked(row, col, "l") ? 1 : 0;
-			int bottomMark = isMarked(row, col, "b") ? 1 : 0;
-			if (leftMark + topMark + bottomMark == 2) {
-				if (leftMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "l"));
-				} else if (topMark == 0) {
-					capturableBoxes.add(new AIMove(row, col, "t"));
-				} else {
-					capturableBoxes.add(new AIMove(row, col, "b"));
-				}
-			}
-			
-			if (col != 9) {
-				int rightMark = isMarked(row, col+1, "r") ? 1 : 0;
-				bottomMark = isMarked(row, col+1, "b") ? 1 : 0;
-				topMark = isMarked(row, col+1, "t") ? 1 : 0;
-				if (rightMark + bottomMark + topMark == 2) {
-					if (rightMark == 0) {
-						capturableBoxes.add(new AIMove(row, col+1, "r"));
-					} else if (topMark == 0) {
-						capturableBoxes.add(new AIMove(row, col+1, "t"));
-					} else {
-						capturableBoxes.add(new AIMove(row, col+1, "b"));
-					}
-				}
-			}
-			if (capturableBoxes.size() != 0) {
-				return capturableBoxes;
-			} else {
-				return null;
-			}
-		}
-		return null;
-	}
-			
-	private GameBoard(ConcurrentHashMap<String, Integer> inBoard, int inUncaptured, ConcurrentHashMap<Integer, Integer> inScores) {
-		m_board = new ConcurrentHashMap<String, Integer>(inBoard);
-		m_uncaptured = inUncaptured;
-		m_scores = new ConcurrentHashMap<Integer, Integer>(inScores);
-	}
-	
-	public GameBoard duplicate() {
-		return new GameBoard(m_board, m_uncaptured, m_scores);
 	}
 }

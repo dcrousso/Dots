@@ -1,17 +1,18 @@
 package Dots;
 
-import java.util.Vector;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+
+import Dots.GameBoard.Move;
 
 public class AIController extends Player implements Runnable {
 	public static final AIController INSTANCE = new AIController();
 
 	private ConcurrentLinkedQueue<GameController> m_games;
 	private Thread m_thread;
-	private boolean AITakeover = false;
 
 	AIController() {
 		initialize(Type.AI);
@@ -25,7 +26,7 @@ public class AIController extends Player implements Runnable {
 	public void run() {
 		try {
 			while (!m_games.isEmpty()) {
-				Thread.sleep(200);
+				Thread.sleep(250);
 
 				GameController game = m_games.poll();
 				if (game == null)
@@ -37,43 +38,34 @@ public class AIController extends Player implements Runnable {
 
 				GameBoard board = game.getBoard();
 
-				for (int i = 0; i < 10 && Util.isEmpty(side); ++i) {
-					for (int j = 0; j < 10 && Util.isEmpty(side); ++j) {
-						int topMark = board.isMarked(i, j, "t") ? 1 : 0;
-						int rightMark = board.isMarked(i, j, "r") ? 1 : 0;
-						int bottomMark = board.isMarked(i, j, "b") ? 1 : 0;
-						int leftMark = board.isMarked(i, j, "l") ? 1 : 0;
-						if (topMark + rightMark + bottomMark + leftMark == 3) {
-							row = i;
-							col = j;
-
-							if (topMark == 0)
-								side = "t";
-							else if (rightMark == 0)
-								side = "r";
-							else if (bottomMark == 0)
-								side = "b";
-							else if (leftMark == 0)
-								side = "l";
-							
-							System.out.println("Best");
+				// Find any capturable boxes and take them
+				for (int r = 0; r < board.getRows() && Util.isEmpty(side); ++r) {
+					for (int c = 0; c < board.getCols() && Util.isEmpty(side); ++c) {
+						HashSet<Move> capturable = board.isCapturable(r, c);
+						if (!capturable.isEmpty()) {
+							Move line = capturable.iterator().next();
+							row = line.row;
+							col = line.col;
+							side = line.side;
 						}
 					}
 				}
 
-				// Pick a random open spot (ONLY IF I DIDN'T ALREADY MARK A BOX)
+				// No boxes capturable, so pick a random spot
 				if (Util.isEmpty(side)) {
-					int myCounter = 0; //no infinite loops when I get caught
-					while (Util.isEmpty(side) || board.isMarked(row, col, side) || board.makesCapturable(row, col, side) != null) {
-						myCounter++;
-						if (myCounter > 40000) {
-							System.out.println("Counter exceeded");
+					row = -1;
+					col = -1;
+					side = null;
+
+					int attempts = 0;
+					do {
+						if (++attempts > board.getRows() * board.getCols() * 100) { // Limit the number of tries
 							side = null;
-							AITakeover = true;
 							break;
 						}
-						row = (int) Math.floor(Math.random() * 10);
-						col = (int) Math.floor(Math.random() * 10);
+
+						row = (int) Math.floor(Math.random() * board.getRows());
+						col = (int) Math.floor(Math.random() * board.getCols());
 						switch ((int) Math.floor(Math.random() * 4)) {
 						case 0:
 							side = "t";
@@ -88,51 +80,22 @@ public class AIController extends Player implements Runnable {
 							side = "l";
 							break;
 						}
-					}
+					} while (board.isMarked(row, col, side) || !board.makesCapturable(row, col, side).isEmpty());
 				}
 
-				boolean dumb = false;
-				
-				if (dumb) {
-					//for now, pick a sequential number (AI to come)
-					for (int i = 0; i < 10 && Util.isEmpty(side); ++i) {
-						for (int j = 0; j < 10 && Util.isEmpty(side); ++j) {
-							int topMark = board.isMarked(i, j, "t") ? 1 : 0;
-							int rightMark = board.isMarked(i, j, "r") ? 1 : 0;
-							int bottomMark = board.isMarked(i, j, "b") ? 1 : 0;
-							int leftMark = board.isMarked(i, j, "l") ? 1 : 0;
-							row = i;
-							col = j;
-							
-							System.out.println("shouldn't happen much");
-
-							if (topMark == 0)
-								side = "t";
-							else if (rightMark == 0)
-								side = "r";
-							else if (bottomMark == 0)
-								side = "b";
-							else if (leftMark == 0)
-								side = "l";
-						}
-					}
-				} else {
-					//AI Compare alternatives, pick the one that leaves the lowest opponent score
-					
-					if (Util.isEmpty(side)) {
-						System.out.println("AI!!");
-						AIMove bestMove = getBestMove(board, 1);
-						row = bestMove.row;
-						col = bestMove.col;
-						side = bestMove.side;
-						System.out.println("AI Done, move: " + row + ", " + col + ", " + side);
-					}
+				// No non-capturing moves left, so evaluate the best option
+				if (Util.isEmpty(side)) {
+					GameBoard.Move move = getBestMove(board, 1); // Opponent is always player 1
+					row = move.row;
+					col = move.col;
+					side = move.side;
 				}
 
-					
-//					m_games.offer(game); // Try again
-//					continue;
-
+				// Unable to find a move
+				if (Util.isEmpty(side)) {
+					m_games.offer(game); // Try again
+					continue;
+				}
 
 				game.send(this, Json.createObjectBuilder()
 					.add("type", "move")
@@ -170,101 +133,66 @@ public class AIController extends Player implements Runnable {
 
 		(m_thread = new Thread(this)).start();
 	}
-	
-	//finds the move that yields the smallest number of boxes to the opposing player (i.e. minimax)
-	private AIMove getBestMove(GameBoard board, int opponent) {
-		
-		//min move
+
+	// Finds the move that yields the smallest number of boxes to the opposing player (i.e. minimax)
+	private GameBoard.Move getBestMove(GameBoard board, int opponent) {
 		int row = -1;
 		int col = -1;
 		String side = null;
-		
-		int minOpponentScore = 1000; //TODO
-		
-		for (int i = 0; i < 10; ++i) {
-			for (int j = 0; j < 10; ++j) {
-				int topMark = board.isMarked(i, j, "t") ? 1 : 0;
-				int rightMark = board.isMarked(i, j, "r") ? 1 : 0;
-				int bottomMark = board.isMarked(i, j, "b") ? 1 : 0;
-				int leftMark = board.isMarked(i, j, "l") ? 1 : 0;
 
-				//for top, right, bottom, left; if they're not marked
+		int minOpponentScore = Integer.MAX_VALUE;
 
-				if (topMark == 0) {
-					
-					//evaluate how many boxes it captures
-					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "t"), opponent);
-					
+		for (int r = 0; r < board.getRows(); ++r) {
+			for (int c = 0; c < board.getCols(); ++c) {
+				if (!board.isMarked(r, c, "t")) {
+					int opponentScore = evaluate(board.duplicate(), new GameBoard.Move(r, c, "t"), opponent);
 					if (opponentScore < minOpponentScore) {
 						minOpponentScore = opponentScore;
-						row = i;
-						col = j;
+						row = r;
+						col = c;
 						side = "t";
 					}
 				}
-					
-				if (rightMark == 0) {
-					//evaluate how many boxes it captures
-					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "r"), opponent);
-					
+
+				if (!board.isMarked(r, c, "r")) {
+					int opponentScore = evaluate(board.duplicate(), new GameBoard.Move(r, c, "r"), opponent);
 					if (opponentScore < minOpponentScore) {
 						minOpponentScore = opponentScore;
-						row = i;
-						col = j;
+						row = r;
+						col = c;
 						side = "r";
 					}
 				}
-				
-				if (bottomMark == 0) {
-					//evaluate how many boxes it captures
-					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "b"), opponent);
-					
+
+				if (!board.isMarked(r, c, "b")) {
+					int opponentScore = evaluate(board.duplicate(), new GameBoard.Move(r, c, "b"), opponent);
 					if (opponentScore < minOpponentScore) {
 						minOpponentScore = opponentScore;
-						row = i;
-						col = j;
+						row = r;
+						col = c;
 						side = "b";
 					}
 				}
-				
-				if (leftMark == 0) {
-					//evaluate how many boxes it captures
-					int opponentScore = evaluate(board.duplicate(), new AIMove(i, j, "l"), opponent);
-					
+
+				if (!board.isMarked(r, c, "l")) {
+					int opponentScore = evaluate(board.duplicate(), new GameBoard.Move(r, c, "l"), opponent);
 					if (opponentScore < minOpponentScore) {
 						minOpponentScore = opponentScore;
-						row = i;
-						col = j;
+						row = r;
+						col = c;
 						side = "l";
 					}
 				}
 			}
 		}
-		
-		return new AIMove(row, col, side);
+
+		return new GameBoard.Move(row, col, side);
 	}
-	
-	//evaluates how many boxes the opponent can capture if the opponent makes a given move
-	//NOTE: call on duplicates!
-	private int evaluate(GameBoard board, AIMove move, int player) {
-		
-		Vector<AIMove> moves = board.makesCapturable(move.row, move.col, move.side);
-		
-		board.mark(move.row, move.col, move.side, player, (result, captured) -> {
-			result.add("current", player);
-		});
-		
-		if (moves == null) {			
-			return board.getScore(player);
-		}
-		
-		int opponentScore = board.getScore(player);
-		
-		for (AIMove m : moves) {
-			opponentScore = evaluate(board, m, player);
-		}
-		
-		return opponentScore;	
+
+	// Evaluates how many boxes the opponent can capture if the opponent makes a given move
+	private int evaluate(GameBoard board, GameBoard.Move move, int player) {
+		HashSet<GameBoard.Move> moves = board.makesCapturable(move.row, move.col, move.side);
+		board.mark(move.row, move.col, move.side, player, null);
+		return moves.parallelStream().mapToInt(m -> evaluate(board, m, player)).max().orElse(board.getScore(player));
 	}
-	
 }
