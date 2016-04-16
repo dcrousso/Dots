@@ -10,6 +10,7 @@
 	var main = document.querySelector("main");
 	var authenticationLink = document.querySelector(".link.authentication");
 	var authenticationForm = null;
+	var authenticationEnded = null;
 
 	function isEmpty(s) {
 		return !s && !s.length && !s.trim().length;
@@ -431,6 +432,9 @@
 	socket.onclose = function() {
 		if (window.logging)
 			console.log(socket);
+
+		if (typeof authenticationEnded === "function")
+			authenticationEnded();
 	};
 
 
@@ -520,17 +524,19 @@
 		}
 
 		if (this.classList.contains("logout")) {
-			ajax("POST", "authentication?logout=true", function(xhr) {
-				authenticationLink.classList.remove("logout");
-				authenticationLink.classList.add("login");
-				authenticationLink.textContent = "Login";
-				authenticationLink.title = "Login";
+			if (!authenticationEnded) {
+				authenticationEnded = function() { 
+					ajax("POST", "authentication?logout=true", function(xhr) {
+						window.location.reload();
+					});
+				};
+			}
 
-				game.playedElement.textContent = 0;
-				game.wonElement.textContent = 0;
-				game.pointsElement.textContent = 0;
-				game.modes.logout();
-			});
+			if (socket && socket.readyState === 1)
+				socket.close();
+			else
+				authenticationEnded();
+
 			return;
 		}
 	});
