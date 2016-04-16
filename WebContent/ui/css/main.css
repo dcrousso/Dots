@@ -195,6 +195,10 @@ main.restart::after {
 	content: "Winner is Player " attr(data-winner);
 }
 
+main.restart[data-winner="-1"]::after {
+	content: "Tie Game!";
+}
+
 main > .modes {
 	display: none;
 }

@@ -316,6 +316,9 @@ public class GameBoard implements Serializable {
 	}
 
 	public int getWinner() {
+		if ((new HashSet<Integer>(m_scores.values())).size() == 1)
+			return -1;
+
 		int winner = -1;
 		for (ConcurrentHashMap.Entry<Integer, Integer> entry : m_scores.entrySet()) {
 			if (!m_scores.containsKey(winner) || entry.getValue() > m_scores.get(winner))
