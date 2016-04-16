@@ -34,18 +34,14 @@ public class AuthenticationServlet extends HttpServlet {
 		if (Util.isEmpty(password))
 			return;
 
-		boolean register = Optional.ofNullable(request.getParameter("register")).orElse("").equals("true");
-
 		String encrypted = Util.encryptMD5(password);
 
 		User user = Util.query("SELECT * FROM users WHERE username = ?", new String[] {
 			username
 		}, rs -> {
 			try {
-				while (rs.next()) {
-					if (rs.getString("password").equals(encrypted))
-						return new User(rs);
-				}
+				while (rs.next())
+					return new User(rs, encrypted);
 			} catch (SQLException e) {
 			}
 			return null;
@@ -53,8 +49,9 @@ public class AuthenticationServlet extends HttpServlet {
 
 		JsonObjectBuilder result = Json.createObjectBuilder();
 
-		if ((user != null && !register) || (user == null && register)) {
-			if (user == null && register) {
+		boolean register = Optional.ofNullable(request.getParameter("register")).orElse("").equals("true");
+		if ((!register && user != null && user.isAuthenticated()) || (register && user == null)) {
+			if (register && user == null) {
 				user = new User(username);
 				Util.update("INSERT INTO users (username, password, played, won, points) VALUES (?, ?, ?, ?, ?)", new String[] {
 					user.getUsername(),
@@ -68,8 +65,10 @@ public class AuthenticationServlet extends HttpServlet {
 			result.add("played", user.getGamesPlayed());
 			result.add("won", user.getGamesWon());
 			result.add("points", user.getPoints());
-		} else
+		} else {
+			user = null; // User does not exist or password was invalid
 			result.add("error", "Invalid Username/Password");
+		}
 
 		request.getSession().setAttribute("user", user);
 		response.getWriter().write(result.build().toString());
