@@ -13,10 +13,10 @@
 		<meta name="keywords" content="dots and boxes, dots, boxes, game">
 		<meta name="description" content="Play the classic game Dots and Boxes, but with a twist!">
 		<meta name="author" content="Benjamin Stein, Sean Yuan, Devin Rousso, Shane Rosse">
-		<link rel="icon" href="${pageContext.request.contextPath}/ui/images/favicon.png" type="image/png" />
+		<link rel="icon" href="/ui/images/favicon.png" type="image/png" />
 
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/main.css">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/ui/css/fonticons.css">
+		<link rel="stylesheet" href="/ui/css/main.css">
+		<link rel="stylesheet" href="/ui/css/fonticons.css">
 	</head>
 	<body>
 		<header>
@@ -27,7 +27,7 @@
 					<div class="p3" title="Player 3"></div>
 					<div class="p4" title="Player 4"></div>
 				</div>
-				<a class="link authentication <%= (user != null ? "logout" : "login") %>" href="${pageContext.request.contextPath}/<%= (user != null ? "logout" : "login") %>" title="<%= (user != null ? "Logout" : "Login") %>"><%= (user != null ? "Logout" : "Login") %></a>
+				<a class="link authentication <%= (user != null ? "logout" : "login") %>" href="/<%= (user != null ? "logout" : "login") %>" title="<%= (user != null ? "Logout" : "Login") %>"><%= (user != null ? "Logout" : "Login") %></a>
 			</nav>
 		</header>
 		<main>
@@ -42,7 +42,7 @@
 			</div>
 		</footer>
 		<div class="scripts">
-			<script src="${pageContext.request.contextPath}/ui/js/main.js"></script>
+			<script src="/ui/js/main.js"></script>
 		</div>
 	</body>
 </html>

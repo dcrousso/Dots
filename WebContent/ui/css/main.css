@@ -561,7 +561,7 @@ main.restart[data-winner="1"]::after,
 }
 
 .p1 footer > .container > .icon-box::before {
-	content: url(icon-box-p1.svg);
+	content: url(/ui/images/icon-box-p1.svg);
 }
 
 
@@ -572,7 +572,7 @@ main.restart[data-winner="2"]::after,
 }
 
 .p2 footer > .container > .icon-box::before {
-	content: url(icon-box-p2.svg);
+	content: url(/ui/images/icon-box-p2.svg);
 }
 
 
@@ -583,7 +583,7 @@ main.restart[data-winner="3"]::after,
 }
 
 .p3 footer > .container > .icon-box::before {
-	content: url(icon-box-p3.svg);
+	content: url(/ui/images/icon-box-p3.svg);
 }
 
 
@@ -594,5 +594,5 @@ main.restart[data-winner="4"]::after,
 }
 
 .p4 footer > .container > .icon-box::before {
-	content: url(icon-box-p4.svg);
+	content: url(/ui/images/icon-box-p4.svg);
 }

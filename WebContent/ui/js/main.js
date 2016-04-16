@@ -311,7 +311,7 @@
 	}
 	resetMain();
 
-	socket = new WebSocket("ws://localhost:8080/Dots/websocket");
+	socket = new WebSocket("ws://dotsandboxes.online/websocket");
 	socket.onopen = function() {
 		if (window.logging)
 			console.log(socket);
@@ -453,7 +453,7 @@
 			if (isRegister)
 				query += "&register=true";
 
-			ajax("POST", "authentication?" + query, function(xhr) {
+			ajax("POST", "/authentication?" + query, function(xhr) {
 				var content = JSON.parse(xhr.responseText);
 				if (!content || content.error) {
 					authenticationForm.classList.add("error");
@@ -526,7 +526,7 @@
 		if (this.classList.contains("logout")) {
 			if (!authenticationEnded) {
 				authenticationEnded = function() { 
-					ajax("POST", "authentication?logout=true", function(xhr) {
+					ajax("POST", "/authentication?logout=true", function(xhr) {
 						window.location.reload();
 					});
 				};
