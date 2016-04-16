@@ -329,6 +329,50 @@ main .line.hover {
 	transition-duration: 200ms;
 }
 
+main .line[class*="p"] {
+	-webkit-animation: anim-shadow 400ms;
+	   -moz-animation: anim-shadow 400ms;
+	    -ms-animation: anim-shadow 400ms;
+	     -o-animation: anim-shadow 400ms;
+	        animation: anim-shadow 400ms;
+}
+
+.p1 main .line.p1,
+.p2 main .line.p2,
+.p3 main .line.p3,
+.p4 main .line.p4 {
+	-webkit-animation: none;
+	   -moz-animation: none;
+	    -ms-animation: none;
+	     -o-animation: none;
+	        animation: none;
+}
+
+@-webkit-keyframes anim-shadow {
+	from { box-shadow: 0 0 0 0 black; }
+	to   { box-shadow: 0 0 10px 5px transparent; }
+}
+
+@-moz-keyframes anim-shadow {
+	from { box-shadow: 0 0 0 0 black; }
+	to   { box-shadow: 0 0 10px 5px transparent; }
+}
+
+@-ms-keyframes anim-shadow {
+	from { box-shadow: 0 0 0 0 black; }
+	to   { box-shadow: 0 0 10px 5px transparent; }
+}
+
+@-o-keyframes anim-shadow {
+	from { box-shadow: 0 0 0 0 black; }
+	to   { box-shadow: 0 0 10px 5px transparent; }
+}
+
+@keyframes anim-shadow {
+	from { box-shadow: 0 0 0 0 black; }
+	to   { box-shadow: 0 0 15px 7.5px transparent; }
+}
+
 main .line[class*="p"],
 main .line[class*="p"].hover {
 	border-style: solid;
