@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

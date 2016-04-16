@@ -1,4 +1,4 @@
-<%@ page import="Dots.User" %>
+<%@ page import="dotsandboxes.User" %>
 <% User user = ((User) session.getAttribute("user")); %>
 <!DOCTYPE html>
 <html lang="en">

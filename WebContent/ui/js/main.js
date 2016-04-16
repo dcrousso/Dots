@@ -174,6 +174,10 @@
 		var left = isFilled(cell.left) ? Infinity : distance(event, cell.left);
 
 		switch (Math.min(top, right, bottom, left)) {
+		case Infinity: // Current cell is filled
+		default:
+			markLine();
+			break;
 		case top:
 			markLine(cell.top);
 			break;
@@ -222,6 +226,8 @@
 		case cell.left:
 			move.line.side = "l";
 			break;
+		default: // Current line is not within clicked cell
+			return;
 		}
 
 		if (window.logging)

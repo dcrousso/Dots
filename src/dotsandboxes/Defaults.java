@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 public class Defaults {
 	public static final String DB_DRIVER = "com.mysql.jdbc.Driver";

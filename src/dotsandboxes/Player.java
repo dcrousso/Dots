@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import javax.json.JsonObject;
 

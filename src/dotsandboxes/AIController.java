@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import Dots.GameBoard.Move;
+import dotsandboxes.GameBoard.Move;
 
 public class AIController extends Player implements Runnable {
 	public static final AIController INSTANCE = new AIController();

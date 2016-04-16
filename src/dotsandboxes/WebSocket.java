@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;

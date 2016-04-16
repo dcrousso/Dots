@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import java.io.StringReader;
 import java.math.BigInteger;

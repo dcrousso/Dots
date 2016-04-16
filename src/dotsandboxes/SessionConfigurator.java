@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.HandshakeResponse;

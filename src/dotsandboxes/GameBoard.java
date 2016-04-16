@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import java.io.Serializable;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package Dots;
+package dotsandboxes;
 
 import java.util.Arrays;
 import java.util.Vector;
