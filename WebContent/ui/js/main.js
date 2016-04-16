@@ -430,6 +430,16 @@
 		socket.close();
 	};
 	socket.onclose = function() {
+		main.className = "disconnected";
+
+		var reload = main.appendChild(document.createElement("button"));
+		reload.textContent = "Reload";
+		reload.focus();
+		reload.addEventListener("click", function (event) {
+			window.location.reload();
+			this.remove();
+		});
+
 		if (window.logging)
 			console.log(socket);
 

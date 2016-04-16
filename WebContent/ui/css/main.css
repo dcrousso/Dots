@@ -167,7 +167,8 @@ main {
 main.mode-select::after,
 main.waiting::after,
 main.leave::after,
-main.restart::after {
+main.restart::after,
+main.disconnected::after {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -197,6 +198,10 @@ main.restart::after {
 
 main.restart[data-winner="-1"]::after {
 	content: "Tie Game!";
+}
+
+main.disconnected::after {
+	content: "Connection Lost";
 }
 
 main > .modes {
