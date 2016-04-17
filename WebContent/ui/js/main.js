@@ -459,7 +459,7 @@
 			if (!authenticationForm || isEmpty(username) || isEmpty(password))
 				return;
 
-			var query = "username=" + username + "&password=" + password;
+			var query = "username=" + username + "&password=" + md5(password);
 			if (isRegister)
 				query += "&register=true";
 

@@ -7,13 +7,15 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="HandheldFriendly" content="True">
 		<meta name="MobileOptimized" content="320">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=yes" />
 
 		<title>Dots</title>
 		<meta name="keywords" content="dots and boxes, dots, boxes, game">
 		<meta name="description" content="Play the classic game Dots and Boxes, but with a twist!">
 		<meta name="author" content="Benjamin Stein, Sean Yuan, Devin Rousso, Shane Rosse">
+
 		<link rel="icon" href="/ui/images/favicon.png" type="image/png" />
+		<link rel="apple-touch-icon" href="/ui/images/favicon.png" />
 
 		<link rel="stylesheet" href="/ui/css/main.css">
 		<link rel="stylesheet" href="/ui/css/fonticons.css">
@@ -42,6 +44,7 @@
 			</div>
 		</footer>
 		<div class="scripts">
+			<script src="/ui/js/md5.js"></script>
 			<script src="/ui/js/main.js"></script>
 		</div>
 	</body>
