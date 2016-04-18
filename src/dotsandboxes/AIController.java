@@ -186,6 +186,8 @@ public class AIController extends Player implements Runnable {
 			}
 		}
 
+		System.gc(); // Clear extra memory used by duplicating the board
+
 		return new GameBoard.Move(row, col, side);
 	}
 

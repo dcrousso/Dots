@@ -88,11 +88,7 @@ public class WebSocket extends Player {
 	@OnClose
 	public void handleClose() {
 		if (!isAlive()) {
-			s_waiting.values().parallelStream().forEach(queue -> {
-				if (queue.contains(this))
-					queue.remove(this);
-			});
-
+			s_waiting.values().parallelStream().forEach(queue -> queue.remove(this));
 			return;
 		}
 
