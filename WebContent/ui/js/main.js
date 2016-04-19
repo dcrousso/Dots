@@ -378,11 +378,8 @@
 
 			main.className = "leave";
 
-			if (!isNaN(content.played))
-				game.playedElement.textContent = content.played || 0;
-
-			if (!isNaN(content.points))
-				game.pointsElement.textContent = content.points || 0;
+			game.playedElement.textContent = (isNaN(content.played) ? parseInt(game.playedElement.textContent) + 1 : content.played) || 0;
+			game.pointsElement.textContent = (isNaN(content.points) ? parseInt(game.pointsElement.textContent) + parseInt(game.scoreElement.textContent) : content.played) || 0;
 
 			var restart = main.appendChild(document.createElement("button"));
 			restart.textContent = "New Game";
@@ -413,12 +410,8 @@
 				this.remove();
 			});
 
-			if (!isNaN(content.played))
-				game.playedElement.textContent = content.played || 0;
-
-			if (!isNaN(content.points))
-				game.pointsElement.textContent = content.points || 0;
-
+			game.playedElement.textContent = (isNaN(content.played) ? parseInt(game.playedElement.textContent) + 1 : content.played) || 0;
+			game.pointsElement.textContent = (isNaN(content.points) ? parseInt(game.pointsElement.textContent) + parseInt(game.scoreElement.textContent) : content.played) || 0;
 			if (game.playerId === content.winner)
 				game.wonElement.textContent = parseInt(game.wonElement.textContent) + 1;
 
