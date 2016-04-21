@@ -14,6 +14,8 @@
 		<meta name="description" content="Play the classic game Dots and Boxes, but with a twist!">
 		<meta name="author" content="Benjamin Stein, Sean Yuan, Devin Rousso, Shane Rosse">
 
+		<meta name="google-site-verification" content="JBBDq2xkKJGYYw9qWeNDz3kQYmjjo7M-0VhrptQcsoI" />
+
 		<link rel="icon" href="/ui/images/favicon.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/ui/images/favicon.png" />
 
