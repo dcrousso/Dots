@@ -67,7 +67,7 @@ header {
 	left: 0;
 	z-index: 100;
 	background-color: hsla(0, 0%, 100%, 0.9);
-	-webkit-backdrop-filter: blur(5px);
+	pointer-events: none;
 }
 
 header > nav {
@@ -100,6 +100,7 @@ header > nav > .players > div {
 	border-radius: 25%;
 	outline: 3px dashed transparent;
 	outline-offset: calc((-25px / 2) - 6px);
+	pointer-events: auto;
 	-webkit-transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
 	   -moz-transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
 	    -ms-transition: outline-color 400ms, outline-offset 400ms, opacity 400ms;
@@ -149,6 +150,10 @@ header > nav > .players > div.disabled {
 	from {         transform: rotate(0deg); }
 	50%  {         transform: rotate(180deg); }
 	to   {         transform: rotate(360deg); }
+}
+
+header > nav > .link {
+	pointer-events: auto;
 }
 
 main {
@@ -249,7 +254,7 @@ main > .container {
 }
 
 main > .container.boxes {
-	pointer-events: all;
+	pointer-events: auto;
 }
 
 main .box {
@@ -420,7 +425,7 @@ footer {
 	left: 0;
 	z-index: 10;
 	background-color: hsla(0, 0%, 100%, 0.9);
-	-webkit-backdrop-filter: blur(5px);
+	pointer-events: none;
 }
 
 footer > .container {
@@ -432,12 +437,13 @@ footer > .container {
 	width: 100%;
 	max-width: 800px;
 	margin: 10px auto;
-	text-align: center;
 }
 
 footer > .container > div {
-	width: 100%;
+	margin: 0 auto;
 	color: black;
+	pointer-events: auto;
+	cursor: help;
 }
 
 footer > .container > *[class^="icon"]::before {
