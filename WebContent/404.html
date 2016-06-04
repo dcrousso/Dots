@@ -7,10 +7,12 @@
 		<meta name="MobileOptimized" content="320">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<link rel="icon" href="/ui/images/favicon.png" type="image/png"/>
 
 		<style>
-			html, body {
+			body {
 				margin: 0;
+				padding: 0;
 				font: 20px/1.5 Helvetica Neue, Arial, sans-serif;
 				text-align: center;
 				color: #333;
@@ -25,19 +27,14 @@
 			}
 			a {
 				display: inline-block;
-				overflow: hidden;
 				vertical-align: top;
 				color: #2980b9;
 			}
-			a span {
+			a > span {
 				display: inline-block;
 				position: relative;
-				padding: 0 2px;
-				-webkit-transition: all 400ms ease;
-				   -moz-transition: all 400ms ease;
-				    -ms-transition: all 400ms ease;
-				     -o-transition: all 400ms ease;
-				        transition: all 400ms ease;
+				text-align: center;
+				padding: 0 4px;
 				-webkit-transform-origin: center top;
 				   -moz-transform-origin: center top;
 				    -ms-transform-origin: center top;
@@ -48,40 +45,55 @@
 				    -ms-transform-style: preserve-3d;
 				     -o-transform-style: preserve-3d;
 				        transform-style: preserve-3d;
+				-webkit-transition-property: -webkit-transform, color, background-color;
+				   -moz-transition-property:    -moz-transform, color, background-color;
+				    -ms-transition-property:     -ms-transform, color, background-color;
+				     -o-transition-property:      -o-transform, color, background-color;
+				        transition-property:         transform, color, background-color;
+				transition-duration: 300ms;
 			}
-			span:after {
-				display: block;
+			a > span::after {
 				position: absolute;
-				top: 0;
+				top: 100%;
 				left: 0;
-				padding: 0 2px;
-				content: attr(data-title);
-				color: #fff;
-				background-color: #3498db;
+				width: 100%;
+				height: 100%;
+				text-align: inherit;
+				content: attr(data-hover);
+				color: white;
+				background-color: #0965a0;
+				-webkit-transform: rotateX(-90deg);
+				   -moz-transform: rotateX(-90deg);
+				    -ms-transform: rotateX(-90deg);
+				     -o-transform: rotateX(-90deg);
+				        transform: rotateX(-90deg);
 				-webkit-transform-origin: center top;
 				   -moz-transform-origin: center top;
 				    -ms-transform-origin: center top;
 				     -o-transform-origin: center top;
 				        transform-origin: center top;
-				-webkit-transform: translate(0, 100%) rotateX(-90deg);
-				   -moz-transform: translate(0, 100%) rotateX(-90deg);
-				    -ms-transform: translate(0, 100%) rotateX(-90deg);
-				     -o-transform: translate(0, 100%) rotateX(-90deg);
-				        transform: translate(0, 100%) rotateX(-90deg);
+				-webkit-transition: background-color 300ms;
+				   -moz-transition: background-color 300ms;
+				    -ms-transition: background-color 300ms;
+				     -o-transition: background-color 300ms;
+				        transition: background-color 300ms;
 			}
-			a:hover span {
-				color: #277bb6;
-				background-color: #3498db;
-				-webkit-transform: translate(0, 0) rotateX(90deg);
-				   -moz-transform: translate(0, 0) rotateX(90deg);
-				    -ms-transform: translate(0, 0) rotateX(90deg);
-				     -o-transform: translate(0, 0) rotateX(90deg);
-				        transform: translate(0, 0) rotateX(90deg);
+			a:hover > span {
+				color: white;
+				background-color: #2195de;
+				-webkit-transform: rotateX(90deg) translateY(-50%);
+				   -moz-transform: rotateX(90deg) translateY(-50%);
+				    -ms-transform: rotateX(90deg) translateY(-50%);
+				     -o-transform: rotateX(90deg) translateY(-50%);
+				        transform: rotateX(90deg) translateY(-50%);
+			}
+			a:hover > span::after {
+				background-color: #28a2ee;
 			}
 		</style>
 	</head>
 	<body>
 		<h1>404</h1>
-		<p>Page not found. <a href="/"><span data-title="Go Back">Go Back</span></a></p>
+		<p>Page not found. <a href="/"><span data-hover="Go Back">Go Back</span></a></p>
 	</body>
 </html>
