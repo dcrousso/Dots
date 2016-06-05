@@ -19,9 +19,6 @@
 	function ajax(method, url, callback) {
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
-			if (window.logging)
-				console.log(xhr);
-
 			if (xhr.readyState !== 4 || xhr.status !== 200)
 				return;
 
@@ -79,38 +76,11 @@
 
 	game.modes.three = game.modes.container.appendChild(document.createElement("button"));
 	game.modes.three.textContent = "Three Players";
+	game.modes.three.addEventListener("click", game.modes.handleClick(3));
 
 	game.modes.four = game.modes.container.appendChild(document.createElement("button"));
 	game.modes.four.textContent = "Four Players";
-
-	game.modes.login = function() {
-		game.modes.boundThreeClick = game.modes.handleClick(3);
-		game.modes.three.removeAttribute("title");
-		game.modes.three.disabled = false;
-		game.modes.three.addEventListener("click", game.modes.boundThreeClick);
-
-		game.modes.boundFourClick = game.modes.handleClick(4);
-		game.modes.four.removeAttribute("title");
-		game.modes.four.disabled = false;
-		game.modes.four.addEventListener("click", game.modes.boundFourClick);
-	};
-
-	game.modes.logout = function() {
-		game.modes.three.title = "Register to gain access";
-		game.modes.three.disabled = true;
-		if (game.modes.boundThreeClick)
-			game.modes.three.removeEventListener("click", game.modes.boundThreeClick);
-
-		game.modes.four.title = "Register to gain access";
-		game.modes.four.disabled = true;
-		if (game.modes.boundFourClick)
-			game.modes.four.removeEventListener("click", game.modes.boundFourClick);
-	};
-
-	if (authenticationLink.classList.contains("logout"))
-		game.modes.login();
-	else
-		game.modes.logout();
+	game.modes.four.addEventListener("click", game.modes.handleClick(4));
 
 	// Boxes
 	game.boxes.container = document.createElement("div");
@@ -175,8 +145,8 @@
 		var left = isFilled(cell.left) ? Infinity : distance(event, cell.left);
 
 		switch (Math.min(top, right, bottom, left)) {
-		case Infinity: // Current cell is filled
 		default:
+		case Infinity: // Current cell is filled
 			markLine();
 			break;
 		case top:
@@ -230,9 +200,6 @@
 		default: // Current line is not within clicked cell
 			return;
 		}
-
-		if (window.logging)
-			console.log(move);
 
 		if (socket && socket.readyState === 1)
 			socket.send(JSON.stringify(move));
@@ -312,14 +279,7 @@
 	resetMain();
 
 	socket = new WebSocket("ws://dotsandboxes.online/websocket");
-	socket.onopen = function() {
-		if (window.logging)
-			console.log(socket);
-	};
 	socket.onmessage = function(event) {
-		if (window.logging)
-			console.log(event);
-
 		var content = JSON.parse(event.data);
 		if (!content || !content.type)
 			return;
@@ -433,9 +393,6 @@
 			this.remove();
 		});
 
-		if (window.logging)
-			console.log(socket);
-
 		if (typeof authenticationEnded === "function")
 			authenticationEnded();
 	};
@@ -475,7 +432,6 @@
 				game.playedElement.textContent = parseInt(content.played) || 0;
 				game.wonElement.textContent = parseInt(content.won) || 0;
 				game.pointsElement.textContent = parseInt(content.points) || 0;
-				game.modes.login();
 			});
 		}
 
