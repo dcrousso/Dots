@@ -1,5 +1,6 @@
 {
 	"name": "Dots",
+	"short_name": "Dots",
 	"icons": [
 		{
 			"src": "/android-chrome-36x36.png",
