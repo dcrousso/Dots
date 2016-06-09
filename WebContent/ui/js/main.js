@@ -18,13 +18,13 @@
 
 	function ajax(method, url, callback) {
 		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState !== 4 || xhr.status !== 200)
+		xhr.addEventListener("readystatechange", function(event) {
+			if (xhr.readyState !== XMLHttpRequest.DONE || xhr.status !== 200)
 				return;
 
 			if (typeof callback === "function")
 				callback(xhr);
-		};
+		});
 		xhr.open(method, url, true);
 		xhr.send();
 	}
@@ -405,14 +405,11 @@
 	authenticationLink.addEventListener("click", function(event) {
 		event.preventDefault();
 
-		function authenticate(username, password, isRegister) {
+		function authenticate(username, password) {
 			if (!authenticationForm || isEmpty(username) || isEmpty(password))
 				return;
 
 			var query = "username=" + username + "&password=" + md5(password);
-			if (isRegister)
-				query += "&register=true";
-
 			ajax("POST", "/authentication?" + query, function(xhr) {
 				var content = JSON.parse(xhr.responseText);
 				if (!content || content.error) {
@@ -454,23 +451,11 @@
 			passwordInput.placeholder = "Password";
 			passwordInput.required = true;
 
-			var actionRow = authenticationForm.appendChild(document.createElement("div"));
-			actionRow.classList.add("actions");
-
-			var login = actionRow.appendChild(document.createElement("button"));
+			var login = authenticationForm.appendChild(document.createElement("button"));
 			login.textContent = "Login";
 			login.addEventListener("click", function(event) {
 				event.preventDefault();
-
 				authenticate(usernameInput.value, passwordInput.value);
-			});
-
-			var register = actionRow.appendChild(document.createElement("button"));
-			register.textContent = "Register";
-			register.addEventListener("click", function(event) {
-				event.preventDefault();
-
-				authenticate(usernameInput.value, passwordInput.value, true);
 			});
 
 			var close = authenticationForm.appendChild(document.createElement("div"));
@@ -491,7 +476,7 @@
 				};
 			}
 
-			if (socket && socket.readyState === 1)
+			if (socket && socket.readyState === WebSocket.OPEN)
 				socket.close();
 			else
 				authenticationEnded();
