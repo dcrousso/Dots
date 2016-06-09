@@ -80,6 +80,22 @@ header > nav > .players > div {
 	border-radius: 25%;
 }
 
+header > nav > .players > .p1 {
+	color: #900; /* Cardinal */
+}
+
+header > nav > .players > .p2 {
+	color: #fc0; /* Gold */
+}
+
+header > nav > .players > .p3 {
+	color: #F75; /* Coral */
+}
+
+header > nav > .players > .p4 {
+	color: #DAD; /* Plum */
+}
+
 main {
 	position: relative;
 	top: 15vh;

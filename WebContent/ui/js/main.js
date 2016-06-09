@@ -31,6 +31,14 @@
 
 
 	// ============================== //
+	// ==========  Styles  ========== //
+	// ============================== //
+	var mainCSS = document.head.appendChild(document.createElement("linK"));
+	mainCSS.rel = "stylesheet";
+	mainCSS.href = "/ui/css/main.css";
+
+
+	// ============================== //
 	// ==========   Game   ========== //
 	// ============================== //
 

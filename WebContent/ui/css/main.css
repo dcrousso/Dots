@@ -468,7 +468,6 @@ footer > .container > div {
 }
 
 
-.p1,
 main.restart[data-winner="1"]::after,
 .p1 footer > .container > *[class^="icon"]::before {
 	color: #900 !important; /* Cardinal */
@@ -479,7 +478,6 @@ main.restart[data-winner="1"]::after,
 }
 
 
-.p2,
 main.restart[data-winner="2"]::after,
 .p2 footer > .container > *[class^="icon"]::before {
 	color: #fc0 !important; /* Gold */
@@ -490,7 +488,6 @@ main.restart[data-winner="2"]::after,
 }
 
 
-.p3,
 main.restart[data-winner="3"]::after,
 .p3 footer > .container > *[class^="icon"]::before {
 	color: #F75 !important; /* Coral */
@@ -501,7 +498,6 @@ main.restart[data-winner="3"]::after,
 }
 
 
-.p4,
 main.restart[data-winner="4"]::after,
 .p4 footer > .container > *[class^="icon"]::before {
 	color: #DAD !important; /* Plum */
