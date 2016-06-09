@@ -30,17 +30,18 @@
 	}
 
 
-	// ============================== //
-	// ==========  Styles  ========== //
-	// ============================== //
-	var mainCSS = document.head.appendChild(document.createElement("linK"));
+	// ================================================== //
+	// ===============       Styles       =============== //
+	// ================================================== //
+
+	var mainCSS = document.head.appendChild(document.createElement("link"));
 	mainCSS.rel = "stylesheet";
 	mainCSS.href = "/ui/css/main.css";
 
 
-	// ============================== //
-	// ==========   Game   ========== //
-	// ============================== //
+	// ================================================== //
+	// ===============        Game        =============== //
+	// ================================================== //
 
 	var game = {
 		rows: 10,
@@ -59,7 +60,7 @@
 	};
 	var socket = null;
 
-	game.modes.container = main.appendChild(document.createElement("div"));
+	game.modes.container = document.createElement("div");
 	game.modes.container.classList.add("modes");
 	game.modes.handleClick = function(mode) {
 		return function(event) {
@@ -284,7 +285,7 @@
 		main.appendChild(game.dots.container);
 		main.appendChild(game.modes.container);
 	}
-	resetMain();
+	mainCSS.addEventListener("load", resetMain); // Only display DOM once styles are loaded
 
 	socket = new WebSocket("ws://dotsandboxes.online/websocket");
 	socket.onmessage = function(event) {
@@ -406,9 +407,9 @@
 	};
 
 
-	// ============================== //
-	// ==========  Header  ========== //
-	// ============================== //
+	// ================================================== //
+	// ===============       Header       =============== //
+	// ================================================== //
 
 	authenticationLink.addEventListener("click", function(event) {
 		event.preventDefault();
