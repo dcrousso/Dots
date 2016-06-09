@@ -1,28 +1,4 @@
-* {
-	box-sizing: border-box;
-}
-
-body {
-	min-height: 100vh;
-	margin: 0;
-	font-size: 1.5em;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	color: hsl(0, 0%, 25%);
-	background-color: hsl(205, 76%, 95%); /* hsla(0, 0%, 100%, 0.9) on top of hsl(215, 65%, 50%) */
-	background-image: radial-gradient(hsl(190, 100%, 50%), hsl(215, 65%, 50%));
-	background-attachment: fixed;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
 a {
-	position: relative;
-	margin: 2px;
-	padding: 2px 4px;
-	text-decoration: none;
-	font-weight: lighter;
-	font-size: 150%;
-	color: hsl(0, 0%, 10%);
 	-webkit-transition: color 400ms;
 	   -moz-transition: color 400ms;
 	    -ms-transition: color 400ms;
@@ -60,44 +36,7 @@ button {
 	line-height: 1.5em;
 }
 
-header {
-	position: fixed;
-	top: 0;
-	right: 0;
-	left: 0;
-	z-index: 100;
-	background-color: hsla(0, 0%, 100%, 0.9);
-	pointer-events: none;
-}
-
-header > nav {
-	display: -webkit-flex;
-	display:    -moz-flex;
-	display:     -ms-flexbox;
-	display:         flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	max-width: 800px;
-	margin: 0 auto;
-	padding: 0 20px;
-}
-
-header > nav > .players {
-	display: -webkit-flex;
-	display:    -moz-flex;
-	display:     -ms-flexbox;
-	display:         flex;
-	justify-content: space-between;
-	width: 100%;
-	max-width: 150px;
-}
-
 header > nav > .players > div {
-	width: 25px;
-	height: 25px;
-	background-color: currentColor;
-	border-radius: 25%;
 	outline: 3px dashed transparent;
 	outline-offset: calc((-25px / 2) - 6px);
 	pointer-events: auto;
@@ -157,15 +96,6 @@ header > nav > .link {
 }
 
 main {
-	position: relative;
-	top: 15vh;
-	width: 90vw;
-	max-width: 500px;
-	height: 90vw;
-	max-height: 500px;
-	margin: 0 auto;
-	background-color: white;
-	box-shadow: 0 0 2px white;
 	cursor: default;
 }
 
@@ -282,6 +212,7 @@ main .box[class*="p"]::after {
 	border: 2px solid currentColor;
 	-webkit-animation: clipPath 8s linear infinite;
 	        animation: clipPath 8s linear infinite;
+	will-change: -webkit-clip-path;
 }
 
 main .box[class*="p"]::after {
@@ -340,11 +271,11 @@ main .line.hover {
 }
 
 main .line[class*="p"] {
-	-webkit-animation: anim-shadow 400ms;
-	   -moz-animation: anim-shadow 400ms;
-	    -ms-animation: anim-shadow 400ms;
-	     -o-animation: anim-shadow 400ms;
-	        animation: anim-shadow 400ms;
+	-webkit-animation: animShadow 400ms;
+	   -moz-animation: animShadow 400ms;
+	    -ms-animation: animShadow 400ms;
+	     -o-animation: animShadow 400ms;
+	        animation: animShadow 400ms;
 }
 
 .p1 main .line.p1,
@@ -358,29 +289,29 @@ main .line[class*="p"] {
 	        animation: none;
 }
 
-@-webkit-keyframes anim-shadow {
+@-webkit-keyframes animShadow {
 	from { box-shadow: 0 0 0 0 black; }
 	to   { box-shadow: 0 0 10px 5px transparent; }
 }
 
-@-moz-keyframes anim-shadow {
+@-moz-keyframes    animShadow {
 	from { box-shadow: 0 0 0 0 black; }
 	to   { box-shadow: 0 0 10px 5px transparent; }
 }
 
-@-ms-keyframes anim-shadow {
+@-ms-keyframes     animShadow {
 	from { box-shadow: 0 0 0 0 black; }
 	to   { box-shadow: 0 0 10px 5px transparent; }
 }
 
-@-o-keyframes anim-shadow {
+@-o-keyframes      animShadow {
 	from { box-shadow: 0 0 0 0 black; }
 	to   { box-shadow: 0 0 10px 5px transparent; }
 }
 
-@keyframes anim-shadow {
+@keyframes         animShadow {
 	from { box-shadow: 0 0 0 0 black; }
-	to   { box-shadow: 0 0 15px 7.5px transparent; }
+	to   { box-shadow: 0 0 10px 5px transparent; }
 }
 
 main .line[class*="p"],
@@ -418,47 +349,10 @@ main .line {
 	        transition: color 400ms, border-color 400ms, background-color 400ms;
 }
 
-footer {
-	position: fixed;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: 10;
-	background-color: hsla(0, 0%, 100%, 0.9);
-	pointer-events: none;
-}
-
-footer > .container {
-	display: -webkit-flex;
-	display:    -moz-flex;
-	display:     -ms-flexbox;
-	display:         flex;
-	align-items: center;
-	width: 100%;
-	max-width: 800px;
-	margin: 10px auto;
-}
-
 footer > .container > div {
-	margin: 0 auto;
 	color: black;
 	pointer-events: auto;
 	cursor: help;
-}
-
-footer > .container > *[class^="icon"]::before {
-	margin-right: 5px;
-	font-size: 90%;
-	vertical-align: 1px;
-}
-
-footer > .container > .icon-box::before {
-	margin-right: 2px;
-	vertical-align:-1px;
-}
-
-footer > .container > .icon-star::before {
-	margin-right: 2px;
 }
 
 #authentication {
@@ -472,6 +366,37 @@ footer > .container > .icon-star::before {
 	font-size: 150%;
 	background-color: hsla(0, 0%, 0%, 0.9);
 	-webkit-backdrop-filter: blur(5px);
+	-webkit-animation: fadeIn 200ms;
+	   -moz-animation: fadeIn 200ms;
+	    -ms-animation: fadeIn 200ms;
+	     -o-animation: fadeIn 200ms;
+	        animation: fadeIn 200ms;
+}
+
+
+@-webkit-keyframes fadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@-moz-keyframes    fadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@-ms-keyframes     fadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@-o-keyframes      fadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@keyframes         fadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
 }
 
 #authentication.error::after {
@@ -485,31 +410,17 @@ footer > .container > .icon-star::before {
 }
 
 #authentication * {
+	display: block;
 	width: 50%;
 	min-width: 250px;
 	margin: 10px auto;
 }
 
 #authentication input {
-	display: block;
-	width: 50%;
-	min-width: 250px;
-	margin: 10px auto;
 	padding: 10px;
 	font-size: 50%;
-}
-
-#authentication > .actions {
-	display: -webkit-flex;
-	display:    -moz-flex;
-	display:     -ms-flexbox;
-	display:         flex;
-	justify-content: space-around;
-	align-items: center;
-}
-
-#authentication > .actions > button {
-	margin: 5px;
+	border: none;
+	border-radius: 5px;
 }
 
 #authentication > .close {
@@ -547,15 +458,6 @@ footer > .container > .icon-star::before {
 	    -ms-transform: rotate(-45deg);
 	     -o-transform: rotate(-45deg);
 	        transform: rotate(-45deg);
-}
-
-noscript {
-	text-align: center;
-}
-
-noscript > h2 {
-	margin: 0;
-	padding-top: 30%;
 }
 
 @supports(-webkit-backdrop-filter: blur()) {

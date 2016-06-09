@@ -39,6 +39,7 @@
 
 		<meta name="google-site-verification" content="JBBDq2xkKJGYYw9qWeNDz3kQYmjjo7M-0VhrptQcsoI"/>
 
+		<link rel="stylesheet" href="/ui/css/inline.css">
 		<link rel="stylesheet" href="/ui/css/main.css">
 		<link rel="stylesheet" href="/ui/css/fonticons.css">
 	</head>
