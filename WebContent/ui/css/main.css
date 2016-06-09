@@ -33,6 +33,7 @@ a:hover::before {
 }
 
 button {
+	margin: 5px;
 	padding: 2px 6px 3px;
 	line-height: 1.5em;
 }
@@ -149,7 +150,6 @@ main > button {
 	position: absolute;
 	top: 60%;
 	z-index: 1;
-	margin-top: 0.5vh;
 }
 
 main.mode-select > .modes {
