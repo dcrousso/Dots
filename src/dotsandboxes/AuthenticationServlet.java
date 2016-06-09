@@ -47,26 +47,24 @@ public class AuthenticationServlet extends HttpServlet {
 			return null;
 		});
 
+		if (user == null) { // User does not exist
+			user = new User(username);
+			Util.update("INSERT INTO users (username, password, played, won, points) VALUES (?, ?, ?, ?, ?)", new String[] {
+				user.getUsername(),
+				encrypted,
+				Integer.toString(user.getGamesPlayed()),
+				Integer.toString(user.getGamesWon()),
+				Integer.toString(user.getPoints())
+			});
+		}
+
 		JsonObjectBuilder result = Json.createObjectBuilder();
-
-		boolean register = Optional.ofNullable(request.getParameter("register")).orElse("").equals("true");
-		if ((!register && user != null && user.isAuthenticated()) || (register && user == null)) {
-			if (register && user == null) {
-				user = new User(username);
-				Util.update("INSERT INTO users (username, password, played, won, points) VALUES (?, ?, ?, ?, ?)", new String[] {
-					user.getUsername(),
-					encrypted,
-					Integer.toString(user.getGamesPlayed()),
-					Integer.toString(user.getGamesWon()),
-					Integer.toString(user.getPoints())
-				});
-			}
-
+		if (user.isAuthenticated()) {
 			result.add("played", user.getGamesPlayed());
 			result.add("won", user.getGamesWon());
 			result.add("points", user.getPoints());
 		} else {
-			user = null; // User does not exist or password was invalid
+			user = null; // User exists and password was invalid
 			result.add("error", "Invalid Username/Password");
 		}
 
