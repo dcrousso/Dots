@@ -65,6 +65,12 @@
 				<div id="points" class="icon-star" title="Total Points"><%= (user != null ? user.getPoints() : 0) %></div>
 			</div>
 		</footer>
+		<div class="preload" hidden>
+			<img src="/ui/images/icon-box-p1.svg">
+			<img src="/ui/images/icon-box-p2.svg">
+			<img src="/ui/images/icon-box-p3.svg">
+			<img src="/ui/images/icon-box-p4.svg">
+		</div>
 		<script src="/ui/js/main.js"></script>
 	</body>
 </html>
