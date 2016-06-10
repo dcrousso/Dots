@@ -81,22 +81,6 @@ header > nav > .players > div {
 	border-radius: 25%;
 }
 
-header > nav > .players > .p1 {
-	color: #900; /* Cardinal */
-}
-
-header > nav > .players > .p2 {
-	color: #fc0; /* Gold */
-}
-
-header > nav > .players > .p3 {
-	color: #F75; /* Coral */
-}
-
-header > nav > .players > .p4 {
-	color: #DAD; /* Plum */
-}
-
 main {
 	position: relative;
 	top: 15vh;
@@ -148,4 +132,44 @@ footer > .container > .icon-box::before {
 
 footer > .container > .icon-star::before {
 	margin-right: 2px;
+}
+
+.p1,
+main.restart[data-winner="1"]::after,
+.p1 footer > .container > *[class^="icon"]::before {
+	color: #900 !important; /* Cardinal */
+}
+
+.p1 footer > .container > .icon-box::before {
+	content: url(/ui/images/icon-box-p1.svg);
+}
+
+.p2,
+main.restart[data-winner="2"]::after,
+.p2 footer > .container > *[class^="icon"]::before {
+	color: #fc0 !important; /* Gold */
+}
+
+.p2 footer > .container > .icon-box::before {
+	content: url(/ui/images/icon-box-p2.svg);
+}
+
+.p3,
+main.restart[data-winner="3"]::after,
+.p3 footer > .container > *[class^="icon"]::before {
+	color: #F75 !important; /* Coral */
+}
+
+.p3 footer > .container > .icon-box::before {
+	content: url(/ui/images/icon-box-p3.svg);
+}
+
+.p4,
+main.restart[data-winner="4"]::after,
+.p4 footer > .container > *[class^="icon"]::before {
+	color: #DAD !important; /* Plum */
+}
+
+.p4 footer > .container > .icon-box::before {
+	content: url(/ui/images/icon-box-p4.svg);
 }
