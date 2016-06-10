@@ -65,9 +65,6 @@
 				<div id="points" class="icon-star" title="Total Points"><%= (user != null ? user.getPoints() : 0) %></div>
 			</div>
 		</footer>
-		<div class="scripts">
-			<script src="/ui/js/md5.js"></script>
-			<script src="/ui/js/main.js"></script>
-		</div>
+		<script src="/ui/js/main.js"></script>
 	</body>
 </html>

@@ -99,7 +99,7 @@ footer {
 	bottom: 0;
 	left: 0;
 	z-index: 10;
-	height: 43px;
+	height: 39px;
 	background-color: hsla(0, 0%, 100%, 0.9);
 	pointer-events: none;
 }
@@ -112,7 +112,7 @@ footer > .container {
 	align-items: center;
 	width: 100%;
 	max-width: 800px;
-	margin: 10px auto 4px;
+	margin: 9px auto;
 }
 
 footer > .container > div {
@@ -121,6 +121,7 @@ footer > .container > div {
 
 footer > .container > *[class^="icon"]::before {
 	margin-right: 5px;
+	line-height: 90%;
 	font-size: 90%;
 	vertical-align: 1px;
 }

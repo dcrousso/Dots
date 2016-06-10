@@ -418,6 +418,15 @@
 			if (!authenticationForm || isEmpty(username) || isEmpty(password))
 				return;
 
+			if (typeof md5 !== "function") {
+				var script = document.body.appendChild(document.createElement("script"));
+				script.addEventListener("load", function(event) {
+					authenticate(username, password);
+				});
+				script.src = "/ui/js/md5.js";
+				return;
+			}
+
 			var query = "username=" + username + "&password=" + md5(password);
 			ajax("POST", "/authentication?" + query, function(xhr) {
 				var content = JSON.parse(xhr.responseText);
