@@ -2,7 +2,6 @@ package dotsandboxes;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Optional;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
