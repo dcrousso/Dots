@@ -54,6 +54,21 @@
 
 
 	// ================================================== //
+	// ===============       Images       =============== //
+	// ================================================== //
+
+	invokeSoon(function() {
+		[1, 2, 3, 4].forEach(function(i) {
+			invokeSoon(function() {
+				var image = document.body.appendChild(document.createElement("img"));
+				image.hidden = true;
+				image.src = "/ui/images/icon-box-p" + i + ".svg";
+			});
+		});
+	});
+
+
+	// ================================================== //
 	// ===============        Game        =============== //
 	// ================================================== //
 
@@ -70,21 +85,21 @@
 		scoreElement: document.getElementById("score"),
 		playedElement: document.getElementById("played"),
 		wonElement: document.getElementById("won"),
-		pointsElement: document.getElementById("points")
+		pointsElement: document.getElementById("points"),
+		socket: null
 	};
-	var socket = null;
 
 	game.modes.container = document.createElement("div");
 	game.modes.container.classList.add("modes");
 	game.modes.handleClick = function(mode) {
 		return function(event) {
-			if (!socket || socket.readyState !== 1)
+			if (!game.socket || game.socket.readyState !== 1)
 				return;
 
 			playerIcons[2].classList.toggle("disabled", mode < 3);
 			playerIcons[3].classList.toggle("disabled", mode < 4);
 
-			socket.send(JSON.stringify({mode: mode}));
+			game.socket.send(JSON.stringify({mode: mode}));
 			main.className = "waiting";
 		};
 	};
@@ -224,8 +239,8 @@
 			return;
 		}
 
-		if (socket && socket.readyState === 1)
-			socket.send(JSON.stringify(move));
+		if (game.socket && game.socket.readyState === WebSocket.OPEN)
+			game.socket.send(JSON.stringify(move));
 	});
 
 	// Lines
@@ -302,8 +317,8 @@
 	}
 	invokeSoon(resetMain);
 
-	socket = new WebSocket("ws://dotsandboxes.online/websocket");
-	socket.onmessage = function(event) {
+	game.socket = new WebSocket("ws://dotsandboxes.online/websocket");
+	game.socket.onmessage = function(event) {
 		var content = JSON.parse(event.data);
 		if (!content || !content.type)
 			return;
@@ -372,7 +387,7 @@
 			restart.textContent = "New Game";
 			restart.focus();
 			restart.addEventListener("click", function (event) {
-				socket.send(JSON.stringify({
+				game.socket.send(JSON.stringify({
 					type: "restart"
 				}));
 				resetMain();
@@ -390,7 +405,7 @@
 			restart.textContent = "New Game";
 			restart.focus();
 			restart.addEventListener("click", function (event) {
-				socket.send(JSON.stringify({
+				game.socket.send(JSON.stringify({
 					type: "restart"
 				}));
 				resetMain();
@@ -405,11 +420,11 @@
 			break;
 		}
 	};
-	socket.onerror = function(error) {
+	game.socket.onerror = function(error) {
 		console.error(error);
-		socket.close();
+		game.socket.close();
 	};
-	socket.onclose = function() {
+	game.socket.onclose = function() {
 		main.className = "disconnected";
 
 		var reload = main.appendChild(document.createElement("button"));
@@ -512,8 +527,8 @@
 				};
 			}
 
-			if (socket && socket.readyState === WebSocket.OPEN)
-				socket.close();
+			if (game.socket && game.socket.readyState === WebSocket.OPEN)
+				game.socket.close();
 			else
 				authenticationEnded();
 
