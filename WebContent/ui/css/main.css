@@ -145,28 +145,12 @@ main > .modes {
 	display: none;
 }
 
-main.mode-select > .modes,
 main > button {
 	position: absolute;
 	top: 60%;
-	z-index: 1;
-}
-
-main.mode-select > .modes {
-	display: -webkit-flex;
-	display:    -moz-flex;
-	display:     -ms-flexbox;
-	display:         flex;
-	justify-content: space-around;
-	align-items: center;
-	right: 15%;
-	left: 15%;
-	width: 70%;
-}
-
-main > button {
 	right: 35%;
 	left: 35%;
+	z-index: 1;
 	width: 30%;
 }
 
@@ -358,7 +342,7 @@ footer > .container > div {
 
 #authentication {
 	position: fixed;
-	top: 1.4em;
+	top: 47px;
 	right: 0;
 	bottom: 0;
 	left: 0;

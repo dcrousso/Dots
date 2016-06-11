@@ -1,12 +1,12 @@
 (function() {
 	"use strict";
 
-	var playerIcons = {
-		1: document.querySelector("header > nav > .players > div.p1"),
-		2: document.querySelector("header > nav > .players > div.p2"),
-		3: document.querySelector("header > nav > .players > div.p3"),
-		4: document.querySelector("header > nav > .players > div.p4")
-	};
+	var playerIcons = [
+		document.querySelector("header > nav > .players > div.p1"),
+		document.querySelector("header > nav > .players > div.p2"),
+		document.querySelector("header > nav > .players > div.p3"),
+		document.querySelector("header > nav > .players > div.p4")
+	];
 	var main = document.querySelector("main");
 	var authenticationLink = document.querySelector(".link.authentication");
 	var authenticationForm = null;
@@ -29,14 +29,28 @@
 		xhr.send();
 	}
 
+	function invokeSoon(callback) {
+		var animationFrame = window.requestAnimationFrame
+		                  || window.webkitRequestAnimationFrame
+		                  || window.mozRequestAnimationFrame
+		                  || window.oRequestAnimationFrame
+		                  || window.msRequestAnimationFrame
+		                  || function(func) {
+		                     	window.setTimeout(func, 0);
+		                     };
+		animationFrame(callback);
+	}
+
 
 	// ================================================== //
 	// ===============       Styles       =============== //
 	// ================================================== //
 
-	var mainCSS = document.head.appendChild(document.createElement("link"));
-	mainCSS.rel = "stylesheet";
-	mainCSS.href = "/ui/css/main.css";
+	invokeSoon(function() {
+		var mainCSS = document.head.appendChild(document.createElement("link"));
+		mainCSS.rel = "stylesheet";
+		mainCSS.href = "/ui/css/main.css";
+	});
 
 
 	// ================================================== //
@@ -67,8 +81,8 @@
 			if (!socket || socket.readyState !== 1)
 				return;
 
-			playerIcons[3].classList.toggle("disabled", mode < 3);
-			playerIcons[4].classList.toggle("disabled", mode < 4);
+			playerIcons[2].classList.toggle("disabled", mode < 3);
+			playerIcons[3].classList.toggle("disabled", mode < 4);
 
 			socket.send(JSON.stringify({mode: mode}));
 			main.className = "waiting";
@@ -261,8 +275,9 @@
 	}
 
 	function resetMain() {
-		for (var key in playerIcons)
-			playerIcons[key].classList.remove("disabled");
+		playerIcons.forEach(function(icon) {
+			icon.classList.remove("disabled");
+		});
 
 		main.textContent = ""; // Remove all children
 		main.className = "mode-select";
@@ -285,7 +300,7 @@
 		main.appendChild(game.dots.container);
 		main.appendChild(game.modes.container);
 	}
-	mainCSS.addEventListener("load", resetMain); // Only display DOM once styles are loaded
+	invokeSoon(resetMain);
 
 	socket = new WebSocket("ws://dotsandboxes.online/websocket");
 	socket.onmessage = function(event) {
@@ -298,8 +313,9 @@
 			game.playerId = content.player;
 
 			document.body.className = "p" + game.playerId;
-			for (var key in playerIcons)
-				playerIcons[key].classList.toggle("current", parseInt(key) === content.current);
+			playerIcons.forEach(function(icon, i) {
+				icon.classList.toggle("current", (i + 1) === content.current);
+			});
 
 			main.removeAttribute("class");
 			game.modes.container.remove();
@@ -337,13 +353,15 @@
 					game.scoreElement.textContent = parseInt(game.scoreElement.textContent) + content.boxes.length;
 			}
 
-			for (var key in playerIcons)
-				playerIcons[key].classList.toggle("current", parseInt(key) === content.current);
+			playerIcons.forEach(function(icon, i) {
+				icon.classList.toggle("current", (i + 1) === content.current);
+			});
 
 			break;
 		case "leave":
-			for (var key in playerIcons)
-				playerIcons[key].classList.remove("current");
+			playerIcons.forEach(function(icon) {
+				icon.classList.remove("disabled");
+			});
 
 			main.className = "leave";
 

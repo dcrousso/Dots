@@ -96,6 +96,19 @@ main {
 	box-shadow: 0 0 2px white;
 }
 
+main.mode-select > .modes {
+	display: -webkit-flex;
+	display:    -moz-flex;
+	display:     -ms-flexbox;
+	display:         flex;
+	justify-content: space-around;
+	position: absolute;
+	top: 60%;
+	right: 15%;
+	left: 15%;
+	z-index: 1;
+}
+
 footer {
 	position: fixed;
 	right: 0;
