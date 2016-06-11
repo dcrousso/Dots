@@ -318,7 +318,7 @@
 	invokeSoon(resetMain);
 
 	game.socket = new WebSocket("ws://dotsandboxes.online/websocket");
-	game.socket.onmessage = function(event) {
+	game.socket.addEventListener("message", function(event) {
 		var content = JSON.parse(event.data);
 		if (!content || !content.type)
 			return;
@@ -419,12 +419,12 @@
 
 			break;
 		}
-	};
-	game.socket.onerror = function(error) {
-		console.error(error);
+	});
+	game.socket.addEventListener("error", function(event) {
+		console.error(event);
 		game.socket.close();
-	};
-	game.socket.onclose = function() {
+	});
+	game.socket.addEventListener("close", function(event) {
 		main.className = "disconnected";
 
 		var reload = main.appendChild(document.createElement("button"));
@@ -437,7 +437,7 @@
 
 		if (typeof authenticationEnded === "function")
 			authenticationEnded();
-	};
+	});
 
 
 	// ================================================== //
