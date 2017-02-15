@@ -12,6 +12,9 @@
 	var authenticationForm = null;
 	var authenticationEnded = null;
 
+	// https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+	var eventListenerOptions = (function(){var s=!1;try{window.addEventListener("test",null,Object.defineProperty({},"passive",{get:function(){s=!0}}))}catch(n){}return s})() ? {passive: true} : undefined;
+
 	function isEmpty(s) {
 		return !s && !s.length && !s.trim().length;
 	}
@@ -24,7 +27,7 @@
 
 			if (typeof callback === "function")
 				callback(xhr);
-		});
+		}, eventListenerOptions);
 		xhr.open(method, url, true);
 		xhr.send();
 	}
@@ -106,19 +109,19 @@
 
 	game.modes.ai = game.modes.container.appendChild(document.createElement("button"));
 	game.modes.ai.textContent = "Play AI";
-	game.modes.ai.addEventListener("click", game.modes.handleClick(1));
+	game.modes.ai.addEventListener("click", game.modes.handleClick(1), eventListenerOptions);
 
 	game.modes.two = game.modes.container.appendChild(document.createElement("button"));
 	game.modes.two.textContent = "Two Players";
-	game.modes.two.addEventListener("click", game.modes.handleClick(2));
+	game.modes.two.addEventListener("click", game.modes.handleClick(2), eventListenerOptions);
 
 	game.modes.three = game.modes.container.appendChild(document.createElement("button"));
 	game.modes.three.textContent = "Three Players";
-	game.modes.three.addEventListener("click", game.modes.handleClick(3));
+	game.modes.three.addEventListener("click", game.modes.handleClick(3), eventListenerOptions);
 
 	game.modes.four = game.modes.container.appendChild(document.createElement("button"));
 	game.modes.four.textContent = "Four Players";
-	game.modes.four.addEventListener("click", game.modes.handleClick(4));
+	game.modes.four.addEventListener("click", game.modes.handleClick(4), eventListenerOptions);
 
 	// Boxes
 	game.boxes.container = document.createElement("div");
@@ -200,7 +203,7 @@
 			markLine(cell.left);
 			break;
 		}
-	});
+	}, eventListenerOptions);
 
 	game.boxes.container.addEventListener("click", function(event) {
 		if (!game.currentLine)
@@ -241,7 +244,7 @@
 
 		if (game.socket && game.socket.readyState === WebSocket.OPEN)
 			game.socket.send(JSON.stringify(move));
-	});
+	}, eventListenerOptions);
 
 	// Lines
 	game.lines.container = document.createElement("div");
@@ -393,6 +396,7 @@
 				resetMain();
 				this.remove();
 			});
+
 			break;
 		case "end":
 			for (var key in playerIcons)
@@ -419,11 +423,11 @@
 
 			break;
 		}
-	});
+	}, eventListenerOptions);
 	game.socket.addEventListener("error", function(event) {
 		console.error(event);
 		game.socket.close();
-	});
+	}, eventListenerOptions);
 	game.socket.addEventListener("close", function(event) {
 		main.className = "disconnected";
 
@@ -433,11 +437,11 @@
 		reload.addEventListener("click", function (event) {
 			window.location.reload();
 			this.remove();
-		});
+		}, eventListenerOptions);
 
 		if (typeof authenticationEnded === "function")
 			authenticationEnded();
-	});
+	}, eventListenerOptions);
 
 
 	// ================================================== //
@@ -514,7 +518,7 @@
 			close.addEventListener("click", function(event) {
 				authenticationForm.remove();
 				authenticationForm = null;
-			});
+			}, eventListenerOptions);
 			return;
 		}
 
