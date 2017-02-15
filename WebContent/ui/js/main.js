@@ -44,6 +44,25 @@
 		animationFrame(callback);
 	}
 
+	function notify(body) {
+		if (!Notification)
+			return;
+
+		if (!document.hidden)
+			return;
+
+		var options = {
+			body: body,
+			icon: "http://dotsandboxes.online/favicon-194x194.png"
+		};
+		if (Notification.permission !== "denied") {
+			Notification.requestPermission(function(permission) {
+				new Notification("Dots", options);
+			});
+		} else if (Notification.permission === "granted")
+			new Notification("Dots", options);
+	}
+
 
 	// ================================================== //
 	// ===============       Styles       =============== //
@@ -375,6 +394,9 @@
 				icon.classList.toggle("current", (i + 1) === content.current);
 			});
 
+			if (game.playerId === content.current)
+				notify("It's your move.");
+
 			break;
 		case "leave":
 			playerIcons.forEach(function(icon) {
@@ -397,6 +419,7 @@
 				this.remove();
 			});
 
+			notify("An opponent left.");
 			break;
 		case "end":
 			for (var key in playerIcons)
@@ -421,6 +444,7 @@
 			if (game.playerId === content.winner)
 				game.wonElement.textContent = parseInt(game.wonElement.textContent) + 1;
 
+			notify("Player " + content.winner + " won!");
 			break;
 		}
 	}, eventListenerOptions);
