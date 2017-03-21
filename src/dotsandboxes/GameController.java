@@ -55,15 +55,11 @@ public class GameController {
 
 			if (!m_board.hasUncaptured()) {
 				final int winner = m_board.getWinner();
-				savePlayerInfo(winner);
+				m_alive = false;
 				m_players.parallelStream().forEach(player -> {
 					JsonObjectBuilder end = Json.createObjectBuilder()
 						.add("type", "end")
 						.add("winner", winner);
-
-					User user = player.getUser();
-					if (user != null)
-						end.add("played", user.getGamesPlayed()).add("points", user.getPoints());
 
 					player.send(this, end.build());
 				});
@@ -74,14 +70,10 @@ public class GameController {
 			if (!m_alive)
 				break;
 
-			savePlayerInfo(-1); // No Winner
+			m_alive = false;
 			m_players.parallelStream().forEach(player -> {
 				JsonObjectBuilder leave = Json.createObjectBuilder()
 					.add("type", "leave");
-
-				User user = player.getUser();
-				if (user != null)
-					leave.add("played", user.getGamesPlayed()).add("points", user.getPoints());
 
 				player.send(this, leave.build());
 			});
@@ -97,22 +89,5 @@ public class GameController {
 
 	public GameBoard getBoard() {
 		return m_board;
-	}
-
-	private void savePlayerInfo(int winner) {
-		m_players.forEach(player -> {
-			User user = player.getUser();
-			if (user == null)
-				return;
-
-			user.addGame(m_board.getScore(player.getId()), player.getId() == winner);
-			Util.update("UPDATE users SET played = ?, won = ?, points = ? WHERE username = ?", new String[] {
-				Integer.toString(user.getGamesPlayed()),
-				Integer.toString(user.getGamesWon()),
-				Integer.toString(user.getPoints()),
-				user.getUsername()
-			});
-		});
-		m_alive = false;
 	}
 }

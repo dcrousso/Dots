@@ -19,8 +19,6 @@ public abstract class Player {
 
 	public abstract void send(GameController game, JsonObject content);
 
-	public abstract User getUser();
-
 	public abstract void restart();
 
 	public boolean isAlive() {

@@ -4,13 +4,7 @@ import java.io.StringReader;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,109 +14,6 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 public class Util {
-
-	// ============================== //
-	// ========== Database ========== //
-	// ============================== //
-
-	private static Connection dbConnection = null;
-
-	public static void openDBConnection() {
-		if (dbConnection != null)
-			return;
-
-		try {
-			Class.forName(Defaults.DB_DRIVER);
-			dbConnection = DriverManager.getConnection(Defaults.DB_URL, Defaults.DB_USERNAME, Defaults.DB_PASSWORD);
-		} catch (SQLException e) {
-		} catch (ClassNotFoundException e) {
-		}
-	}
-
-	public static void closeDBConnection() {
-		if (dbConnection == null)
-			return;
-
-		try {
-			dbConnection.close();
-			dbConnection = null;
-		} catch (SQLException e) {
-		}
-	}
-
-	public static Connection getDBConnection() {
-		if (dbConnection == null)
-			openDBConnection();
-
-		return dbConnection;
-	}
-
-	public static boolean update(String query, String[] args) {
-		if (getDBConnection() == null)
-			return false;
-
-		boolean result = false;
-		PreparedStatement ps = null;
-		try {
-			ps = getDBConnection().prepareStatement(query);
-
-			for (int i = 0; i < args.length; ++i)
-				ps.setString(i + 1, args[i]); // SQL indexes start at 1
-
-			ps.executeUpdate();
-			result = true;
-		} catch (SQLException e) {
-		} finally {
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-
-			closeDBConnection();
-		}
-
-		return result;
-	}
-
-	public static <T> T query(String query, String[] args, Function<ResultSet, T> callback) {
-		if (getDBConnection() == null)
-			return null;
-
-		T result = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			ps = getDBConnection().prepareStatement(query);
-
-			for (int i = 0; i < args.length; ++i)
-				ps.setString(i + 1, args[i]); // SQL indexes start at 1
-
-			rs = ps.executeQuery();
-			result = callback.apply(rs);
-		} catch (SQLException e) {
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-
-			closeDBConnection();
-		}
-
-		return result;
-	}
-
 
 	// ============================== //
 	// ==========  String  ========== //

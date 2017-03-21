@@ -122,11 +122,6 @@ public class AIController extends Player implements Runnable {
 	}
 
 	@Override
-	public User getUser() {
-		return null;
-	}
-
-	@Override
 	public void restart() {
 		if (m_thread != null)
 			return;

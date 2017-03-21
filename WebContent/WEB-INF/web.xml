@@ -57,41 +57,10 @@
 	/>
 -->
 
-	<jsp-config>
-		<jsp-property-group>
-			<url-pattern>*.jsp</url-pattern>
-			<trim-directive-whitespaces>true</trim-directive-whitespaces>
-		</jsp-property-group>
-	</jsp-config>
-
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list> 
-
 	<error-page>
 		<error-code>404</error-code>
 		<location>/404.html</location>
 	</error-page>
-
-	<servlet>
-		<servlet-name>home-extension</servlet-name>
-		<jsp-file>/index.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>home-extension</servlet-name>
-		<url-pattern>/index</url-pattern>
-		<url-pattern>/index.html</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>AuthenticationServlet</servlet-name>
-		<servlet-class>dotsandboxes.AuthenticationServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>AuthenticationServlet</servlet-name>
-		<url-pattern>/authentication</url-pattern>
-	</servlet-mapping>
 
 	<session-config>
 		<session-timeout>60</session-timeout>

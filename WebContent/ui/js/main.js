@@ -8,9 +8,6 @@
 		document.querySelector("header > nav > .players > div.p4")
 	];
 	var main = document.querySelector("main");
-	var authenticationLink = document.querySelector(".link.authentication");
-	var authenticationForm = null;
-	var authenticationEnded = null;
 
 	// https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
 	var eventListenerOptions = (function(){var s=!1;try{window.addEventListener("test",null,Object.defineProperty({},"passive",{get:function(){s=!0}}))}catch(n){}return s})() ? {passive: true} : undefined;
@@ -53,7 +50,7 @@
 
 		var options = {
 			body: body,
-			icon: "http://dotsandboxes.online/favicon-194x194.png"
+			icon: "http://devinrousso.com:8080/dots/favicon-194x194.png"
 		};
 		if (Notification.permission !== "denied") {
 			Notification.requestPermission(function(permission) {
@@ -71,22 +68,7 @@
 	invokeSoon(function() {
 		var mainCSS = document.head.appendChild(document.createElement("link"));
 		mainCSS.rel = "stylesheet";
-		mainCSS.href = "/ui/css/main.css";
-	});
-
-
-	// ================================================== //
-	// ===============       Images       =============== //
-	// ================================================== //
-
-	invokeSoon(function() {
-		[1, 2, 3, 4].forEach(function(i) {
-			invokeSoon(function() {
-				var image = document.body.appendChild(document.createElement("img"));
-				image.hidden = true;
-				image.src = "/ui/images/icon-box-p" + i + ".svg";
-			});
-		});
+		mainCSS.href = "/dots/ui/css/main.css";
 	});
 
 
@@ -104,10 +86,6 @@
 		boxes: {},
 		lines: {},
 		dots: {},
-		scoreElement: document.getElementById("score"),
-		playedElement: document.getElementById("played"),
-		wonElement: document.getElementById("won"),
-		pointsElement: document.getElementById("points"),
 		socket: null
 	};
 
@@ -316,11 +294,11 @@
 			icon.classList.remove("disabled");
 		});
 
+		document.body.className = "";
+
 		main.textContent = ""; // Remove all children
 		main.className = "mode-select";
 		main.removeAttribute("data-winner");
-
-		game.scoreElement.textContent = 0;
 
 		game.playerId = null;
 
@@ -339,7 +317,7 @@
 	}
 	invokeSoon(resetMain);
 
-	game.socket = new WebSocket("ws://dotsandboxes.online/websocket");
+	game.socket = new WebSocket("ws://devinrousso.com:8080/dots/websocket");
 	game.socket.addEventListener("message", function(event) {
 		var content = JSON.parse(event.data);
 		if (!content || !content.type)
@@ -385,9 +363,6 @@
 			if (Array.isArray(content.boxes)) {
 				for (var i = 0; i < content.boxes.length; ++i)
 					game.cells[content.boxes[i].r][content.boxes[i].c].box.classList.add("p" + content.player);
-
-				if (game.playerId === content.player)
-					game.scoreElement.textContent = parseInt(game.scoreElement.textContent) + content.boxes.length;
 			}
 
 			playerIcons.forEach(function(icon, i) {
@@ -404,9 +379,6 @@
 			});
 
 			main.className = "leave";
-
-			game.playedElement.textContent = parseInt(game.playedElement.textContent) + ((isNaN(content.played) ? 1 : content.played) || 0);
-			game.pointsElement.textContent = parseInt(game.pointsElement.textContent) + ((isNaN(content.points) ? parseInt(game.scoreElement.textContent) : content.played) || 0);
 
 			var restart = main.appendChild(document.createElement("button"));
 			restart.textContent = "New Game";
@@ -439,11 +411,6 @@
 				this.remove();
 			});
 
-			game.playedElement.textContent = parseInt(game.playedElement.textContent) + ((isNaN(content.played) ? 1 : content.played) || 0);
-			game.pointsElement.textContent = parseInt(game.pointsElement.textContent) + ((isNaN(content.points) ? parseInt(game.scoreElement.textContent) : content.played) || 0);
-			if (game.playerId === content.winner)
-				game.wonElement.textContent = parseInt(game.wonElement.textContent) + 1;
-
 			notify("Player " + content.winner + " won!");
 			break;
 		}
@@ -462,105 +429,5 @@
 			window.location.reload();
 			this.remove();
 		}, eventListenerOptions);
-
-		if (typeof authenticationEnded === "function")
-			authenticationEnded();
 	}, eventListenerOptions);
-
-
-	// ================================================== //
-	// ===============       Header       =============== //
-	// ================================================== //
-
-	authenticationLink.addEventListener("click", function(event) {
-		event.preventDefault();
-
-		function authenticate(username, password) {
-			if (!authenticationForm || isEmpty(username) || isEmpty(password))
-				return;
-
-			if (typeof md5 !== "function") {
-				var script = document.body.appendChild(document.createElement("script"));
-				script.addEventListener("load", function(event) {
-					authenticate(username, password);
-				});
-				script.src = "/ui/js/md5.js";
-				return;
-			}
-
-			var query = "username=" + username + "&password=" + md5(password);
-			ajax("POST", "/authentication?" + query, function(xhr) {
-				var content = JSON.parse(xhr.responseText);
-				if (!content || content.error) {
-					authenticationForm.classList.add("error");
-					authenticationForm.dataset.error = (content && content.error) || "Invalid Username/Password";
-					return;
-				}
-
-				authenticationLink.classList.remove("login");
-				authenticationLink.classList.add("logout");
-				authenticationLink.textContent = "Logout";
-				authenticationLink.title = "Logout";
-
-				authenticationForm.remove();
-				authenticationForm = null;
-
-				game.playedElement.textContent = parseInt(content.played) || 0;
-				game.wonElement.textContent = parseInt(content.won) || 0;
-				game.pointsElement.textContent = parseInt(content.points) || 0;
-			});
-		}
-
-		if (this.classList.contains("login")) {
-			if (authenticationForm)
-				return;
-
-			authenticationForm = document.body.appendChild(document.createElement("form"));
-			authenticationForm.id = "authentication";
-			authenticationForm.action = "authentication";
-
-			var usernameInput = authenticationForm.appendChild(document.createElement("input"));
-			usernameInput.type = "text";
-			usernameInput.placeholder = "Username";
-			usernameInput.required = true;
-			usernameInput.focus();
-
-			var passwordInput = authenticationForm.appendChild(document.createElement("input"));
-			passwordInput.type = "password";
-			passwordInput.placeholder = "Password";
-			passwordInput.required = true;
-
-			var login = authenticationForm.appendChild(document.createElement("button"));
-			login.textContent = "Login";
-			login.addEventListener("click", function(event) {
-				event.preventDefault();
-				authenticate(usernameInput.value, passwordInput.value);
-			});
-
-			var close = authenticationForm.appendChild(document.createElement("div"));
-			close.classList.add("close");
-			close.addEventListener("click", function(event) {
-				authenticationForm.remove();
-				authenticationForm = null;
-			}, eventListenerOptions);
-			return;
-		}
-
-		if (this.classList.contains("logout")) {
-			if (!authenticationEnded) {
-				authenticationEnded = function() { 
-					ajax("POST", "/authentication?logout=true", function(xhr) {
-						window.location.reload();
-					});
-				};
-			}
-
-			if (game.socket && game.socket.readyState === WebSocket.OPEN)
-				game.socket.close();
-			else
-				authenticationEnded();
-
-			return;
-		}
-	});
 })();

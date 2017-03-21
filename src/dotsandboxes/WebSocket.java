@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.servlet.http.HttpSession;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -14,7 +13,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint(value = "/websocket", configurator = SessionConfigurator.class)
+@ServerEndpoint(value = "/websocket")
 
 public class WebSocket extends Player {
 	private static final HashMap<Integer, ConcurrentLinkedQueue<WebSocket>> s_waiting = new HashMap<Integer, ConcurrentLinkedQueue<WebSocket>>();
@@ -25,14 +24,12 @@ public class WebSocket extends Player {
 	}
 
 	private Session m_socketSession;
-	private HttpSession m_httpSession;
 
 	@OnOpen
 	public void handleOpen(Session session, EndpointConfig config) {
 		initialize(Type.Client);
 
 		m_socketSession = session;
-		m_httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
 	}
 
 	@OnMessage
@@ -55,7 +52,7 @@ public class WebSocket extends Player {
 					waiting.offer(this);
 				else
 					m_game = p1.m_game = new GameController(p1, this);
-			} else if (mode == 3 && getUser() != null) { // 3 Players (Authenticated only)
+			} else if (mode == 3) {
 				WebSocket p1 = waiting.poll();
 				WebSocket p2 = waiting.poll();
 				if (p2 == null) {
@@ -64,7 +61,7 @@ public class WebSocket extends Player {
 					waiting.offer(this);
 				} else
 					m_game = p1.m_game = p2.m_game = new GameController(p1, p2, this);
-			} else if (mode == 4 && getUser() != null) { // 4 Players (Authenticated only)
+			} else if (mode == 4) {
 				WebSocket p1 = waiting.poll();
 				WebSocket p2 = waiting.poll();
 				WebSocket p3 = waiting.poll();
@@ -111,11 +108,6 @@ public class WebSocket extends Player {
 			return;
 
 		m_socketSession.getAsyncRemote().sendText(content.toString());
-	}
-
-	@Override
-	public User getUser() {
-		return (User) m_httpSession.getAttribute("user");
 	}
 
 	@Override

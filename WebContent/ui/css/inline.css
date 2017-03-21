@@ -2,7 +2,7 @@
 	font-family: "AvenirLight";
 	font-style: normal;
 	font-weight: lighter;
-	src: local("AvenirLight"), url("/ui/fonts/AvenirLTStd-Light.otf") format("opentype");
+	src: local("AvenirLight"), url("/dots/ui/fonts/AvenirLTStd-Light.otf") format("opentype");
 }
 
 * {
@@ -49,7 +49,6 @@ header {
 	right: 0;
 	left: 0;
 	z-index: 100;
-	height: 47px;
 	background-color: hsla(0, 0%, 100%, 0.9);
 	pointer-events: none;
 }
@@ -62,9 +61,10 @@ header > nav {
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
+	height: 100%;
 	max-width: 800px;
 	margin: 0 auto;
-	padding: 0 20px;
+	padding: 8px 20px;
 }
 
 header > nav > .players {
@@ -82,6 +82,25 @@ header > nav > .players > div {
 	height: 25px;
 	background-color: currentColor;
 	border-radius: 25%;
+}
+
+header > nav > .id {
+	display: flex;
+	align-items: baseline;
+	font-size: calc(1 / 1.5 * 1.1em);
+}
+
+.p1 header > nav > .id::before {
+	display: block;
+	margin-right: 4px;
+	color: black;
+}
+.p1 header > nav > .id::after {
+	display: block;
+	width: 0.75em;
+	height: 0.75em;
+	background-color: currentColor;
+	border-radius: 50%;
 }
 
 main {
@@ -109,84 +128,46 @@ main.mode-select > .modes {
 	z-index: 1;
 }
 
-footer {
-	position: fixed;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: 10;
-	height: 39px;
-	background-color: hsla(0, 0%, 100%, 0.9);
-	pointer-events: none;
-}
-
-footer > .container {
-	display: -webkit-flex;
-	display:    -moz-flex;
-	display:     -ms-flexbox;
-	display:         flex;
-	align-items: center;
-	width: 100%;
-	max-width: 800px;
-	margin: 9px auto;
-}
-
-footer > .container > div {
-	margin: 0 auto;
-}
-
-footer > .container > *[class^="icon"]::before {
-	margin-right: 5px;
-	line-height: 0.9rem;
-	font-size: 0.9rem;
-	vertical-align: 1px;
-}
-
-footer > .container > .icon-box::before {
-	margin-right: 2px;
-	vertical-align: -1px;
-}
-
-footer > .container > .icon-star::before {
-	margin-right: 2px;
-}
-
 .p1,
-main.restart[data-winner="1"]::after,
-.p1 footer > .container > *[class^="icon"]::before {
+main.restart[data-winner="1"]::after {
 	color: #900 !important; /* Cardinal */
 }
-
-.p1 footer > .container > .icon-box::before {
-	content: url(/ui/images/icon-box-p1.svg);
+.p1 header > nav > .id::before {
+	content: "You are Player 1";
+}
+.p1 header > nav > .id::after {
+	content: "";
 }
 
 .p2,
-main.restart[data-winner="2"]::after,
-.p2 footer > .container > *[class^="icon"]::before {
+main.restart[data-winner="2"]::after {
 	color: #fc0 !important; /* Gold */
 }
-
-.p2 footer > .container > .icon-box::before {
-	content: url(/ui/images/icon-box-p2.svg);
+.p2 header > nav > .id::before {
+	content: "You are Player 2";
+}
+.p2 header > nav > .id::after {
+	content: "";
 }
 
 .p3,
-main.restart[data-winner="3"]::after,
-.p3 footer > .container > *[class^="icon"]::before {
+main.restart[data-winner="3"]::after {
 	color: #F75 !important; /* Coral */
 }
-
-.p3 footer > .container > .icon-box::before {
-	content: url(/ui/images/icon-box-p3.svg);
+.p3 header > nav > .id::before {
+	content: "You are Player 3";
+}
+.p3 header > nav > .id::after {
+	content: "";
 }
 
 .p4,
-main.restart[data-winner="4"]::after,
-.p4 footer > .container > *[class^="icon"]::before {
+main.restart[data-winner="4"]::after {
 	color: #DAD !important; /* Plum */
 }
-
-.p4 footer > .container > .icon-box::before {
-	content: url(/ui/images/icon-box-p4.svg);
+.p4 header > nav > .id::before {
+	content: "You are Player 4";
+}
+.p4 header > nav > .id::after {
+	content: "";
 }
